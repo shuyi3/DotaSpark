@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Dota Spark</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="date">update time</string>
+    <string name="listviewpic">picture_front</string>
+    <string name="imageanimation">animationimage</string>
+    <string name="youtube">youtbe</string>
+    <string name="youku">youku</string>
+    <string name="startspark">Start My Dota Spark Now!</string>
+        <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Side Menu Tutorial</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+ 	<string name="loading">Loading...</string>
+
+</resources>

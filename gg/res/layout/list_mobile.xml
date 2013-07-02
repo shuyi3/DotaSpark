@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#CFCFCF"
+    android:orientation="vertical"
+    android:padding="5dp">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp" >
+
+    <ImageView
+        android:id="@+id/uploaderImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/customshape2" />
+
+    <TextView
+        android:id="@+id/Uploader"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:layout_gravity="bottom"
+        android:text="Uploader"
+        android:background="@drawable/customshape1"
+        android:ems="10" >
+
+        <requestFocus />
+    </TextView>
+    
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/customshape3"
+    android:minHeight="125dp"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="86dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="5dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/listviewpic" >
+
+    </ImageView>
+    
+    <LinearLayout
+    android:layout_width="0dip"
+    android:layout_height="fill_parent"
+    android:layout_weight="3"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@+id/label">
+    </TextView>
+    
+    <TextView
+        android:id="@+id/updatetime"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/date">
+    </TextView>
+    
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text="desc111111111" />
+    
+    </LinearLayout>
+    
+</LinearLayout>
+</LinearLayout>
