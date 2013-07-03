@@ -3,6 +3,6 @@
     android:id="@+id/vertical_container" android:orientation="vertical"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:layout_marginTop="0dp" android:gravity="top"
-    android:background="#CFCFCF"
+    android:background="#A7A7A7"
     >
 </LinearLayout>

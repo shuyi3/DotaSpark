@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="date">update time</string>
+    <string name="desc">album desc</string>
     <string name="listviewpic">picture_front</string>
     <string name="imageanimation">animationimage</string>
     <string name="youtube">youtbe</string>
@@ -16,5 +17,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
  	<string name="loading">Loading...</string>
+ 	<string name="albumtitle">some title</string>
+ 	<string name="numberofvideos">50 videos</string>
 
 </resources>
