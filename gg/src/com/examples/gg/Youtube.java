@@ -113,10 +113,16 @@ public class Youtube extends SherlockListFragment {
 
 		//sfa.findViewById(R.id.content_frame).setVisibility(View.GONE);
 		
-		//start loading
-		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-		new YoutubeGetRequest().execute(videolist.get(position).getPlaylistUrl());		
 		
+		InternetConnection ic = new InternetConnection();
+		if(ic.isOnline(sfa)){
+			//internet is ok
+			//start loading
+			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
+			new YoutubeGetRequest().execute(videolist.get(position).getPlaylistUrl());		
+		}else{
+			ic.networkToast(sfa);
+		}
 
 	
 	}
@@ -239,10 +245,10 @@ public class Youtube extends SherlockListFragment {
 	    
 	    private void processJSON(String json) throws JSONException{
 	        JSONTokener jsonParser = new JSONTokener(json);  
-	        // 雎�ｽ､隴鯉ｽｶ髴台ｿｶ謔ｴ髫ｸ�ｻ陷ｿ邏具ｽｻ�ｻ闖ｴ蠖ｬson隴�ｿｽ謔ｽ�ｽ讙主ｳｩ隰暦ｽ･髫ｸ�ｻ陷ｿ髢�ｽｰ�ｱ隴擾ｽｯ闕ｳ�ｽ�ｸ�ｪJSONObject陝�ｽｹ髮趣ｽ｡邵ｲ�ｽ 
-	        // 陞ｯ繧域｣｡雎�ｽ､隴鯉ｽｶ騾ｧ�ｽ�ｯ�ｻ陷ｿ邏具ｽｽ蜥ｲ�ｽ�ｮ陜ｨ�ｨ"name" : 闔�ｿｽ�ｼ遒√≦闕ｵ�ｽextValue陝�ｽｱ隴擾ｽｯ"yuanzhifei89"�ｽ�ｽtring�ｽ�ｽ 
+	        // 闆庯拷锝斤饯闅撮瘔锝斤蕉楂村彴锝匡蕉璎旓酱楂礁锟斤交闄凤娇閭忓叿锝斤交锟斤交闂栵酱锠栵浆son闅达拷锝匡浇璎旓浇锟斤浇璁欎富锝筹僵闅版殾锝斤渐楂礁锟斤交闄凤娇楂拷锝斤桨锟斤奖闅存摼锝斤蒋闂曪匠锟斤浇锟斤礁锟斤姜JSONObject闄濓拷锝斤焦楂叮锝斤健閭碉讲锟斤浇 
+	        // 闄烇蒋绻у煙锝ｏ健闆庯拷锝斤饯闅撮瘔锝斤蕉楱撅涧锟斤浇锟斤蒋锟斤交闄凤娇閭忓叿锝斤浇铚ワ讲锟斤浇锟斤疆闄滐建锟斤建"name" : 闂旓拷锝匡浇锟斤郊閬掆垰鈮﹂棔锝碉拷锝絜xtValue闄濓拷锝斤奖闅存摼锝斤蒋"yuanzhifei89"锟斤浇锟斤浇tring锟斤浇锟斤浇 
 	        JSONObject wholeJson = (JSONObject) jsonParser.nextValue();  
-	        // 隰暦ｽ･闕ｳ蛹ｺ謫る��ｽ�ｰ�ｱ隴擾ｽｯJSON陝�ｽｹ髮趣ｽ｡騾ｧ�ｽ譯�抄諛会ｽｺ�ｽ 
+	        // 闅版殾锝斤渐闂曪匠铔癸胶璎倠锟斤拷锝斤拷锝帮拷锝遍毚鎿撅浇锝疛SON闄濓拷锝斤焦楂叮锝斤健楱撅涧锟斤浇璀拷鎶勮珱浼氾浇锝猴拷锝�
 	        this.feed = wholeJson.getJSONObject("feed");
 	        
 	        

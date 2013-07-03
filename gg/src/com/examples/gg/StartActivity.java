@@ -1,8 +1,15 @@
 package com.examples.gg;
 
+import com.examples.gg.SideMenuActivity.DummySectionFragment;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,10 +23,15 @@ public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-            
-        addListenerOnButton();
+		
+		InternetConnection ic = new InternetConnection(); 
+		
+		if(ic.isOnline(this)){ 
+			addListenerOnButton();
         
-        
+		}else{
+			ic.networkToast(this);
+		}
 //        Intent playIntent = new Intent(Intent.ACTION_VIEW);
 //        playIntent.setData(Uri.parse("http://www.youtube.com/watch?v=sMM0R19IisI"));
 //        playIntent.putExtra("force_fullscreen", true);
@@ -44,11 +56,18 @@ public class StartActivity extends Activity {
 		
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(StartActivity.this,"Youtube is selected", Toast.LENGTH_SHORT).show();
+				
 				   //Intent youtubeIntent = new Intent(StartActivity.this,TabActivity.class);
-				Intent youtubeIntent = new Intent(StartActivity.this,SideMenuActivity.class);
-				startActivity(youtubeIntent);
 
+					Toast.makeText(StartActivity.this,"Youtube is selected", Toast.LENGTH_SHORT).show();
+					Intent youtubeIntent = new Intent(StartActivity.this,SideMenuActivity.class);
+					startActivity(youtubeIntent);
+
+
+
+
+
+				
 				   
 			}
  
@@ -77,5 +96,6 @@ public class StartActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    
     
 }

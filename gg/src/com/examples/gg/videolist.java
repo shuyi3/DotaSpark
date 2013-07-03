@@ -15,7 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
@@ -40,14 +40,15 @@ private ArrayList<String> thumbList;
 private ArrayList<Video> videolist;
 private String query;
 private boolean isMoreVideos;
-
+private InternetConnection ic;
+private SherlockFragmentActivity sa;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 //		super.onCreate(savedInstanceState);
-		
+		ic = new InternetConnection(); 
 		View view = inflater.inflate(R.layout.loadmore_list, null);
-		
+		sa = this.getSherlockActivity();
 //		setContentView(R.layout.loadmore_list);
 		
 
@@ -104,33 +105,51 @@ private boolean isMoreVideos;
 		myLoadMoreListView =  (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 		
-		
-		if (isMoreVideos)
-		myLoadMoreListView
-		.setOnLoadMoreListener(new OnLoadMoreListener() {
-			public void onLoadMore() {
-				// Do the work to load more items at the end of list
-				// hereru
-				if(isMoreVideos == true){
-					new LoadMoreTask().execute(query);
+		if(ic.isOnline(sa)){
+			if (isMoreVideos)
+			myLoadMoreListView
+			.setOnLoadMoreListener(new OnLoadMoreListener() {
+				public void onLoadMore() {
+					// Do the work to load more items at the end of list
+					// hereru
+					
+					//checking network
+					if(ic.isOnline(sa)){
+						//network ok
+						if(isMoreVideos == true){
+							new LoadMoreTask().execute(query);
+						}
+					}else{
+						ic.networkToast(sa);
+						((LoadMoreListView) getListView()).onLoadMoreComplete();
+					}
+						
 				}
+			});
+			
+			else myLoadMoreListView.setOnLoadMoreListener(null);
 			}
-		});
-		
-		else myLoadMoreListView.setOnLoadMoreListener(null);
+		else{
+			ic.networkToast(sa);
+		}
 	}
 
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
- 
-		//get selected items
-		String selectedValue = (String) getListAdapter().getItem(position);
-		Toast.makeText(this.getSherlockActivity(), videos.get(position), Toast.LENGTH_SHORT).show();
 		
-        Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
-        i.putExtra("video", videolist.get(position));
-        startActivity(i);
+		//check network first	
+		if(ic.isOnline(this.getSherlockActivity())){
+			//get selected items
+			String selectedValue = (String) getListAdapter().getItem(position);
+			Toast.makeText(this.getSherlockActivity(), videos.get(position), Toast.LENGTH_SHORT).show();
+			
+	        Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
+	        i.putExtra("video", videolist.get(position));
+	        startActivity(i);
+		}else{
+			ic.networkToast(this.getSherlockActivity());
+		}
 		
 	}	
 	

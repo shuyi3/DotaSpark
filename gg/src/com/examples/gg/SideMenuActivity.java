@@ -2,7 +2,10 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -148,50 +152,59 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	}
 
 	private void selectItem(int position) {
-
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		// Locate Position
-		switch (position) {
-		case 1:
-			mActionBar.setTitle("Albums");
-			Fragment byPlaylist = new Youtube();
-			Bundle pArgs = new Bundle();
-			pArgs.putString("SECTION", "PLAYLIST");
-			byPlaylist.setArguments(pArgs);
-			
-			ft.replace(R.id.content_frame, byPlaylist);
-			break;
-		case 2:
-			mActionBar.setTitle("Uploaders");
-			Fragment byUploader = new Youtube();
-			Bundle uArgs = new Bundle();
-			uArgs.putString("SECTION", "UPLOADER");
-			byUploader.setArguments(uArgs);
-			ft.replace(R.id.content_frame, byUploader);
-			break;
-		case 3:
-			mActionBar.setTitle("Recent Matches");
-			
-			Fragment fragment2 = new DummySectionFragment();
-			Bundle args2 = new Bundle();
-			args2.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment2.setArguments(args2);
-
-			ft.replace(R.id.content_frame, fragment2);
-			break;
-		case 5:
-			mActionBar.setTitle("Twitch Lives");
-			Fragment fragment5 = new DummySectionFragment();
-			Bundle args5 = new Bundle();
-			args5.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment5.setArguments(args5);
-			ft.replace(R.id.content_frame, fragment5);
-			break;
+		//check network
+		InternetConnection ic = new InternetConnection(); 
+		
+		if(ic.isOnline(this)){
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			// Locate Position
+			switch (position) {
+			case 1:
+	
+				mActionBar.setTitle("Albums");
+				Fragment byPlaylist = new Youtube();
+				Bundle pArgs = new Bundle();
+				pArgs.putString("SECTION", "PLAYLIST");
+				byPlaylist.setArguments(pArgs);
+				
+				ft.replace(R.id.content_frame, byPlaylist);
+	
+				break;
+			case 2:
+				mActionBar.setTitle("Uploaders");
+				Fragment byUploader = new Youtube();
+				Bundle uArgs = new Bundle();
+				uArgs.putString("SECTION", "UPLOADER");
+				byUploader.setArguments(uArgs);
+				ft.replace(R.id.content_frame, byUploader);
+				break;
+			case 3:
+				mActionBar.setTitle("Recent Matches");
+				
+				Fragment fragment2 = new DummySectionFragment();
+				Bundle args2 = new Bundle();
+				args2.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+				fragment2.setArguments(args2);
+	
+				ft.replace(R.id.content_frame, fragment2);
+				break;
+			case 5:
+				mActionBar.setTitle("Twitch Lives");
+				Fragment fragment5 = new DummySectionFragment();
+				Bundle args5 = new Bundle();
+				args5.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+				fragment5.setArguments(args5);
+				ft.replace(R.id.content_frame, fragment5);
+				break;
+			}
+			ft.commit();
+			mDrawerList.setItemChecked(position, true);
+			// Close drawer
+			mDrawerLayout.closeDrawer(mDrawerList);
+		
+		}else{
+			ic.networkToast(this);
 		}
-		ft.commit();
-		mDrawerList.setItemChecked(position, true);
-		// Close drawer
-		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
 	@Override
@@ -208,7 +221,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 	
-	
+
+    
 	public static class DummySectionFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
