@@ -70,9 +70,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// Pass results to MenuListAdapter Class
 //		mMenuAdapter = new MenuListAdapter(this, title, subtitle, icon);
 		
-        items.add(new SectionItem("Videos"));
-        items.add(new EntryItem("Topics", "video cellections!", R.drawable.action_about));
-        items.add(new EntryItem("Channels", "Your daily dotalicious!", R.drawable.action_settings));
+        items.add(new SectionItem("Latest Videos"));
+        items.add(new EntryItem("Highlights", "Dota excitements", R.drawable.action_about));
         items.add(new EntryItem("Recent matches", "You don't wanna miss it", R.drawable.collections_cloud));
         
         
@@ -161,7 +160,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			switch (position) {
 			case 1:
 	
-				mActionBar.setTitle("Albums");
+				mActionBar.setTitle("Highlights");
 				Fragment byPlaylist = new Youtube();
 				Bundle pArgs = new Bundle();
 				pArgs.putString("SECTION", "PLAYLIST");
@@ -171,24 +170,24 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	
 				break;
 			case 2:
-				mActionBar.setTitle("Uploaders");
+				mActionBar.setTitle("Recent Matches");
 				Fragment byUploader = new Youtube();
 				Bundle uArgs = new Bundle();
 				uArgs.putString("SECTION", "UPLOADER");
 				byUploader.setArguments(uArgs);
 				ft.replace(R.id.content_frame, byUploader);
 				break;
-			case 3:
-				mActionBar.setTitle("Recent Matches");
-				
-				Fragment fragment2 = new DummySectionFragment();
-				Bundle args2 = new Bundle();
-				args2.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-				fragment2.setArguments(args2);
-	
-				ft.replace(R.id.content_frame, fragment2);
-				break;
-			case 5:
+//			case 3:
+//				mActionBar.setTitle("Recent Matches");
+//				
+//				Fragment fragment2 = new DummySectionFragment();
+//				Bundle args2 = new Bundle();
+//				args2.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+//				fragment2.setArguments(args2);
+//	
+//				ft.replace(R.id.content_frame, fragment2);
+//				break;
+			case 4:
 				mActionBar.setTitle("Twitch Lives");
 				Fragment fragment5 = new DummySectionFragment();
 				Bundle args5 = new Bundle();

@@ -16,18 +16,29 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
  
 public class Youtube extends SherlockListFragment {
   
@@ -40,6 +51,10 @@ public class Youtube extends SherlockListFragment {
 	private VideoArrayAdapter vaa;
 	private String section;
 	private SherlockFragmentActivity sfa;
+//	private PopupWindow mPop;
+//	private View menuLayout;
+	ArrayList<Item> items = new ArrayList<Item>();
+	AlertDialog dialog;
 
 	
 
@@ -98,8 +113,51 @@ public class Youtube extends SherlockListFragment {
 			new YoutubeGetRequest2().execute(q2);
 			new YoutubeGetRequest2().execute(q3);
 		}
+		
+		setHasOptionsMenu(true);
 		return view;
 	}
+	
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    	
+        SubMenu subMenu1 = menu.addSubMenu(0,1,0,"Action Item");
+        subMenu1.add(0,11,0,"All(Default)");
+        subMenu1.add(0,12,0,"Uploaders");
+        subMenu1.add(0,13,0,"Playlists");
+
+        MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setTitle("Classify");
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+//        SubMenu subMenu2 = menu.addSubMenu("Overflow Item");
+//        subMenu2.add("These");
+//        subMenu2.add("Are");
+//        subMenu2.add("Sample");
+//        subMenu2.add("Items");
+//
+//        MenuItem subMenu2Item = subMenu2.getItem();
+//        subMenu2Item.setIcon(R.drawable.ic_compose);
+
+//        return super.onCreateOptionsMenu(menu, inflater);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case 11:
+                  initPopWindow();
+//                mPop.showAtLocation(menuLayout, 
+//                        Gravity.CENTER, 0, 0);
+                  dialog.show();
+//                  Toast.makeText(getSherlockActivity(), item.getItemId(), Toast.LENGTH_SHORT).show();
+                  return true;
+            default:
+                  return super.onOptionsItemSelected(item);
+        }
+    }
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -127,8 +185,34 @@ public class Youtube extends SherlockListFragment {
 	
 	}
 	
+	private void initPopWindow() {
+		
+		items.clear();
+        items.add(new EntryItem("DotaCinema", "DC comment", R.drawable.action_about));
+        items.add(new EntryItem("Noobfromua", "big noob", R.drawable.collections_cloud));
+        
+        EntryAdapter adapter = new EntryAdapter(getSherlockActivity(), items);
+
+//        ContextThemeWrapper ctw = new ContextThemeWrapper(getSherlockActivity(), R.style.MyCustomThemeDialogVariant);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+
+        builder.setTitle("Select Option");
+        ListView modeList = new ListView(getSherlockActivity()); 
+        modeList.setBackgroundResource(R.drawable.my_theme_gradient);
+        modeList.setAdapter(adapter);
+        builder.setView(modeList);     
+//        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+//
+//               public void onClick(DialogInterface dialog, int which) {
+//                     // TODO Auto-generated method stub
+//
+//               }
+//        });
+        dialog = builder.create();
+		
+    }
 	
-	
+
 	private class YoutubeGetRequest extends AsyncTask<String, String, String>{
 	    private JSONObject feed;
 	    public YoutubeGetRequest(){
@@ -245,10 +329,10 @@ public class Youtube extends SherlockListFragment {
 	    
 	    private void processJSON(String json) throws JSONException{
 	        JSONTokener jsonParser = new JSONTokener(json);  
-	        // 闆庯拷锝斤饯闅撮瘔锝斤蕉楂村彴锝匡蕉璎旓酱楂礁锟斤交闄凤娇閭忓叿锝斤交锟斤交闂栵酱锠栵浆son闅达拷锝匡浇璎旓浇锟斤浇璁欎富锝筹僵闅版殾锝斤渐楂礁锟斤交闄凤娇楂拷锝斤桨锟斤奖闅存摼锝斤蒋闂曪匠锟斤浇锟斤礁锟斤姜JSONObject闄濓拷锝斤焦楂叮锝斤健閭碉讲锟斤浇 
-	        // 闄烇蒋绻у煙锝ｏ健闆庯拷锝斤饯闅撮瘔锝斤蕉楱撅涧锟斤浇锟斤蒋锟斤交闄凤娇閭忓叿锝斤浇铚ワ讲锟斤浇锟斤疆闄滐建锟斤建"name" : 闂旓拷锝匡浇锟斤郊閬掆垰鈮﹂棔锝碉拷锝絜xtValue闄濓拷锝斤奖闅存摼锝斤蒋"yuanzhifei89"锟斤浇锟斤浇tring锟斤浇锟斤浇 
+	        // 髣�ｺｯ諡ｷ髞晄巳鬣ｯ髣�聴逖秘駁譁､阨画･よ搗蠖ｴ髞晏牽阨臥虫譌馴�讌ゐぎ遉�函譁､莠､髣��螽�妙蠢灘樵髞晄巳莠､髞滓巳莠､髣よ�驟ｱ髞��豬�on髣�ｾｾ諡ｷ髞晏牽豬�虫譌捺ｵ�函譁､豬�秩谺主ｯ碁駁遲ｹ蜒ｵ髣�沿谿ｾ髞晄巳貂先･ゐぎ遉�函譁､莠､髣��螽�･ゐ鮪諡ｷ髞晄巳譯ｨ髞滓巳螂夜羅蟄俶他髞晄巳闥矩翌譖ｪ蛹�函譁､豬�函譁､遉�函譁､蟋廱SONObject髣�ｿ捺狭髞晄巳辟ｦ讌ゐ�蜿ｮ髞晄巳蛛･髢ｭ遒芽ｮｲ髞滓巳豬�
+	        // 髣�ョ闥狗ｻｻﾑ��髞晢ｽ丞▼髣�ｺｯ諡ｷ髞晄巳鬣ｯ髣�聴逖秘駁譁､阨画･ｱ謦�ｶｧ髞滓巳豬�函譁､闥矩函譁､莠､髣��螽�妙蠢灘樵髞晄巳豬�答繝ｯ隶ｲ髞滓巳豬�函譁､逍�淀貊仙ｻｺ髞滓巳蟒ｺ"name" : 髣よ欄諡ｷ髞晏牽豬�函譁､驛企脈謗�棆驤ｮ�よ｣秘駁遒画狭髞晉ｵ忸tValue髣�ｿ捺狭髞晄巳螂夜羅蟄俶他髞晄巳闥�yuanzhifei89"髞滓巳豬�函譁､豬㏄ring髞滓巳豬�函譁､豬�
 	        JSONObject wholeJson = (JSONObject) jsonParser.nextValue();  
-	        // 闅版殾锝斤渐闂曪匠铔癸胶璎倠锟斤拷锝斤拷锝帮拷锝遍毚鎿撅浇锝疛SON闄濓拷锝斤焦楂叮锝斤健楱撅涧锟斤浇璀拷鎶勮珱浼氾浇锝猴拷锝�
+	        // 髣�沿谿ｾ髞晄巳貂宣翌譖ｪ蛹�灯逋ｸ閭ｶ迺腫あ蛟�函譁､諡ｷ髞晄巳諡ｷ髞晏ｸｮ諡ｷ髞晞″豈夐質謦�ｵ�駁逍婀ON髣�ｿ捺狭髞晄巳辟ｦ讌ゐ�蜿ｮ髞晄巳蛛･讌ｱ謦�ｶｧ髞滓巳豬�逐訷､諡ｷ骼ｶ蜍ｮ迴ｱ豬ｼ豌ｾ豬�駁迪ｴ諡ｷ髞晢ｿｽ
 	        this.feed = wholeJson.getJSONObject("feed");
 	        
 	        

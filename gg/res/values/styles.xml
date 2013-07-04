@@ -28,4 +28,10 @@
         <item name="android:textColor">@color/emphasis</item>
         <item name="android:textSize">14sp</item>
     </style>
+    
+    <style name="MyCustomThemeDialogVariant" parent="@android:style/Theme.Dialog">
+           <item name="android:windowBackground">@drawable/my_theme_gradient</item>
+           <item name="android:colorBackgroundCacheHint">#00000000</item>
+    </style>
+    
 </resources>
