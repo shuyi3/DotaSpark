@@ -21,7 +21,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private ArrayList<Video> videos;
  
 	public VideoArrayAdapter(Context context, ArrayList<String> values, ArrayList<Video> videos) {
-		super(context, R.layout.list_mobile, values);
+		super(context, R.layout.videolist, values);
 		this.context = context;
 		this.values = values;
 		this.videos = videos;
@@ -32,18 +32,18 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		LayoutInflater inflater = (LayoutInflater) context
 			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
  
-		View rowView = inflater.inflate(R.layout.list_mobile, parent, false);
-		TextView titleView = (TextView) rowView.findViewById(R.id.albumtitle);
-		ImageView imageView = (ImageView) rowView.findViewById(R.id.logo);
-		ImageView uploaderView = (ImageView) rowView.findViewById(R.id.uploaderImage);
+		View rowView = inflater.inflate(R.layout.videolist, parent, false);
+		TextView titleView = (TextView) rowView.findViewById(R.id.videotitle);
+		ImageView imageView = (ImageView) rowView.findViewById(R.id.thumbnail);
+//		ImageView uploaderView = (ImageView) rowView.findViewById(R.id.uploaderImage);
 		titleView.setText(values.get(position));
 		
 		//set the description
-		TextView descView = (TextView) rowView.findViewById(R.id.description);
-		descView.setText(videos.get(position).getVideoDesc());
+//		TextView descView = (TextView) rowView.findViewById(R.id.description);
+//		descView.setText(videos.get(position).getVideoDesc());
 		
 		//set the author
-		TextView authorView = (TextView) rowView.findViewById(R.id.Uploader);
+		TextView authorView = (TextView) rowView.findViewById(R.id.videouploader);
 		authorView.setText(videos.get(position).getAuthor());
 		
 		//set the update time
@@ -53,7 +53,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		// Change icon based on name
 			
         new DownloadImage(videos.get(position).getThumbnailUrl()).execute(imageView);
-        new DownloadImage(videos.get(position).getUploaderThumUrl()).execute(uploaderView);
+//        new DownloadImage(videos.get(position).getUploaderThumUrl()).execute(uploaderView);
  
 		return rowView;
 	}
