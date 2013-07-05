@@ -39,7 +39,6 @@ public class FeedManager
         
         try {
         	if(theSource.equals(YOUTUBE)){
-        		System.out.println("Here is youtube");
 	            //get title of the playlist
 	            String plTitle = feed.getJSONObject("title").getString("$t");
 	            //System.out.println(plTitle);
@@ -83,32 +82,20 @@ public class FeedManager
 
         	}else if (theSource.equals(TWITCH)){
 	          	//Json is coming from twitch
-        		System.out.println("Here is twitch");
 	    		JSONArray streams = feed.getJSONArray("streams");
 	    		System.out.println("Total: " + streams.length());
 	            for(int i=0;i<streams.length();i++){
-	            	 System.out.println("Start+1");
 	                //get a video in the playlist           
 	                JSONObject oneVideo = streams.getJSONObject(i);
-	                System.out.println("Start+2");
 	                //get the title of this video
 	                JSONObject videoChannel = oneVideo.getJSONObject("channel");
-	                System.out.println("Start+3");
 	                String videoTitle = videoChannel.getString("status");
-	                System.out.println("Start+4");
 	                String videoLink = oneVideo.getJSONObject("_links").getString("self");
-	                System.out.println("Start+5");
-	                String videoId = videoLink.substring(videoLink.indexOf("/streams/")+9, videoLink.length()-1);
-	                System.out.println("Start+6");
+	                String videoId = videoLink.substring(videoLink.indexOf("/streams/")+9, videoLink.length());
 	                String videoDesc = "No Desc";
-	                System.out.println("Start+7");
 	                String thumbUrl = oneVideo.getJSONObject("preview").getString("small");
-	                System.out.println("Start+8");
 	                String updateTime = videoChannel.getString("updated_at");
-	                System.out.println("Start+9");
 	                String author = videoChannel.getString("display_name");
-	                System.out.println("Thum+++++");
-	                System.out.println("Thum: " + thumbUrl);
 	                System.out.println("Stream ID: " + videoId);
 	                //store title and link
 	                
