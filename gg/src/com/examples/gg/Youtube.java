@@ -17,21 +17,14 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -51,6 +44,7 @@ public class Youtube extends SherlockListFragment {
 	private VideoArrayAdapter vaa;
 	private String section;
 	private SherlockFragmentActivity sfa;
+	
 //	private PopupWindow mPop;
 //	private View menuLayout;
 	ArrayList<Item> items = new ArrayList<Item>();
@@ -110,8 +104,15 @@ public class Youtube extends SherlockListFragment {
 		if(section.equals("PLAYLIST")){
 			//sfa.findViewById(R.id.content_frame).setVisibility(View.GONE);
 			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-			new YoutubeGetRequest2().execute(q2);
-			new YoutubeGetRequest2().execute(q3);
+			new GetRequest2().execute(q2);
+			new GetRequest2().execute(q3);
+		}
+		
+		if(section.equals("TWITCHLIVE")){
+			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
+			new GetRequest("Twitch").execute("https://api.twitch.tv/kraken/streams?game=Dota+2");
+			System.out.println("It's twitch section");
+
 		}
 		
 		setHasOptionsMenu(true);
@@ -177,7 +178,7 @@ public class Youtube extends SherlockListFragment {
 			//internet is ok
 			//start loading
 			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-			new YoutubeGetRequest().execute(videolist.get(position).getPlaylistUrl());		
+			new GetRequest("Youtube").execute(videolist.get(position).getPlaylistUrl());		
 		}else{
 			ic.networkToast(sfa);
 		}
@@ -213,10 +214,11 @@ public class Youtube extends SherlockListFragment {
     }
 	
 
-	private class YoutubeGetRequest extends AsyncTask<String, String, String>{
-	    private JSONObject feed;
-	    public YoutubeGetRequest(){
-	        ;
+	private class GetRequest extends AsyncTask<String, String, String>{
+	    private String source;
+	    public GetRequest(String s){
+	    	
+	        this.source = s;
 	    }
 	    @Override
 	    protected String doInBackground(String... uri) {
@@ -252,21 +254,15 @@ public class Youtube extends SherlockListFragment {
 	        //Do anything with response..
 	        //System.out.println(result);
 	        
-	        try
-	        {   
-	            processJSON(result);
-	        } catch (JSONException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
+
 	        
 	        List<String> titles=new ArrayList<String>();   
 	        List<String> ids = new ArrayList<String>();
 	        
-	        YoutubeFeed ytf = null;
+	        FeedManager ytf = null;
+	        
 			try {
-				ytf = new YoutubeFeed(result);
+				ytf = new FeedManager(result, source);
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -274,8 +270,8 @@ public class Youtube extends SherlockListFragment {
 	        ArrayList<Video> videos = ytf.getVideoPlaylist();
 	        for(Video v:videos){
 //	            System.out.println(v.getVideoId());
-	        	titles.add(v.getTitle());
-	        	ids.add(v.getVideoId());
+	        	titles.add("Title: " + v.getTitle());
+	        	ids.add("ID: " + v.getVideoId());
 
 	        }
 	        
@@ -308,8 +304,9 @@ public class Youtube extends SherlockListFragment {
 			Fragment videolist = new videolist();
 			
 	        Bundle bundle = new Bundle();
-	        bundle.putParcelableArrayList("videolist", videos);
 	        
+	        bundle.putParcelableArrayList("videolist", videos);
+	        bundle.putString("source", this.source);
 	        try {
 	        	bundle.putString("query", ytf.getNextApi());
 			} catch (JSONException e) {
@@ -327,23 +324,12 @@ public class Youtube extends SherlockListFragment {
 
 	    }
 	    
-	    private void processJSON(String json) throws JSONException{
-	        JSONTokener jsonParser = new JSONTokener(json);  
-	        // 髣�ｺｯ諡ｷ髞晄巳鬣ｯ髣�聴逖秘駁譁､阨画･よ搗蠖ｴ髞晏牽阨臥虫譌馴�讌ゐぎ遉�函譁､莠､髣��螽�妙蠢灘樵髞晄巳莠､髞滓巳莠､髣よ�驟ｱ髞��豬�on髣�ｾｾ諡ｷ髞晏牽豬�虫譌捺ｵ�函譁､豬�秩谺主ｯ碁駁遲ｹ蜒ｵ髣�沿谿ｾ髞晄巳貂先･ゐぎ遉�函譁､莠､髣��螽�･ゐ鮪諡ｷ髞晄巳譯ｨ髞滓巳螂夜羅蟄俶他髞晄巳闥矩翌譖ｪ蛹�函譁､豬�函譁､遉�函譁､蟋廱SONObject髣�ｿ捺狭髞晄巳辟ｦ讌ゐ�蜿ｮ髞晄巳蛛･髢ｭ遒芽ｮｲ髞滓巳豬�
-	        // 髣�ョ闥狗ｻｻﾑ��髞晢ｽ丞▼髣�ｺｯ諡ｷ髞晄巳鬣ｯ髣�聴逖秘駁譁､阨画･ｱ謦�ｶｧ髞滓巳豬�函譁､闥矩函譁､莠､髣��螽�妙蠢灘樵髞晄巳豬�答繝ｯ隶ｲ髞滓巳豬�函譁､逍�淀貊仙ｻｺ髞滓巳蟒ｺ"name" : 髣よ欄諡ｷ髞晏牽豬�函譁､驛企脈謗�棆驤ｮ�よ｣秘駁遒画狭髞晉ｵ忸tValue髣�ｿ捺狭髞晄巳螂夜羅蟄俶他髞晄巳闥�yuanzhifei89"髞滓巳豬�函譁､豬㏄ring髞滓巳豬�函譁､豬�
-	        JSONObject wholeJson = (JSONObject) jsonParser.nextValue();  
-	        // 髣�沿谿ｾ髞晄巳貂宣翌譖ｪ蛹�灯逋ｸ閭ｶ迺腫あ蛟�函譁､諡ｷ髞晄巳諡ｷ髞晏ｸｮ諡ｷ髞晞″豈夐質謦�ｵ�駁逍婀ON髣�ｿ捺狭髞晄巳辟ｦ讌ゐ�蜿ｮ髞晄巳蛛･讌ｱ謦�ｶｧ髞滓巳豬�逐訷､諡ｷ骼ｶ蜍ｮ迴ｱ豬ｼ豌ｾ豬�駁迪ｴ諡ｷ髞晢ｿｽ
-	        this.feed = wholeJson.getJSONObject("feed");
-	        
-	        
-	    }
-	    
 	   
 	}
 	
-	private class YoutubeGetRequest2 extends AsyncTask<String, String, String>{
+	private class GetRequest2 extends AsyncTask<String, String, String>{
 	    private JSONObject feed;
-	    public YoutubeGetRequest2(){
+	    public GetRequest2(){
 	        ;
 	    }
 	    @Override
@@ -378,10 +364,10 @@ public class Youtube extends SherlockListFragment {
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
 	        //System.out.println(result);
-	    	YoutubeFeed ytf = null;
+	    	FeedManager ytf = null;
 	        try
 	        {   
-	            ytf = new YoutubeFeed(result);
+	            ytf = new FeedManager(result, "Youtube");
 	        } catch (JSONException e)
 	        {
 	            // TODO Auto-generated catch block

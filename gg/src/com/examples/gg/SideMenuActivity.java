@@ -189,11 +189,11 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 //				break;
 			case 4:
 				mActionBar.setTitle("Twitch Lives");
-				Fragment fragment5 = new DummySectionFragment();
-				Bundle args5 = new Bundle();
-				args5.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-				fragment5.setArguments(args5);
-				ft.replace(R.id.content_frame, fragment5);
+				Fragment twitchLive = new Youtube();
+				Bundle uArgs3 = new Bundle();
+				uArgs3.putString("SECTION", "TWITCHLIVE");
+				twitchLive.setArguments(uArgs3);
+				ft.replace(R.id.content_frame, twitchLive);
 				break;
 			}
 			ft.commit();

@@ -42,6 +42,7 @@ private String query;
 private boolean isMoreVideos;
 private InternetConnection ic;
 private SherlockFragmentActivity sa;
+private String theSource;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ private SherlockFragmentActivity sa;
 		
 		videolist = savedInstanceState.getParcelableArrayList ("videolist");
 		query = savedInstanceState.getString("query");
-		
+		theSource = savedInstanceState.getString("source");
 		
 		//check whether there are more videos in the playlist
 		if(query == null){
@@ -117,7 +118,7 @@ private SherlockFragmentActivity sa;
 					if(ic.isOnline(sa)){
 						//network ok
 						if(isMoreVideos == true){
-							new LoadMoreTask().execute(query);
+							new LoadMoreTask(theSource).execute(query);
 						}
 					}else{
 						ic.networkToast(sa);
@@ -155,8 +156,9 @@ private SherlockFragmentActivity sa;
 	
 	private class LoadMoreTask extends AsyncTask<String, String, String>{
 	    private JSONObject feed;
-	    public LoadMoreTask(){
-	        ;
+	    private String source;
+	    public LoadMoreTask(String s){
+	        this.source = s;
 	    }
 	    @Override
 	    protected String doInBackground(String... uri) {
@@ -190,10 +192,10 @@ private SherlockFragmentActivity sa;
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
 	        //System.out.println(result);
-	    	YoutubeFeed ytf = null;
+	    	FeedManager ytf = null;
 	        try
 	        {   
-	            ytf = new YoutubeFeed(result);
+	            ytf = new FeedManager(result, source);
 	        } catch (JSONException e)
 	        {
 	            // TODO Auto-generated catch block
