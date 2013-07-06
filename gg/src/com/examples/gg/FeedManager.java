@@ -57,16 +57,32 @@ public class FeedManager
 	                String thumbUrl = oneVideo.getJSONObject("media$group").getJSONArray("media$thumbnail").getJSONObject(0).getString("url");
 	                String updateTime = oneVideo.getJSONObject("updated").getString("$t");
 	                String author = oneVideo.getJSONArray("author").getJSONObject(0).getJSONObject("name").getString("$t");
-	                //System.out.println(thumbUrl);
+	                String vCount = oneVideo.getJSONObject("yt$statistics").getString("viewCount") + " views";
+	                String inSecs =  oneVideo.getJSONObject("media$group").getJSONObject("yt$duration").getString("seconds");
+	                String convertedDuration = formatSecondsAsTime(inSecs) + " HD";
+	                
+	                Video video = new Video();
+	                
+
+	                if(videoTitle.length()>36){
+	                	video.setTitle(videoTitle.substring(0, 33) + "..");
+	                } else{
+	                	video.setTitle(videoTitle);
+	                }
+	                
+	                
+	                //System.out.println("converted duration: " + convertedDuration);
 	                //System.out.println(videoDesc);
 	                //store title and link
-	                Video video = new Video();
-	                video.setTitle(videoTitle);
+	                
+	                
 	                video.setVideoId(videoId);
 	                video.setThumbnailUrl(thumbUrl);
 	                video.setVideoDesc(videoDesc);
 	                video.setUpdateTime(updateTime);
 	                video.setAuthor(author);
+	                video.setViewCount(vCount);
+	                video.setDuration(convertedDuration);
 	                //System.out.println(video.getTitle());
 	                //push it to the list
 	                videos.add(video);
@@ -223,6 +239,33 @@ public class FeedManager
 		this.feed = feed;
 	}
     
+	private String formatSecondsAsTime(String secs){
+		int totalSecs = Integer.parseInt(secs);
+		
+		int hours = totalSecs/3600;
+		int minutes = (totalSecs%3600)/60;
+		int seconds = totalSecs%60;
+		
+		if(hours == 0){
+			return twoDigitString(minutes) + ":" + twoDigitString(seconds);
+		}else{
+			return twoDigitString(hours) + ":" + twoDigitString(minutes) + ":" + twoDigitString(seconds);
+		}
+		
+	}
+	
+	private String twoDigitString(int number) {
+
+	    if (number == 0) {
+	        return "00";
+	    }
+
+	    if (number / 10 == 0) {
+	        return "0" + number;
+	    }
+
+	    return String.valueOf(number);
+	}
 	
     private void processJSONYoutube(String json) throws JSONException{
         JSONTokener jsonParser = new JSONTokener(json);  

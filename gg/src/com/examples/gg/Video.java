@@ -15,7 +15,26 @@ public class Video implements Parcelable
     public String thumbnailUrl;
     public String author;
     public String uploaderThumUrl;
-    public String getUploaderThumUrl() {
+    public String viewCount;
+    public String duration;
+    
+    public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
+	public String getViewCount() {
+		return viewCount;
+	}
+
+	public void setViewCount(String viewCount) {
+		this.viewCount = viewCount;
+	}
+
+	public String getUploaderThumUrl() {
 		return uploaderThumUrl;
 	}
 

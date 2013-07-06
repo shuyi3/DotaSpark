@@ -104,8 +104,8 @@ public class Youtube extends SherlockListFragment {
 		if(section.equals("PLAYLIST")){
 			//sfa.findViewById(R.id.content_frame).setVisibility(View.GONE);
 			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-			new GetRequest2().execute(q2);
-			new GetRequest2().execute(q3);
+			new GetRequest2("").execute(q2);
+			new GetRequest2("").execute(q3);
 		}
 		
 		if(section.equals("TWITCHLIVE")){
@@ -327,39 +327,13 @@ public class Youtube extends SherlockListFragment {
 	   
 	}
 	
-	private class GetRequest2 extends AsyncTask<String, String, String>{
-	    private JSONObject feed;
-	    public GetRequest2(){
-	        ;
-	    }
-	    @Override
-	    protected String doInBackground(String... uri) {
-	    	
-	    
-	        HttpClient httpclient = new DefaultHttpClient();
-	        HttpResponse response;
-	        String responseString = null;
-	        try {
-	            response = httpclient.execute(new HttpGet(uri[0]));
-	            StatusLine statusLine = response.getStatusLine();
-	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                response.getEntity().writeTo(out);
-	                out.close();
-	                responseString = out.toString();
-	            } else{
-	                //Closes the connection.
-	                response.getEntity().getContent().close();
-	                throw new IOException(statusLine.getReasonPhrase());
-	            }
-	        } catch (ClientProtocolException e) {
-	            //TODO Handle problems..
-	        } catch (IOException e) {
-	            //TODO Handle problems..
-	        }
-	        return responseString;
-	    }
+	
+	private class GetRequest2 extends GetRequest{
 
+	    public GetRequest2(String s) {
+			super(s);
+			// TODO Auto-generated constructor stub
+		}
 	    @Override
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
@@ -373,9 +347,7 @@ public class Youtube extends SherlockListFragment {
 	            // TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
-	        
-	        
-	        
+	                    
 	        List<Video> newVideos = ytf.getVideoPlaylist2();
 	        for(Video v:newVideos){
 //	            System.out.println(v.getVideoId());
@@ -389,38 +361,14 @@ public class Youtube extends SherlockListFragment {
 	        	}
 	        }
 	        
-//	        for(String s:titles){
-//	        	System.out.println(s);
-//	        }
-
-//	        ListFragment lFrag = (ListFragment) getFragmentManager().findFragmentById(android.R.id.list);
-//	        BaseAdapter adapter = (BaseAdapter) lFrag.getListAdapter();
-//	        adapter.notifyDataSetChanged();
+	        //notify the adapter that the data changed
 	        vaa.notifyDataSetChanged();
 	        
 	        //Make the loading view invisible
 	        sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.GONE);
-	        
-	        //show content view
-	        //sfa.findViewById(R.id.content_frame).setVisibility(View.VISIBLE);
-	        //pd.dismiss();
-	        
-
-	        //rl.setVisibility(View.GONE);
-			
-
 
 	    }
 	    
-	    private void processJSON(String json) throws JSONException{
-	        JSONTokener jsonParser = new JSONTokener(json);  
-
-	        JSONObject wholeJson = (JSONObject) jsonParser.nextValue();  
-
-	        this.feed = wholeJson.getJSONObject("feed");
-	        
-	        
-	    }
 	    
 	   
 	}

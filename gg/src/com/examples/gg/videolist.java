@@ -75,6 +75,7 @@ private String theSource;
         	System.out.println("Title: " + v.getTitle());
         	System.out.println("video: " + v.getVideoId());
         	System.out.println("thumb: " + v.getThumbnailUrl());
+        	System.out.println("duration: " + v.getDuration());
         	titles.add(v.getTitle());
         	videos.add(v.getVideoId());
         	thumbList.add(v.getThumbnailUrl());

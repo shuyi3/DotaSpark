@@ -40,6 +40,8 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		
 			holder.titleView = (TextView) convertView.findViewById(R.id.videotitle);
 			holder.imageView = (ImageView) convertView.findViewById(R.id.thumbnail);
+			holder.countView = (TextView) convertView.findViewById(R.id.Desc);
+			holder.videoLength = (TextView) convertView.findViewById(R.id.videolength);
 //		ImageView uploaderView = (ImageView) rowView.findViewById(R.id.uploaderImage);
 		
 		//set the description
@@ -63,6 +65,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		
 		holder.titleView.setText(values.get(position));
 		holder.authorView.setText(videos.get(position).getAuthor());
+		holder.countView.setText(videos.get(position).getViewCount());
+		holder.videoLength.setText(videos.get(position).getDuration());
+		
 		new DownloadImage(videos.get(position).getThumbnailUrl()).execute(holder.imageView );
  
 		return convertView;
@@ -71,7 +76,11 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
     static class ViewHolder {
         TextView titleView;
         TextView authorView;
+        TextView countView;
+        TextView videoLength;
         ImageView imageView;
+        
+        
     }
 	
 	private class DownloadImage extends AsyncTask<Object, String, Bitmap> {
