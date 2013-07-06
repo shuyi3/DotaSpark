@@ -33,7 +33,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		
 		ViewHolder holder;
  
-		if (convertView == null) {
+//		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.videolist, parent, false);
 		
 			holder = new ViewHolder();
@@ -59,9 +59,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 			
 //        new DownloadImage(videos.get(position).getUploaderThumUrl()).execute(uploaderView);
 			convertView.setTag(holder);
-		}else{
-			holder = (ViewHolder) convertView.getTag();
-		}
+//		}else{
+//			holder = (ViewHolder) convertView.getTag();
+//		}
 		
 		holder.titleView.setText(values.get(position));
 		holder.authorView.setText(videos.get(position).getAuthor());
@@ -75,7 +75,11 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
 		
-		new DownloadImage(videos.get(position).getThumbnailUrl()).execute(holder.imageView );
+		if (videos.get(position).getThumbnail() == null)
+		new DownloadImage(videos.get(position).getThumbnailUrl(), videos.get(position), holder.imageView).execute();
+		else holder.imageView.setImageBitmap(videos.get(position).getThumbnail());
+		
+		
  
 		return convertView;
 	}
@@ -94,35 +98,31 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		private ImageView imageView;
 		private Bitmap thumbnail = null;
 		private String url = null;
+		private Video mVideo;
 		
-		public DownloadImage (String url) {
+		public DownloadImage (String url, Video video, ImageView imageView) {
 			this.url = url;
+			this.mVideo = video;
+			this.imageView = imageView;
 		}
 
 		@Override
 		protected Bitmap doInBackground(Object... params) {
 			// TODO Auto-generated method stub
-			
-			 imageView = (ImageView)  params[0];
-			
+						
 			 try {
 		            InputStream in = (InputStream) new URL(url).getContent();
-		            thumbnail = BitmapFactory.decodeStream(in);
+		            mVideo.thumbnail = BitmapFactory.decodeStream(in);
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
 		   
-			 return thumbnail;
+			 return mVideo.thumbnail;
 		}
 		
 		@Override
 		protected void onPostExecute(Bitmap result) {
-            if(result != null && imageView != null){
-            	imageView.setVisibility(View.VISIBLE);
-            	imageView.setImageBitmap(result);
-            }else{
-            	imageView.setVisibility(View.GONE);
-            }
+			imageView.setImageBitmap(result);
         }
 		
 		

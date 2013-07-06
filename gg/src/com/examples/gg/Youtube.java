@@ -148,7 +148,7 @@ public class Youtube extends SherlockListFragment {
     {
         switch(item.getItemId())
         {
-            case 11:
+            case 12:
                   initPopWindow();
 //                mPop.showAtLocation(menuLayout, 
 //                        Gravity.CENTER, 0, 0);

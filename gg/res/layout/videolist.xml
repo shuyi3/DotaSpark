@@ -39,7 +39,8 @@
         android:layout_marginLeft="5dip"
         android:layout_marginTop="5dip"
         android:layout_toRightOf="@+id/thumbholder"
-       android:textSize="16sp"
+       	android:textSize="16sp"
+       	android:maxLines="2"
         android:text="Title" />
 
     <TextView

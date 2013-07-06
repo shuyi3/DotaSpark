@@ -2,6 +2,7 @@ package com.examples.gg;
 
 
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,8 +18,17 @@ public class Video implements Parcelable
     public String uploaderThumUrl;
     public String viewCount;
     public String duration;
+    public Bitmap thumbnail;
     
-    public String getDuration() {
+    public Bitmap getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(Bitmap thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public String getDuration() {
 		return duration;
 	}
 
