@@ -1,6 +1,11 @@
 package com.examples.gg;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,11 +60,15 @@ public class FeedManager
 	                String videoId = videoLink.substring(videoLink.indexOf("/v/")+3, videoLink.indexOf("?"));
 	                String videoDesc = oneVideo.getJSONObject("media$group").getJSONObject("media$description").getString("$t");
 	                String thumbUrl = oneVideo.getJSONObject("media$group").getJSONArray("media$thumbnail").getJSONObject(0).getString("url");
-	                String updateTime = oneVideo.getJSONObject("updated").getString("$t");
+	                String updateTime = oneVideo.getJSONObject("published").getString("$t");
 	                String author = oneVideo.getJSONArray("author").getJSONObject(0).getJSONObject("name").getString("$t");
 	                String vCount = oneVideo.getJSONObject("yt$statistics").getString("viewCount") + " views";
 	                String inSecs =  oneVideo.getJSONObject("media$group").getJSONObject("yt$duration").getString("seconds");
 	                String convertedDuration = formatSecondsAsTime(inSecs) + " HD";
+	                
+	                //System.out.println("date: " + updateTime.substring(0,updateTime.indexOf("T")));
+	                //System.out.println("time: " + updateTime.substring(updateTime.indexOf("T")+1, updateTime.indexOf(".")));
+	                updateTime = handleDate(updateTime);
 	                
 	                Video video = new Video();
 	                
@@ -267,6 +276,86 @@ public class FeedManager
 	    return String.valueOf(number);
 	}
 	
+	
+	private String handleDate(String s){
+        String temp =  s.replace("T", " ");
+        String dateInString = temp.substring(0, temp.indexOf("."));
+        //System.out.println("Date in String: " + dateInString);
+        
+        
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
+        Date d1 = new Date();
+        Date d2 = new Date();
+        try {
+			d2 = dateFormat.parse(dateInString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        //System.out.println("Date 1: " + dateFormat.format(d1));
+        //System.out.println("Date 2: " + dateFormat.format(d2));
+        
+        //System.out.println(calculateDateDifference(d1,d2));
+		return calculateDateDifference(d1,d2);
+		
+	}
+	private String calculateDateDifference(Date today, Date past){
+		long diff = today.getTime() - past.getTime();
+		//System.out.println("diff: " + diff);
+		long diffSec = (diff/1000L) % 60L;
+		long diffMin = (diff/(60L*1000L)) % 60L;
+		long diffHour = (diff/(60L*60L*1000L)) % 24L;
+		long diffDay = (diff/(24L*60L*60L*1000L)) % 30L;
+		long diffMonth = (diff/(30L*24L*60L*60L*1000L)) % 12L;
+		long diffYear = (diff/(12L*30L*24L*60L*60L*1000L));
+		
+		if(diffYear==1){
+			return diffYear + " year ago";
+		}else if(diffYear > 1){
+			return diffYear + " years ago";
+		}else{
+			//less than 1 year
+			if(diffMonth == 1){
+				return diffMonth + " month ago";
+			}else if(diffMonth > 1){
+				return diffMonth + " months ago";
+			}else{
+				//less than 1 month
+				if(diffDay == 1){
+					return diffDay + " day ago";
+				}else if(diffDay > 1){
+					return diffDay + " days ago";
+				}else{
+					//less than 1 day
+					if(diffHour == 1){
+						return diffHour + " hour ago";
+					}else if(diffHour > 1){
+						return diffHour + " hours ago";
+					}else{
+						//less than 1 hour
+						if(diffMin == 1){
+							return diffMin + " minute ago";
+						}else if(diffMin > 1){
+							return diffMin + " minutes ago";
+						}else{
+							//less than 1 minute
+							if(diffSec == 0 || diffSec == 1){
+								return diffSec + " second ago";
+							}else if(diffSec > 1){
+								return diffSec + " seconds ago";
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		//String result = "Years: " + diffYear + "\nMonths: " + diffMonth + "\nDays: " + diffDay + "\nHours: " + diffHour + "\nMinutes: " + diffMin + "\nSeconds: " + diffSec + "\n";
+		
+		return "";
+	}
     private void processJSONYoutube(String json) throws JSONException{
         JSONTokener jsonParser = new JSONTokener(json);  
         JSONObject wholeJson = (JSONObject) jsonParser.nextValue();  

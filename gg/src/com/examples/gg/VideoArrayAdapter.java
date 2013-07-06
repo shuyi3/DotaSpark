@@ -65,7 +65,14 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		
 		holder.titleView.setText(values.get(position));
 		holder.authorView.setText(videos.get(position).getAuthor());
-		holder.countView.setText(videos.get(position).getViewCount());
+		
+		//values for time and view counts should not be null
+		if(videos.get(position).getUpdateTime() != null && videos.get(position).getViewCount()!=null){
+			holder.countView.setText(videos.get(position).getUpdateTime()+" | "+videos.get(position).getViewCount());
+		}
+		else{
+			holder.countView.setText(null);
+		}
 		holder.videoLength.setText(videos.get(position).getDuration());
 		
 		new DownloadImage(videos.get(position).getThumbnailUrl()).execute(holder.imageView );
