@@ -18,6 +18,8 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +27,19 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
 
 
-public class videolist extends SherlockListFragment{
+public class Videolist_Base extends SherlockListFragment{
 private LoadMoreListView myLoadMoreListView;
 private ArrayList<String> titles;
 private ArrayList<String> videos;
@@ -41,15 +48,24 @@ private ArrayList<Video> videolist;
 private String query;
 private boolean isMoreVideos;
 private InternetConnection ic;
-private SherlockFragmentActivity sa;
-private String theSource;
+private SherlockFragmentActivity sfa;
+private String theSource = "";
+private ActionBar ab;
+private FragmentTransaction ft;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 //		super.onCreate(savedInstanceState);
 		ic = new InternetConnection(); 
 		View view = inflater.inflate(R.layout.loadmore_list, null);
-		sa = this.getSherlockActivity();
+		sfa = this.getSherlockActivity();
+		
+		//get action bar
+		ab = sfa.getSupportActionBar();
+		
+		//get fragment manager
+		ft = sfa.getSupportFragmentManager().beginTransaction();
+		
 //		setContentView(R.layout.loadmore_list);
 		
 
@@ -63,7 +79,7 @@ private String theSource;
 		
 		videolist = savedInstanceState.getParcelableArrayList ("videolist");
 		query = savedInstanceState.getString("query");
-		theSource = savedInstanceState.getString("source");
+		//theSource = savedInstanceState.getString("source");
 		
 		//check whether there are more videos in the playlist
 		if(query == null){
@@ -95,9 +111,62 @@ private String theSource;
 		
 		//loading done
 		this.getSherlockActivity().findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.GONE);
+		
+		setHasOptionsMenu(true);
 		return view;
 	
 	}
+	
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    	
+        SubMenu subMenu1 = menu.addSubMenu(0,1,0,"Action Item");
+        subMenu1.add(0,11,0,"All(Default)");
+        subMenu1.add(0,12,0,"Uploaders");
+        subMenu1.add(0,13,0,"Playlists");
+
+        MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setTitle("Classify");
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item)
+    {
+    	
+    	if(ic.isOnline(sfa)){
+    		FragmentTransaction ft = getFragmentManager().beginTransaction();
+    		
+	        switch(item.getItemId())
+	        {
+	        case 11:
+				ab.setTitle("Highlights");
+				Fragment byAll = new Fragment_Base();		
+				ft.replace(R.id.content_frame, byAll);
+				break;
+				
+            case 12:
+				ab.setTitle("Highlights");
+				Fragment byUploader = new Fragment_Uploader();		
+				ft.replace(R.id.content_frame, byUploader);
+	        	break;
+	        	
+            case 13:
+				ab.setTitle("Highlights");
+				Fragment byPlaylist = new Fragment_Playlists();		
+				ft.replace(R.id.content_frame, byPlaylist);
+	        	break;
+            default:
+                  return super.onOptionsItemSelected(item);
+	        }
+	        ft.commit();
+	        
+    	}else{
+    		ic.networkToast(this.getSherlockActivity());
+    	}
+    	
+    	return true;
+    }
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -107,7 +176,7 @@ private String theSource;
 		myLoadMoreListView =  (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 		
-		if(ic.isOnline(sa)){
+		if(ic.isOnline(sfa)){
 			if (isMoreVideos)
 			myLoadMoreListView
 			.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -116,13 +185,13 @@ private String theSource;
 					// hereru
 					
 					//checking network
-					if(ic.isOnline(sa)){
+					if(ic.isOnline(sfa)){
 						//network ok
 						if(isMoreVideos == true){
 							new LoadMoreTask(theSource).execute(query);
 						}
 					}else{
-						ic.networkToast(sa);
+						ic.networkToast(sfa);
 						((LoadMoreListView) getListView()).onLoadMoreComplete();
 					}
 						
@@ -132,7 +201,7 @@ private String theSource;
 			else myLoadMoreListView.setOnLoadMoreListener(null);
 			}
 		else{
-			ic.networkToast(sa);
+			ic.networkToast(sfa);
 		}
 	}
 
@@ -193,17 +262,9 @@ private String theSource;
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
 	        //System.out.println(result);
-	    	FeedManager ytf = null;
-	        try
-	        {   
-	            ytf = new FeedManager(result, source);
-	        } catch (JSONException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
-	        
-	        
+	    	FeedManager_Base ytf = null;
+	    	
+	    	ytf = switcher(ytf,result);
 	        
 	        List<Video> newVideos = ytf.getVideoPlaylist();
 	        for(Video v:newVideos){
@@ -247,6 +308,17 @@ private String theSource;
 	   
 	}
 	
+    //used to initialize different feed manager
+	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
+		// TODO Auto-generated method stub
+		try {
+			fy = new FeedManager_Base(result);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return fy;
+	}
 	
  
 }

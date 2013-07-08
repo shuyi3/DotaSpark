@@ -158,23 +158,16 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			// Locate Position
 			switch (position) {
-			case 1:
-	
+			case 1:		
 				mActionBar.setTitle("Highlights");
-				Fragment byPlaylist = new Youtube();
-				Bundle pArgs = new Bundle();
-				pArgs.putString("SECTION", "PLAYLIST");
-				byPlaylist.setArguments(pArgs);
+				Fragment byAll = new Fragment_Subscription();
 				
-				ft.replace(R.id.content_frame, byPlaylist);
-	
+				ft.replace(R.id.content_frame, byAll);
 				break;
+				
 			case 2:
 				mActionBar.setTitle("Recent Matches");
-				Fragment byUploader = new Youtube();
-				Bundle uArgs = new Bundle();
-				uArgs.putString("SECTION", "UPLOADER");
-				byUploader.setArguments(uArgs);
+				Fragment byUploader = new Fragment_Uploader();
 				ft.replace(R.id.content_frame, byUploader);
 				break;
 //			case 3:
@@ -188,12 +181,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 //				ft.replace(R.id.content_frame, fragment2);
 //				break;
 			case 4:
-				mActionBar.setTitle("Twitch Lives");
-				Fragment twitchLive = new Youtube();
-				Bundle uArgs3 = new Bundle();
-				uArgs3.putString("SECTION", "TWITCHLIVE");
-				twitchLive.setArguments(uArgs3);
-				ft.replace(R.id.content_frame, twitchLive);
+//				mActionBar.setTitle("Twitch Lives");
+//				Fragment twitchLive = new Fragment_Base();
+//				Bundle uArgs3 = new Bundle();
+//				uArgs3.putString("SECTION", "TWITCHLIVE");
+//				twitchLive.setArguments(uArgs3);
+//				ft.replace(R.id.content_frame, twitchLive);
 				break;
 			}
 			ft.commit();
