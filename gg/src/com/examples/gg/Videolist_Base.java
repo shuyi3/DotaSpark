@@ -51,7 +51,9 @@ private InternetConnection ic;
 private SherlockFragmentActivity sfa;
 private String theSource = "";
 private ActionBar ab;
-private FragmentTransaction ft;
+protected String abTitle;
+protected FeedManager_Base ytf;
+protected Fragment mVideolist = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -62,15 +64,9 @@ private FragmentTransaction ft;
 		
 		//get action bar
 		ab = sfa.getSupportActionBar();
-		
-		//get fragment manager
-		ft = sfa.getSupportFragmentManager().beginTransaction();
-		
-//		setContentView(R.layout.loadmore_list);
-		
+		abTitle = "Highlights";
+		ab.setTitle(abTitle);
 
-//		Intent intent = getIntent();
-//		String set = intent.getStringExtra("set");
 		savedInstanceState = this.getArguments();
 		
 		titles = new ArrayList<String>();
@@ -141,7 +137,7 @@ private FragmentTransaction ft;
 	        {
 	        case 11:
 				ab.setTitle("Highlights");
-				Fragment byAll = new Fragment_Base();		
+				Fragment byAll = new Fragment_Subscription();		
 				ft.replace(R.id.content_frame, byAll);
 				break;
 				
@@ -262,9 +258,11 @@ private FragmentTransaction ft;
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
 	        //System.out.println(result);
-	    	FeedManager_Base ytf = null;
 	    	
-	    	ytf = switcher(ytf,result);
+	    	
+	    	//ytf = switcher(ytf,result);
+	    	initialize();
+	    	ytf.setmJSON(result);
 	        
 	        List<Video> newVideos = ytf.getVideoPlaylist();
 	        for(Video v:newVideos){
@@ -308,17 +306,24 @@ private FragmentTransaction ft;
 	   
 	}
 	
-    //used to initialize different feed manager
-	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
-		// TODO Auto-generated method stub
-		try {
-			fy = new FeedManager_Base(result);
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return fy;
+
+	protected void initialize(){
+
+		ytf = new FeedManager_Subscription();
+		mVideolist = new Videolist_Base();
 	}
+	
+//    //used to initialize different feed manager
+//	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
+//		// TODO Auto-generated method stub
+//		try {
+//			fy = new FeedManager_Base(result);
+//		} catch (JSONException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		return fy;
+//	}
 	
  
 }

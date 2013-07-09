@@ -9,11 +9,10 @@ import org.json.JSONTokener;
 
 public class FeedManager_Twitch extends FeedManager_Base{
 	private String twtichNextApi;
-	public FeedManager_Twitch(String json) throws JSONException {
-		super(json);
+	public FeedManager_Twitch() throws JSONException {
 		// TODO Auto-generated constructor stub
 		twtichNextApi = null;
-		processJSON(json);
+		processJSON(mJSON);
 	}
 	@Override
 	public ArrayList<Video> getVideoPlaylist(){

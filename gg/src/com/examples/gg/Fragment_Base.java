@@ -46,6 +46,9 @@ public class Fragment_Base extends SherlockListFragment {
 	protected SherlockFragmentActivity sfa;
 	protected InternetConnection ic;
 	protected ActionBar ab;
+	protected String abTitle = "Highlights";
+	protected FeedManager_Base ytf = new FeedManager_Base();
+	protected Fragment mVideolist = new Videolist_Base();
 
 	
 //	private PopupWindow mPop;
@@ -169,6 +172,7 @@ public class Fragment_Base extends SherlockListFragment {
 	
 	protected class GetRequest extends AsyncTask<String, String, String>{
 	    protected String source;
+	    
 	    public GetRequest(String s){
 	    	
 	        this.source = s;
@@ -198,6 +202,7 @@ public class Fragment_Base extends SherlockListFragment {
 	        } catch (IOException e) {
 	            //TODO Handle problems..
 	        }
+	        
 	        return responseString;
 	    }
 
@@ -206,17 +211,21 @@ public class Fragment_Base extends SherlockListFragment {
 	    protected void onPostExecute(String result) {
 	        super.onPostExecute(result);
 	        //Do anything with response..
-
+	        
+	        //Initializing feed manager and videolist fragment,  must do it....
+	        initialize();
+			ytf.setmJSON(result);
+	        ArrayList<Video> videos = ytf.getVideoPlaylist();
+	        
 	        List<String> titles=new ArrayList<String>();   
 	        List<String> ids = new ArrayList<String>();
 	        
-	        FeedManager_Base ytf = null;
+	        
 	        
 	        //**//
-	        ytf = switcher(ytf, result);
+	        //ytf = switcher(ytf, result);
 
-			
-	        ArrayList<Video> videos = ytf.getVideoPlaylist();
+
 	        
 	        
 	        for(Video v:videos){
@@ -261,9 +270,10 @@ public class Fragment_Base extends SherlockListFragment {
 				e1.printStackTrace();
 			}	
 	        FragmentTransaction ft = getFragmentManager().beginTransaction();
-			getSherlockActivity().getSupportActionBar().setTitle("Videolist");
-			Fragment videolist = null;
-			videolist = listSwitcher();
+			getSherlockActivity().getSupportActionBar().setTitle(abTitle);
+			
+			
+			//mVideolist = listSwitcher();
 			
 	        Bundle bundle = new Bundle();
 	        
@@ -271,9 +281,9 @@ public class Fragment_Base extends SherlockListFragment {
 
 	    	bundle.putString("query", nextAPI);
 
-	        videolist.setArguments(bundle);
+	        mVideolist.setArguments(bundle);
 			
-			ft.replace(R.id.content_frame, videolist);
+			ft.replace(R.id.content_frame, mVideolist);
 			ft.commit();
 //=========================================================================================================
 
@@ -313,18 +323,23 @@ public class Fragment_Base extends SherlockListFragment {
 		
     }
 	
-	
-    //used to initialize different feed manager
-	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
-		// TODO Auto-generated method stub
-		try {
-			fy = new FeedManager_Subscription(result);
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return fy;
+	protected void initialize(){
+
+		ytf = new FeedManager_Base();
+
+		mVideolist = new Videolist_Base();
 	}
+//    //used to initialize different feed manager
+//	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
+//		// TODO Auto-generated method stub
+//		try {
+//			fy = new FeedManager_Subscription(result);
+//		} catch (JSONException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		return fy;
+//	}
 	
  
 }

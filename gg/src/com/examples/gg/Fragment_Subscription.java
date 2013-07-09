@@ -1,12 +1,15 @@
 package com.examples.gg;
 
-import android.support.v4.app.Fragment;
+import org.json.JSONException;
 
 public class Fragment_Subscription extends Fragment_Base{
-	@Override
-	protected Fragment listSwitcher(){
-		return new Videolist_Subscription();
 
+
+	@Override
+	protected void initialize(){
+
+		ytf = new FeedManager_Subscription();
+		mVideolist = new Videolist_Base();
 	}
 
 }

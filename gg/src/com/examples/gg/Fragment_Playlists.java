@@ -55,15 +55,12 @@ public class Fragment_Playlists extends Fragment_Base{
 	}
 	
 	@Override
-    protected FeedManager_Base switcher(FeedManager_Base fy, String result){
-		try {
-			fy = new FeedManager_Base(result);
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return fy;
-    }
+	protected void initialize(){
+
+		ytf = new FeedManager_Base();
+		mVideolist = new Videolist_Base();
+	}
+
 	
 
 	class GetRequest2 extends GetRequest{
@@ -76,15 +73,8 @@ public class Fragment_Playlists extends Fragment_Base{
 	    protected void onPostExecute(String result) {
 	        //Do anything with response..
 	        //System.out.println("my json: "+ result);
-	    	FeedManager_Playlist ytf = null;
-	        try
-	        {   
-	            ytf = new FeedManager_Playlist(result);
-	        } catch (JSONException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
+	        ytf = new FeedManager_Playlist();
+			ytf.setmJSON(result);
 	        List<Video> newVideos = ytf.getVideoPlaylist();
             
 	        for(Video v:newVideos){

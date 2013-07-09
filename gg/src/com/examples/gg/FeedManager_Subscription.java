@@ -8,14 +8,15 @@ import org.json.JSONObject;
 
 public class FeedManager_Subscription extends FeedManager_Base{
 
-	public FeedManager_Subscription(String json) throws JSONException {
-		super(json);
-		// TODO Auto-generated constructor stub
-		processJSON(json);
-	}
 	
 	@Override
 	public ArrayList<Video> getVideoPlaylist(){
+		try {
+			processJSON(mJSON);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         ArrayList<Video> videos = new ArrayList<Video>();
         
         try {

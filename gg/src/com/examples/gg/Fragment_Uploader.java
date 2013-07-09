@@ -70,13 +70,9 @@ public class Fragment_Uploader extends Fragment_Base{
 	}
 	
 	@Override
-    protected FeedManager_Base switcher(FeedManager_Base fy, String result){
-		try {
-			fy = new FeedManager_Base(result);
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return fy;
-    }
+	protected void initialize(){
+
+		ytf = new FeedManager_Base();
+		mVideolist = new Videolist_Base();
+	}
 }

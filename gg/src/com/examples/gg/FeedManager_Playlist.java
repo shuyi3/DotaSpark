@@ -8,12 +8,7 @@ import org.json.JSONObject;
 
 public class FeedManager_Playlist extends FeedManager_Base{
 
-	public FeedManager_Playlist(String json)
-			throws JSONException {
-		super(json);
-		// TODO Auto-generated constructor stub
-		processJSON(json);
-	}
+
 	
 	@Override
 	public ArrayList<Video> getVideoPlaylist(){
@@ -21,6 +16,7 @@ public class FeedManager_Playlist extends FeedManager_Base{
 		ArrayList<Video> videos = new ArrayList<Video>();
         
         try {
+        	processJSON(mJSON);
             //get title of the playlist
             String plTitle = feed.getJSONObject("title").getString("$t");
             //System.out.println(plTitle);

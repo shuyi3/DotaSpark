@@ -21,16 +21,29 @@ public class FeedManager_Base
     public static final String TWITCH = "Twitch";
     public static final String SUBSCRIPTION = "Subscription";
     private String twtichNextApi;
+    protected String mJSON;
 
 
-    public FeedManager_Base(String json) throws JSONException{
+    public String getmJSON() {
+		return mJSON;
+	}
 
-		processJSON(json);
 
-    }
+	public void setmJSON(String mJSON) {
+		this.mJSON = mJSON;
+	}
+
 
 
 	public ArrayList<Video> getVideoPlaylist(){
+		try {
+			if(mJSON != null)
+			processJSON(mJSON);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
         ArrayList<Video> videos = new ArrayList<Video>();
         
         try {
