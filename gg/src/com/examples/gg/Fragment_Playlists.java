@@ -1,57 +1,20 @@
 package com.examples.gg;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.json.JSONException;
-
-import com.examples.gg.Fragment_Base.GetRequest;
-
-
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 
 
 public class Fragment_Playlists extends Fragment_Base{
-	protected final String dotacinemaAPI = "https://gdata.youtube.com/feeds/api/users/dotacinema/playlists?v=2&max-results=50&alt=json";
-	protected final String noobfromuaAPI = "https://gdata.youtube.com/feeds/api/users/noobfromua/playlists?v=2&max-results=50&alt=json";
+	protected String dotacinemaAPI = "https://gdata.youtube.com/feeds/api/users/dotacinema/playlists?v=2&max-results=50&alt=json";
+	protected  String noobfromuaAPI = "https://gdata.youtube.com/feeds/api/users/noobfromua/playlists?v=2&max-results=50&alt=json";
+	protected ArrayList<String> API;
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-		
-		ic = new InternetConnection();
-		sfa = this.getSherlockActivity();
-		
-		ab = sfa.getSupportActionBar();
-		//savedInstanceState = this.getArguments();
-		//section = savedInstanceState.getString("SECTION");
-		String[] Options = new String[] {};
-		titles = new ArrayList<String>();
-		videolist  = new ArrayList<Video>();
-		
-		MOBILE_OS = new ArrayList<String>(Arrays.asList(Options));
-		
-		View view = inflater.inflate(android.R.layout.list_content, null);
-
-	    ListView ls = (ListView) view.findViewById(android.R.id.list);
-	    vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist);
- 
-	    ls.setAdapter(vaa);
-	    ls.setDivider(null);
-	    ls.setDividerHeight(0);
-	    
-		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
+	public void doRequest(){
+		API = new ArrayList<String>();
 		new GetRequest2("").execute(dotacinemaAPI);
 		new GetRequest2("").execute(noobfromuaAPI);
-
-		
-		setHasOptionsMenu(true);
-		return view;
 	}
 	
 	@Override
@@ -62,8 +25,7 @@ public class Fragment_Playlists extends Fragment_Base{
 	}
 
 	
-
-	class GetRequest2 extends GetRequest{
+	public class GetRequest2 extends GetRequest{
 
 	    public GetRequest2(String s) {
 			super(s);

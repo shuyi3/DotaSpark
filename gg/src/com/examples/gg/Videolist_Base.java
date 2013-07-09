@@ -47,10 +47,10 @@ private ArrayList<String> thumbList;
 private ArrayList<Video> videolist;
 private String query;
 private boolean isMoreVideos;
-private InternetConnection ic;
-private SherlockFragmentActivity sfa;
+protected InternetConnection ic;
+protected SherlockFragmentActivity sfa;
 private String theSource = "";
-private ActionBar ab;
+protected ActionBar ab;
 protected String abTitle;
 protected FeedManager_Base ytf;
 protected Fragment mVideolist = null;
@@ -58,14 +58,15 @@ protected Fragment mVideolist = null;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 //		super.onCreate(savedInstanceState);
+		
+		titling();
 		ic = new InternetConnection(); 
 		View view = inflater.inflate(R.layout.loadmore_list, null);
 		sfa = this.getSherlockActivity();
 		
 		//get action bar
 		ab = sfa.getSupportActionBar();
-		abTitle = "Highlights";
-		ab.setTitle(abTitle);
+
 
 		savedInstanceState = this.getArguments();
 		
@@ -113,6 +114,13 @@ protected Fragment mVideolist = null;
 	
 	}
 	
+	
+	protected void titling() {
+		// TODO Auto-generated method stub
+		this.abTitle = "Highlights";  
+		
+	}
+	
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     	
@@ -136,20 +144,23 @@ protected Fragment mVideolist = null;
 	        switch(item.getItemId())
 	        {
 	        case 11:
-				ab.setTitle("Highlights");
-				Fragment byAll = new Fragment_Subscription();		
+				ab.setTitle(abTitle);
+				Fragment byAll = fragmentAll(); 
+						//new Fragment_Base();		
 				ft.replace(R.id.content_frame, byAll);
 				break;
 				
             case 12:
-				ab.setTitle("Highlights");
-				Fragment byUploader = new Fragment_Uploader();		
+				ab.setTitle(abTitle);
+				Fragment byUploader =  fragmentUploader();
+						//new Fragment_Uploader();		
 				ft.replace(R.id.content_frame, byUploader);
 	        	break;
 	        	
             case 13:
-				ab.setTitle("Highlights");
-				Fragment byPlaylist = new Fragment_Playlists();		
+				ab.setTitle(abTitle);
+				Fragment byPlaylist =  fragmentPlaylists(); 
+						//new Fragment_Playlists();		
 				ft.replace(R.id.content_frame, byPlaylist);
 	        	break;
             default:
@@ -163,6 +174,19 @@ protected Fragment mVideolist = null;
     	
     	return true;
     }
+	
+	protected Fragment fragmentPlaylists() {
+		// TODO Auto-generated method stub
+		return new Fragment_Playlists();
+	}
+	protected Fragment fragmentUploader() {
+		// TODO Auto-generated method stub
+		return new Fragment_Uploader();
+	}
+	protected Fragment fragmentAll() {
+		// TODO Auto-generated method stub
+		return new Fragment_Base();
+	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

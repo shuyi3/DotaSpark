@@ -14,30 +14,9 @@ import android.widget.ListView;
 import com.examples.gg.Fragment_Base.GetRequest;
 
 public class Fragment_Uploader extends Fragment_Base{
+	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-		
-		//handles network connection;
-		ic = new InternetConnection();
-		
-		
-		sfa = this.getSherlockActivity();
-		ab = sfa.getSupportActionBar();
-
-		
-		//savedInstanceState = this.getArguments();
-		//section = savedInstanceState.getString("SECTION");
-		String[] Options = new String[] {};
-		titles = new ArrayList<String>();
-		videolist  = new ArrayList<Video>();
-		
-		MOBILE_OS = new ArrayList<String>(Arrays.asList(Options));
-		
-		View view = inflater.inflate(android.R.layout.list_content, null);
-
-	    ListView ls = (ListView) view.findViewById(android.R.id.list);
-	    vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist);
-	    
+	public void doRequest(){
 	    //we are in section which contains uploaders only
     	titles.add("DotaCinema");
     	titles.add("noobfromua");
@@ -58,15 +37,10 @@ public class Fragment_Uploader extends Fragment_Base{
     	
     	videolist.add(dotacinema);
     	videolist.add(noobfromua);
-	    	
-	    
-	    ls.setAdapter(vaa);
-	    ls.setDivider(null);
-	    ls.setDividerHeight(0);
-
-		
-		setHasOptionsMenu(true);
-		return view;
+    	vaa.notifyDataSetChanged();
+    	
+		//loading done
+		this.getSherlockActivity().findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.GONE);
 	}
 	
 	@Override

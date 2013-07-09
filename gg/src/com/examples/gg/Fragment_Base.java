@@ -40,8 +40,6 @@ public class Fragment_Base extends SherlockListFragment {
 	static ArrayList<String> MOBILE_OS;
 	protected ArrayList<String> titles;
 	protected ArrayList<Video> videolist;
-
-	private final String mySubscriptionAPI = "https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json";
 	protected VideoArrayAdapter vaa;
 	protected SherlockFragmentActivity sfa;
 	protected InternetConnection ic;
@@ -61,6 +59,7 @@ public class Fragment_Base extends SherlockListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		
+		titling();
 		//handles network connection;
 		ic = new InternetConnection();
 		
@@ -88,7 +87,8 @@ public class Fragment_Base extends SherlockListFragment {
 	    //display subscription videos
 
 		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-		new GetRequest(FeedManager_Base.SUBSCRIPTION).execute(mySubscriptionAPI);
+		doRequest();
+
 
 			
 		
@@ -102,7 +102,14 @@ public class Fragment_Base extends SherlockListFragment {
 		setHasOptionsMenu(true);
 		return view;
 	}
-	
+	protected void titling() {
+		// TODO Auto-generated method stub
+		this.abTitle = "Highlights";  
+		
+	}
+	public void doRequest(){
+		
+	}
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     	
@@ -126,20 +133,23 @@ public class Fragment_Base extends SherlockListFragment {
 	        switch(item.getItemId())
 	        {
 	        case 11:
-				ab.setTitle("Highlights");
-				Fragment byAll = new Fragment_Base();		
+				ab.setTitle(abTitle);
+				Fragment byAll = fragmentAll(); 
+						//new Fragment_Base();		
 				ft.replace(R.id.content_frame, byAll);
 				break;
 				
             case 12:
-				ab.setTitle("Highlights");
-				Fragment byUploader = new Fragment_Uploader();		
+				ab.setTitle(abTitle);
+				Fragment byUploader =  fragmentUploader();
+						//new Fragment_Uploader();		
 				ft.replace(R.id.content_frame, byUploader);
 	        	break;
 	        	
             case 13:
-				ab.setTitle("Highlights");
-				Fragment byPlaylist = new Fragment_Playlists();		
+				ab.setTitle(abTitle);
+				Fragment byPlaylist =  fragmentPlaylists(); 
+						//new Fragment_Playlists();		
 				ft.replace(R.id.content_frame, byPlaylist);
 	        	break;
             default:
@@ -153,6 +163,20 @@ public class Fragment_Base extends SherlockListFragment {
     	
     	return true;
     }
+	
+	protected Fragment fragmentPlaylists() {
+		// TODO Auto-generated method stub
+		return new Fragment_Playlists();
+	}
+	protected Fragment fragmentUploader() {
+		// TODO Auto-generated method stub
+		return new Fragment_Uploader();
+	}
+	protected Fragment fragmentAll() {
+		// TODO Auto-generated method stub
+		return new Fragment_Base();
+	}
+	
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -262,7 +286,6 @@ public class Fragment_Base extends SherlockListFragment {
 //==========================================================================================================
 	        String nextAPI = null;
 	        try {
-				//listSwitcher(videos, ytf.getNextApi());
 	        	nextAPI = ytf.getNextApi();
 				
 			} catch (JSONException e1) {
@@ -273,7 +296,6 @@ public class Fragment_Base extends SherlockListFragment {
 			getSherlockActivity().getSupportActionBar().setTitle(abTitle);
 			
 			
-			//mVideolist = listSwitcher();
 			
 	        Bundle bundle = new Bundle();
 	        
@@ -292,9 +314,6 @@ public class Fragment_Base extends SherlockListFragment {
  
 	}
 	
-	protected Fragment listSwitcher(){
-		return new Videolist_Base();
-	}
 	
 	private void initPopWindow() {
 		
@@ -329,6 +348,7 @@ public class Fragment_Base extends SherlockListFragment {
 
 		mVideolist = new Videolist_Base();
 	}
+	
 //    //used to initialize different feed manager
 //	protected FeedManager_Base switcher(FeedManager_Base fy, String result) {
 //		// TODO Auto-generated method stub

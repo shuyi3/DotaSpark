@@ -166,9 +166,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				break;
 				
 			case 2:
-				mActionBar.setTitle("Recent Matches");
-				Fragment byUploader = new Fragment_Uploader();
-				ft.replace(R.id.content_frame, byUploader);
+				mActionBar.setTitle("Matches");
+				Fragment byMatch = new Fragment_Match_Recent();
+				ft.replace(R.id.content_frame, byMatch);
 				break;
 //			case 3:
 //				mActionBar.setTitle("Recent Matches");
