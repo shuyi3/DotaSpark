@@ -181,12 +181,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 //				ft.replace(R.id.content_frame, fragment2);
 //				break;
 			case 4:
-//				mActionBar.setTitle("Twitch Lives");
-//				Fragment twitchLive = new Fragment_Base();
-//				Bundle uArgs3 = new Bundle();
-//				uArgs3.putString("SECTION", "TWITCHLIVE");
-//				twitchLive.setArguments(uArgs3);
-//				ft.replace(R.id.content_frame, twitchLive);
+				//mActionBar.setTitle("Twitch Live");
+				Fragment twitchLive = new Fragment_Twitch();
+				ft.replace(R.id.content_frame, twitchLive);
 				break;
 			}
 			ft.commit();

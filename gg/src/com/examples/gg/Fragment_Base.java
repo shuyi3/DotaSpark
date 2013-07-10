@@ -84,29 +84,27 @@ public class Fragment_Base extends SherlockListFragment {
 	    ls.setDivider(null);
 	    ls.setDividerHeight(0);
 	    
-	    //display subscription videos
-
 		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
+		
+		
 		doRequest();
-
-
-			
-		
-//		if(section.equals("TWITCHLIVE")){
-//			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-//			new GetRequest("Twitch").execute("https://api.twitch.tv/kraken/streams?game=Dota+2");
-//			System.out.println("It's twitch section");
-//
-//		}
-		
-		setHasOptionsMenu(true);
+		setHasMenu();
+		//setHasOptionsMenu(true);
 		return view;
 	}
+	
+	
+	protected void setHasMenu(){
+		setHasOptionsMenu(true);
+	}
+	
 	protected void titling() {
 		// TODO Auto-generated method stub
 		this.abTitle = "Highlights";  
 		
 	}
+	
+	//to be modified by it's subclasses
 	public void doRequest(){
 		
 	}

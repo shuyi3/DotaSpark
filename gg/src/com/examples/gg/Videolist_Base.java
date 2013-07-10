@@ -108,12 +108,17 @@ protected Fragment mVideolist = null;
 		
 		//loading done
 		this.getSherlockActivity().findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.GONE);
-		
-		setHasOptionsMenu(true);
+		setHasMenu();
+		//setHasOptionsMenu(true);
 		return view;
 	
 	}
 	
+	//indicate whether it has a menu or not
+	//default is true
+	protected void setHasMenu(){
+		setHasOptionsMenu(true);
+	}
 	
 	protected void titling() {
 		// TODO Auto-generated method stub

@@ -9,17 +9,13 @@ import org.json.JSONTokener;
 
 public class FeedManager_Twitch extends FeedManager_Base{
 	private String twtichNextApi;
-	public FeedManager_Twitch() throws JSONException {
-		// TODO Auto-generated constructor stub
-		twtichNextApi = null;
-		processJSON(mJSON);
-	}
+
 	@Override
 	public ArrayList<Video> getVideoPlaylist(){
         ArrayList<Video> videos = new ArrayList<Video>();
         
         try {
-
+        	processJSON(mJSON);
           	//Json is coming from twitch
     		JSONArray streams = feed.getJSONArray("streams");
     		//System.out.println("Total: " + streams.length());
@@ -50,9 +46,7 @@ public class FeedManager_Twitch extends FeedManager_Base{
                 //push it to the list
                 videos.add(video);
                 //System.out.println(videoTitle+"***"+videoLink);
-                
-                
-            
+
         	}
         } catch (JSONException ex) {  
             
