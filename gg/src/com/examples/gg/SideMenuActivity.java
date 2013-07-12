@@ -160,9 +160,22 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			switch (position) {
 			case 1:		
 				mActionBar.setTitle("Highlights");
-				Fragment byAll = new Fragment_Subscription();
+				LoadMore_Base mSubscription = new LoadMore_Base();
+				mSubscription.setAbTitle("Highlights");
+				mSubscription.setHasOptionsMenu(true);
 				
-				ft.replace(R.id.content_frame, byAll);
+				//set the APIs which will be sent to server
+				ArrayList<String> al = new ArrayList<String>();
+				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
+				mSubscription.setAPI(al);
+				
+				mSubscription.setFeedManager(new FeedManager_Subscription());
+				mSubscription.setNextFragment(null);
+				mSubscription.setTitles(new ArrayList<String>());
+				mSubscription.setVideos(new ArrayList<String>());
+				mSubscription.setVideolist(new ArrayList<Video>());
+				//Fragment byAll = new Fragment_Subscription();
+				ft.replace(R.id.content_frame, mSubscription);
 				break;
 				
 			case 2:
