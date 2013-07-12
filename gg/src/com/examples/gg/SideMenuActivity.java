@@ -69,6 +69,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		// Pass results to MenuListAdapter Class
 //		mMenuAdapter = new MenuListAdapter(this, title, subtitle, icon);
+        items.add(new SectionItem("Everyday's Feed"));
+        items.add(new EntryItem("What's new", "Fresh meat!", R.drawable.action_about));
 		
         items.add(new SectionItem("Latest Videos"));
         items.add(new EntryItem("Highlights", "Dota excitements", R.drawable.action_about));
@@ -157,15 +159,37 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		if(ic.isOnline(this)){
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			// Locate Position
+			ArrayList<String> al = new ArrayList<String>();
+			
 			switch (position) {
+			
 			case 1:		
+				mActionBar.setTitle("Highlights");
+				Whatsnew_Fragment whatsnew = new Whatsnew_Fragment();
+				whatsnew.setAbTitle("Highlights");
+				whatsnew.setHasOptionsMenu(true);
+				
+				//set the APIs which will be sent to server
+				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
+				whatsnew.setAPI(al);
+				
+				whatsnew.setFeedManager(new FeedManager_Subscription());
+				whatsnew.setNextFragment(null);
+				whatsnew.setTitles(new ArrayList<String>());
+				whatsnew.setVideos(new ArrayList<String>());
+				whatsnew.setVideolist(new ArrayList<Video>());
+				//Fragment byAll = new Fragment_Subscription();
+				ft.replace(R.id.content_frame, whatsnew);
+				break;
+			
+			
+			case 3:		
 				mActionBar.setTitle("Highlights");
 				LoadMore_Base mSubscription = new LoadMore_Base();
 				mSubscription.setAbTitle("Highlights");
 				mSubscription.setHasOptionsMenu(true);
 				
 				//set the APIs which will be sent to server
-				ArrayList<String> al = new ArrayList<String>();
 				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
 				mSubscription.setAPI(al);
 				
@@ -178,7 +202,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				ft.replace(R.id.content_frame, mSubscription);
 				break;
 				
-			case 2:
+			case 4:
 				mActionBar.setTitle("Matches");
 				Fragment byMatch = new Fragment_Match_Recent();
 				ft.replace(R.id.content_frame, byMatch);
@@ -193,7 +217,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 //	
 //				ft.replace(R.id.content_frame, fragment2);
 //				break;
-			case 4:
+			case 6:
 				//mActionBar.setTitle("Twitch Live");
 				Fragment twitchLive = new Fragment_Twitch();
 				ft.replace(R.id.content_frame, twitchLive);
