@@ -1,7 +1,6 @@
 package com.examples.gg;
 
-
-public class EntryItem implements Item{
+public class EntryItem implements Item {
 
 	public final String title;
 	public final String subtitle;
@@ -12,7 +11,7 @@ public class EntryItem implements Item{
 		this.subtitle = subtitle;
 		this.icon = icon;
 	}
-	
+
 	@Override
 	public boolean isSection() {
 		return false;

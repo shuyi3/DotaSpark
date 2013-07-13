@@ -35,243 +35,251 @@ import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
+public class LoadMore_Base extends SherlockListFragment {
+	private LoadMoreListView myLoadMoreListView;
+	protected ArrayList<String> titles;
+	private ArrayList<String> videos;
+	protected ArrayList<Video> videolist;
 
+	private boolean isMoreVideos;
+	protected InternetConnection ic;
+	protected SherlockFragmentActivity sfa;
+	protected ActionBar ab;
+	protected String abTitle;
+	protected FeedManager_Base feedManager;
+	protected Fragment nextFragment;
+	protected Fragment FragmentAll;
+	protected Fragment FragmentUploader;
+	protected Fragment FragmentPlaylist;
+	protected ArrayList<String> API;
+	protected String nextAPI;
 
-public class LoadMore_Base extends SherlockListFragment{
-private LoadMoreListView myLoadMoreListView;
-private ArrayList<String> titles;
-private ArrayList<String> videos;
-private ArrayList<Video> videolist;
-
-private boolean isMoreVideos;
-protected InternetConnection ic;
-protected SherlockFragmentActivity sfa;
-protected ActionBar ab;
-protected String abTitle;
-protected FeedManager_Base feedManager;
-protected Fragment nextFragment;
-private Fragment FragmentAll;
-private Fragment FragmentUploader;
-private Fragment FragmentPlaylist;
-private ArrayList<String> API;
-
-
-protected VideoArrayAdapter vaa;
+	protected VideoArrayAdapter vaa;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-	
-		//For check internet connection
-		ic = new InternetConnection(); 
-		
-		//set the layout
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		// For check internet connection
+		ic = new InternetConnection();
+
+		// set the layout
 		View view = inflater.inflate(R.layout.loadmore_list, null);
-		
-		//Get the current activity
+
+		// Get the current activity
 		sfa = this.getSherlockActivity();
-		
-		//get action bar
+
+		// get action bar
 		ab = sfa.getSupportActionBar();
 
-		//Initilizing the empty arrays
+		// Initilizing the empty arrays
 		titles = new ArrayList<String>();
 		videos = new ArrayList<String>();
 		videolist = new ArrayList<Video>();
-		//thumbList = new ArrayList<String>();
-		
-		//set adapter
+		// thumbList = new ArrayList<String>();
+
+		// set adapter
 		vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist);
-			
-		//check whether there are more videos in the playlist
-		if(API.isEmpty())
+
+		API = new ArrayList<String>();
+
+		// Initializing important variables
+		Initializing();
+
+		// check whether there are more videos in the playlist
+		if (API.isEmpty())
 			isMoreVideos = false;
-		else if(API.get(0) != null)
+		else if (API.get(0) != null)
 			isMoreVideos = true;
-	
-		//set the adapter
+
+		// set the adapter
 		setListAdapter(vaa);
-		
+
 		return view;
-	
+
 	}
-	
+
+	public void setOptionMenu(boolean b) {
+		setHasOptionsMenu(b);
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-	    // TODO Auto-generated method stub
-	    super.onActivityCreated(savedInstanceState);
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
 
-
-		myLoadMoreListView =  (LoadMoreListView) this.getListView();
+		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
-		
-		if(ic.isOnline(sfa)){
-			if (isMoreVideos){
-				//there are more videos in the list
-				//set the listener for loading need
-			myLoadMoreListView.
-			setOnLoadMoreListener(new OnLoadMoreListener() {
-				public void onLoadMore() {
-					// Do the work to load more items at the end of list
-					// hereru
 
-					//checking network
-					if(ic.isOnline(sfa)){
+		if (ic.isOnline(sfa)) {
+			if (isMoreVideos) {
+				// there are more videos in the list
+				// set the listener for loading need
+				myLoadMoreListView
+						.setOnLoadMoreListener(new OnLoadMoreListener() {
+							public void onLoadMore() {
+								// Do the work to load more items at the end of
+								// list
 
-						//network ok
-						if(isMoreVideos == true){
-							new LoadMoreTask("").execute(API.get(0));
-						}
-					}else{
-						ic.networkToast(sfa);
-						((LoadMoreListView) getListView()).onLoadMoreComplete();
-					}
-						
-				}
-			});
-			
-			}else myLoadMoreListView.setOnLoadMoreListener(null);
-			
-		}else{
+								// checking network
+								if (ic.isOnline(sfa)) {
+
+									// network ok
+									if (isMoreVideos == true) {
+										new LoadMoreTask("").execute(API.get(0));
+									}
+								} else {
+									ic.networkToast(sfa);
+									((LoadMoreListView) getListView())
+											.onLoadMoreComplete();
+								}
+
+							}
+						});
+
+			} else
+				myLoadMoreListView.setOnLoadMoreListener(null);
+
+		} else {
 			ic.networkToast(sfa);
 		}
-		
-		//show loading screen
-		//sending Initial Get Request to Youtube
-		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
-		
-		if(!API.isEmpty())
-			doRequest();
-		
-	}
-	
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    	
-        SubMenu subMenu1 = menu.addSubMenu(0,1,0,"Action Item");
-        subMenu1.add(0,11,0,"All(Default)");
-        subMenu1.add(0,12,0,"Uploaders");
-        subMenu1.add(0,13,0,"Playlists");
 
-        MenuItem subMenu1Item = subMenu1.getItem();
-        subMenu1Item.setTitle("Classify");
-        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item)
-    {
-    	
-    	if(ic.isOnline(sfa)){
-    		FragmentTransaction ft = getFragmentManager().beginTransaction();
-    		
-	        switch(item.getItemId())
-	        {
-	        case 11:
-				ab.setTitle(abTitle);
-				Fragment byAll = FragmentAll; 
-						//new Fragment_Base();		
-				ft.replace(R.id.content_frame, byAll);
+
+
+		// sending Initial Get Request to Youtube
+		if (!API.isEmpty()){
+			// show loading screen
+			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+					View.VISIBLE);
+			doRequest();
+		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+		SubMenu subMenu1 = menu.addSubMenu(0, 1, 0, "Action Item");
+		subMenu1.add(0, 11, 0, "All(Default)");
+		subMenu1.add(0, 12, 0, "Uploaders");
+		subMenu1.add(0, 13, 0, "Playlists");
+
+		MenuItem subMenu1Item = subMenu1.getItem();
+		subMenu1Item.setTitle("Classify");
+		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
+				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+
+		if (ic.isOnline(sfa)) {
+			ab.setTitle(abTitle);
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+			switch (item.getItemId()) {
+			case 11:
+
+				ft.replace(R.id.content_frame, FragmentAll);
 				break;
-				
-            case 12:
-				ab.setTitle(abTitle);
-				Fragment byUploader =  FragmentUploader;
-						//new Fragment_Uploader();		
-				ft.replace(R.id.content_frame, byUploader);
-	        	break;
-	        	
-            case 13:
-				ab.setTitle(abTitle);
-				Fragment byPlaylist =  FragmentPlaylist; 
-						//new Fragment_Playlists();		
-				ft.replace(R.id.content_frame, byPlaylist);
-	        	break;
-            default:
-                  return super.onOptionsItemSelected(item);
-	        }
-	        ft.commit();
-	        
-    	}else{
-    		ic.networkToast(this.getSherlockActivity());
-    	}
-    	
-    	return true;
-    }
-	
+
+			case 12:
+
+				ft.replace(R.id.content_frame, FragmentUploader);
+				break;
+
+			case 13:
+
+				ft.replace(R.id.content_frame, FragmentPlaylist);
+				break;
+			default:
+				return super.onOptionsItemSelected(item);
+			}
+			ft.commit();
+
+		} else {
+			ic.networkToast(this.getSherlockActivity());
+		}
+
+		return true;
+	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		
-		//check network first	
-		if(ic.isOnline(this.getSherlockActivity())){
-			//get selected items
-			String selectedValue = (String) getListAdapter().getItem(position);
-			Toast.makeText(this.getSherlockActivity(), videos.get(position), Toast.LENGTH_SHORT).show();
-			
-	        Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
-	        i.putExtra("video", videolist.get(position));
-	        startActivity(i);
-		}else{
+
+		// check network first
+		if (ic.isOnline(this.getSherlockActivity())) {
+			// get selected items
+
+			// String selectedValue = (String)
+			// getListAdapter().getItem(position);
+
+			Toast.makeText(this.getSherlockActivity(), videos.get(position),
+					Toast.LENGTH_SHORT).show();
+
+			Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
+			i.putExtra("video", videolist.get(position));
+			startActivity(i);
+		} else {
 			ic.networkToast(this.getSherlockActivity());
 		}
-		
-	}	
-	
-	class LoadMoreTask extends AsyncTask<String, String, String>{
-	    public LoadMoreTask(String s){
-	    }
-	    @Override
-	    protected String doInBackground(String... uri) {
-	    	
-	    
-	        HttpClient httpclient = new DefaultHttpClient();
-	        HttpResponse response;
-	        String responseString = null;
-	        try {
-	            response = httpclient.execute(new HttpGet(uri[0]));
-	            StatusLine statusLine = response.getStatusLine();
-	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                response.getEntity().writeTo(out);
-	                out.close();
-	                responseString = out.toString();
-	            } else{
-	                //Closes the connection.
-	                response.getEntity().getContent().close();
-	                throw new IOException(statusLine.getReasonPhrase());
-	            }
-	        } catch (ClientProtocolException e) {
-	            //TODO Handle problems..
-	        } catch (IOException e) {
-	            //TODO Handle problems..
-	        }
-	        return responseString;
-	    }
 
-	    @Override
-	    protected void onPostExecute(String result) {
-	        //Do anything with response..
-	        //System.out.println(result);
-	    	
-	    	
-	    	//ytf = switcher(ytf,result);
+	}
 
-	    	feedManager.setmJSON(result);
-	        
-	        List<Video> newVideos = feedManager.getVideoPlaylist();
-	        
-	        //adding new loaded videos to our current video list 
-	        for(Video v:newVideos){
-	            System.out.println("new id: " + v.getVideoId());
-	        	titles.add(v.getTitle());
-	        	videos.add(v.getVideoId());
-	        	videolist.add(v);
-	        }
-	        try {
-	        	//put the next API in the first place of the array
-	        	API.set(0, feedManager.getNextApi()); 
-				if(API.get(0) == null){
-					//No more videos left
+	class LoadMoreTask extends AsyncTask<String, String, String> {
+		public LoadMoreTask(String s) {
+		}
+
+		@Override
+		protected String doInBackground(String... uri) {
+
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpResponse response;
+			String responseString = null;
+			try {
+				response = httpclient.execute(new HttpGet(uri[0]));
+				StatusLine statusLine = response.getStatusLine();
+				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					response.getEntity().writeTo(out);
+					out.close();
+					responseString = out.toString();
+				} else {
+					// Closes the connection.
+					response.getEntity().getContent().close();
+					throw new IOException(statusLine.getReasonPhrase());
+				}
+			} catch (ClientProtocolException e) {
+				// TODO Handle problems..
+			} catch (IOException e) {
+				// TODO Handle problems..
+			}
+			return responseString;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// Do anything with response..
+			// System.out.println(result);
+
+			// ytf = switcher(ytf,result);
+
+			feedManager.setmJSON(result);
+
+			List<Video> newVideos = feedManager.getVideoPlaylist();
+
+			// adding new loaded videos to our current video list
+			for (Video v : newVideos) {
+				System.out.println("new id: " + v.getVideoId());
+				titles.add(v.getTitle());
+				videos.add(v.getVideoId());
+				videolist.add(v);
+			}
+			try {
+				// put the next API in the first place of the array
+				API.set(0, feedManager.getNextApi());
+				if (API.get(0) == null) {
+					// No more videos left
 					isMoreVideos = false;
 				}
 			} catch (JSONException e) {
@@ -282,122 +290,38 @@ protected VideoArrayAdapter vaa;
 
 			// Call onLoadMoreComplete when the LoadMore task, has finished
 			((LoadMoreListView) getListView()).onLoadMoreComplete();
-			
-			//loading done
-			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.GONE);
-			
+
+			// loading done
+			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+					View.GONE);
+
 			if (!isMoreVideos) {
 				((LoadMoreListView) getListView()).onNoMoreItems();
-				
+
 				myLoadMoreListView.setOnLoadMoreListener(null);
 			}
 
 			super.onPostExecute(result);
 
-	    }
-	    
+		}
+
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
 			((LoadMoreListView) getListView()).onLoadMoreComplete();
 		}
-	    
 
-	    
-	   
 	}
-	
-	//sending the http request
+
+	// sending the http request
 	protected void doRequest() {
 		// TODO Auto-generated method stub
-		for(String s : API)
+		for (String s : API)
 			new LoadMoreTask("").execute(s);
 	}
 
+	public void Initializing() {
 
-	
-	public ArrayList<String> getTitles() {
-		return titles;
-	}
-
-	public void setTitles(ArrayList<String> titles) {
-		this.titles = titles;
-	}
-
-	public ArrayList<String> getVideos() {
-		return videos;
-	}
-
-	public void setVideos(ArrayList<String> videos) {
-		this.videos = videos;
-	}
-
-	public ArrayList<Video> getVideolist() {
-		return videolist;
-	}
-
-	public void setVideolist(ArrayList<Video> videolist) {
-		this.videolist = videolist;
-	}
-
-	public String getAbTitle() {
-		return abTitle;
-	}
-
-	public void setAbTitle(String abTitle) {
-		this.abTitle = abTitle;
-	}
-
-	public FeedManager_Base getFeedManager() {
-		return feedManager;
-	}
-
-	public void setFeedManager(FeedManager_Base feedManager) {
-		this.feedManager = feedManager;
-	}
-
-	public Fragment getNextFragment() {
-		return nextFragment;
-	}
-
-	public void setNextFragment(Fragment nextFragment) {
-		this.nextFragment = nextFragment;
-	}
-
-	public VideoArrayAdapter getVaa() {
-		return vaa;
-	}
-
-	public void setVaa(VideoArrayAdapter vaa) {
-		this.vaa = vaa;
-	}
-
-	public Fragment getFragmentAll() {
-		return FragmentAll;
-	}
-	
-	public void setFragmentAll(Fragment fragmentAll) {
-		FragmentAll = fragmentAll;
-	}
-	
-	public Fragment getFragmentUploader() {
-		return FragmentUploader;
-	}
-	
-	public void setFragmentUploader(Fragment fragmentUploader) {
-		FragmentUploader = fragmentUploader;
-	}
-	
-	public Fragment getFragmentPlaylist() {
-		return FragmentPlaylist;
-	}
-	
-	public void setFragmentPlaylist(Fragment fragmentPlaylist) {
-		FragmentPlaylist = fragmentPlaylist;
-	}
-	
-	public void setAPI(ArrayList<String> aPI) {
-		API = aPI;
 	}
 
 }

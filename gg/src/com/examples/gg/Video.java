@@ -1,26 +1,22 @@
 package com.examples.gg;
 
-
-
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+public class Video implements Parcelable {
 
-public class Video implements Parcelable
-{
+	public String title;
+	public String videoId;
+	public String videoDesc;
+	public String thumbnailUrl;
+	public String author;
+	public String uploaderThumUrl;
+	public String viewCount;
+	public String duration;
+	public Bitmap thumbnail;
 
-    public String title;
-    public String videoId;
-    public String videoDesc;
-    public String thumbnailUrl;
-    public String author;
-    public String uploaderThumUrl;
-    public String viewCount;
-    public String duration;
-    public Bitmap thumbnail;
-    
-    public Bitmap getThumbnail() {
+	public Bitmap getThumbnail() {
 		return thumbnail;
 	}
 
@@ -53,8 +49,8 @@ public class Video implements Parcelable
 	}
 
 	public String playlistUrl;
-    public String updateTime;
-    
+	public String updateTime;
+
 	public String getUpdateTime() {
 		return updateTime;
 	}
@@ -79,82 +75,62 @@ public class Video implements Parcelable
 		this.author = author;
 	}
 
-	public Video(){
+	public Video() {
 
-    }
-	
-	public Video(Parcel in){
-		title = in.readString ();
+	}
+
+	public Video(Parcel in) {
+		title = in.readString();
 		videoId = in.readString();
 		videoDesc = in.readString();
 		thumbnailUrl = in.readString();
 	}
-        
-    
-    public String getTitle()
-    {
-    
-        return title;
-    }
 
+	public String getTitle() {
 
-
-    
-    public void setTitle(String title)
-    {
-    
-        this.title = title;
-    }
-
-
-
-    
-    public String getVideoId()
-    {
-    
-        return videoId;
-    }
-
-
-
-    
-    public void setVideoId(String vid)
-    {
-    
-        this.videoId = vid;
-    }
-    
-    public String getVideoDesc() {
-		return videoDesc;
+		return title;
 	}
 
+	public void setTitle(String title) {
+
+		this.title = title;
+	}
+
+	public String getVideoId() {
+
+		return videoId;
+	}
+
+	public void setVideoId(String vid) {
+
+		this.videoId = vid;
+	}
+
+	public String getVideoDesc() {
+		return videoDesc;
+	}
 
 	public void setVideoDesc(String videoDesc) {
 		this.videoDesc = videoDesc;
 	}
-	
+
 	public String getThumbnailUrl() {
 		return thumbnailUrl;
 	}
 
-
 	public void setThumbnailUrl(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
 	}
-	
-    public static final Parcelable.Creator<Video> CREATOR
-    = new Parcelable.Creator<Video>() 
-   {
-         public Video createFromParcel(Parcel in) 
-         {
-             return new Video(in);
-         }
 
-         public Video[] newArray (int size) 
-         {
-             return new Video[size];
-         }
-    };
+	public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+		public Video createFromParcel(Parcel in) {
+			return new Video(in);
+		}
+
+		public Video[] newArray(int size) {
+			return new Video[size];
+		}
+	};
 
 	@Override
 	public int describeContents() {

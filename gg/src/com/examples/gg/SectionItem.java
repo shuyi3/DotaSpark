@@ -1,17 +1,17 @@
 package com.examples.gg;
 
-public class SectionItem implements Item{
+public class SectionItem implements Item {
 
 	private final String title;
-	
+
 	public SectionItem(String title) {
 		this.title = title;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return title;
 	}
-	
+
 	@Override
 	public boolean isSection() {
 		return true;

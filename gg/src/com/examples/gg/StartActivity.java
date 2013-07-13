@@ -18,84 +18,79 @@ import android.widget.Toast;
 
 public class StartActivity extends Activity {
 	ImageButton youtube;
-	ImageButton youku;  
+	ImageButton youku;
+
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-		
-		InternetConnection ic = new InternetConnection(); 
-		
-		if(ic.isOnline(this)){ 
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		InternetConnection ic = new InternetConnection();
+
+		if (ic.isOnline(this)) {
 			addListenerOnButton();
-        
-		}else{
+
+		} else {
 			ic.networkToast(this);
 		}
-//        Intent playIntent = new Intent(Intent.ACTION_VIEW);
-//        playIntent.setData(Uri.parse("http://www.youtube.com/watch?v=sMM0R19IisI"));
-//        playIntent.putExtra("force_fullscreen", true);
-//        
-//        
-//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=sMM0R19IisI"));
-//        intent.putExtra("force_fullscreen",true); 
-//        startActivity(intent);
-       // Intent intent = new Intent(this, MainActivity.class);
+		// Intent playIntent = new Intent(Intent.ACTION_VIEW);
+		// playIntent.setData(Uri.parse("http://www.youtube.com/watch?v=sMM0R19IisI"));
+		// playIntent.putExtra("force_fullscreen", true);
+		//
+		//
+		// Intent intent = new Intent(Intent.ACTION_VIEW,
+		// Uri.parse("http://www.youtube.com/watch?v=sMM0R19IisI"));
+		// intent.putExtra("force_fullscreen",true);
+		// startActivity(intent);
+		// Intent intent = new Intent(this, MainActivity.class);
 
-
-        //MainActivity.this.startActivity(playIntent);
-    }
-
+		// MainActivity.this.startActivity(playIntent);
+	}
 
 	public void addListenerOnButton() {
-		 
+
 		youtube = (ImageButton) findViewById(R.id.imageButton1);
- 
+
 		youtube.setOnClickListener(new OnClickListener() {
- 
-		
+
 			@Override
 			public void onClick(View v) {
-				
-				   //Intent youtubeIntent = new Intent(StartActivity.this,TabActivity.class);
 
-					Toast.makeText(StartActivity.this,"Youtube is selected", Toast.LENGTH_SHORT).show();
-					Intent youtubeIntent = new Intent(StartActivity.this,SideMenuActivity.class);
-					startActivity(youtubeIntent);
+				// Intent youtubeIntent = new
+				// Intent(StartActivity.this,TabActivity.class);
 
+				Toast.makeText(StartActivity.this, "Youtube is selected",
+						Toast.LENGTH_SHORT).show();
+				Intent youtubeIntent = new Intent(StartActivity.this,
+						SideMenuActivity.class);
+				startActivity(youtubeIntent);
 
-
-
-
-				
-				   
 			}
- 
+
 		});
-		
-		youku=(ImageButton)findViewById(R.id.imageButton2);
+
+		youku = (ImageButton) findViewById(R.id.imageButton2);
 		youku.setOnClickListener(new OnClickListener() {
-			 
-			
+
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(StartActivity.this,"Youku is selected", Toast.LENGTH_SHORT).show();
-				   Intent youtubeIntent = new Intent(StartActivity.this,SideMenuActivity.class);
-				   startActivity(youtubeIntent);
-		
+				Toast.makeText(StartActivity.this, "Youku is selected",
+						Toast.LENGTH_SHORT).show();
+				Intent youtubeIntent = new Intent(StartActivity.this,
+						SideMenuActivity.class);
+				startActivity(youtubeIntent);
+
 			}
- 
+
 		});
- 
+
 	}
-	
-	
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    
-    
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
 }
