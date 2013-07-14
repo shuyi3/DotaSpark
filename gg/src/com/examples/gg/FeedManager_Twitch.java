@@ -31,9 +31,13 @@ public class FeedManager_Twitch extends FeedManager_Base {
 						videoLink.indexOf("/streams/") + 9, videoLink.length());
 				String videoDesc = "No Desc";
 				String thumbUrl = oneVideo.getJSONObject("preview").getString(
-						"small");
-				String updateTime = videoChannel.getString("updated_at");
+						"medium");
+				//String updateTime = videoChannel.getString("updated_at");
 				String author = videoChannel.getString("display_name");
+				
+				// Get the number of viewers
+				String numberOfViewers = oneVideo.getString("viewers");
+				
 				// System.out.println("Stream ID: " + videoId);
 				// store title and link
 
@@ -43,9 +47,10 @@ public class FeedManager_Twitch extends FeedManager_Base {
 				video.setAuthor(author);
 				video.setThumbnailUrl(thumbUrl);
 				video.setVideoDesc(videoDesc);
-				video.setUpdateTime(updateTime);
-				// video.setAuthor(author);
-				// System.out.println(video.getTitle());
+				//video.setUpdateTime(updateTime);
+				video.setViewCount(numberOfViewers);
+				
+				
 				// push it to the list
 				videos.add(video);
 				// System.out.println(videoTitle+"***"+videoLink);

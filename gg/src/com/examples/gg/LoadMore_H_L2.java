@@ -11,6 +11,9 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 	public void Initializing() {
 		// Give a title for the action bar
 		abTitle = "Highlights";
+		
+		// Set action bar title
+		ab.setTitle(abTitle);
 
 		// API can be get from the previous fragment
 		API.add(mAPI);

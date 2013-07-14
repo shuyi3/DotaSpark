@@ -86,6 +86,9 @@ public class LoadMore_Base extends SherlockListFragment {
 		// Initializing important variables
 		Initializing();
 
+		// Set action bar title
+		ab.setTitle(abTitle);
+		
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
@@ -174,22 +177,22 @@ public class LoadMore_Base extends SherlockListFragment {
 			com.actionbarsherlock.view.MenuItem item) {
 
 		if (ic.isOnline(sfa)) {
-			ab.setTitle(abTitle);
+			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 
 			switch (item.getItemId()) {
 			case 11:
-
+				// Menu option 1
 				ft.replace(R.id.content_frame, FragmentAll);
 				break;
 
 			case 12:
-
+				// Menu option 2
 				ft.replace(R.id.content_frame, FragmentUploader);
 				break;
 
 			case 13:
-
+				// Menu option 3
 				ft.replace(R.id.content_frame, FragmentPlaylist);
 				break;
 			default:

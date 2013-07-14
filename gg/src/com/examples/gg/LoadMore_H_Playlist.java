@@ -6,6 +6,9 @@ public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 	public void Initializing() {
 		// Give a title for the action bar
 		abTitle = "Highlights";
+		
+		// Set action bar title
+		ab.setTitle(abTitle);
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/dotacinema/playlists?v=2&max-results=50&alt=json");

@@ -16,9 +16,9 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 		// API.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
 
 		// initialize the fragments in the Menu
-		FragmentAll = new LoadMore_H_Subscription();
-		FragmentUploader = new LoadMore_H_Uploader();
-		FragmentPlaylist = new LoadMore_H_Playlist();
+		FragmentAll = new LoadMore_M_Subscription();
+		FragmentUploader = new LoadMore_M_Uploader();
+		FragmentPlaylist = new LoadMore_M_Playlist();
 
 		// set a feed manager
 		feedManager = new FeedManager_Base();
@@ -49,7 +49,7 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 	@Override
 	public void InitializingNextFragment() {
 
-		mLoadMore = new LoadMore_H_L2(nextFragmentAPI);
+		mLoadMore = new LoadMore_M_L2(nextFragmentAPI);
 
 	}
 }

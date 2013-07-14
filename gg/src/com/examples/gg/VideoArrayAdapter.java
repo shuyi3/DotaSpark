@@ -76,9 +76,16 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		// values for time and view counts should not be null
 		if (videos.get(position).getUpdateTime() != null
 				&& videos.get(position).getViewCount() != null) {
+			
+			// For Youtube videos, showing update date and views
 			holder.countView.setText(videos.get(position).getUpdateTime()
 					+ " | " + videos.get(position).getViewCount());
-		} else {
+		} else if(videos.get(position).getViewCount() != null){
+			
+			// For Twitch, only showing number of viewers
+			holder.countView.setText(videos.get(position).getViewCount());
+		} else{	
+			
 			holder.countView.setText(null);
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
