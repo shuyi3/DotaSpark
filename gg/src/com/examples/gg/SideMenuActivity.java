@@ -59,6 +59,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		// Locate ListView in drawer_main.xml
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		
+		// Do not allow list view to scroll over
+		mDrawerList.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
 
 		// Set a custom shadow that overlays the main content when the drawer
 		// opens
