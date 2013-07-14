@@ -179,7 +179,10 @@ public class LoadMore_Base extends SherlockListFragment {
 		if (ic.isOnline(sfa)) {
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
-
+			
+			// Putting the current fragment into stack for later call back
+			ft.addToBackStack(null);
+			
 			switch (item.getItemId()) {
 			case 11:
 				// Menu option 1

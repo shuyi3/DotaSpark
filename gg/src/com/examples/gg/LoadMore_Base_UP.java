@@ -16,6 +16,9 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 		if (ic.isOnline(sfa)) {
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			
+			// Putting the current fragment into stack for later call back
+			ft.addToBackStack(null);
 			//get the API corresponding to the item selected
 			nextFragmentAPI = videolist.get(position).getPlaylistUrl();
 			
