@@ -9,6 +9,8 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/GJoABYYxwoGsl6TuP0DGnw/newsubscriptionvideos?max-results=10&alt=json");
+		
+			
 
 		// initialize the fragments in the Menu
 		FragmentAll = new LoadMore_M_Subscription();
