@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.costum.android.widget.LoadMoreListView;
@@ -127,26 +128,41 @@ public class LoadMore_News extends LoadMore_Base {
 
 		List<View> advPics = new ArrayList<View>();
 		FrameLayout flayout = new FrameLayout(sfa);
-		TextView text = new TextView(sfa);
-		text.setSingleLine(false);
+		LinearLayout lLayout = new LinearLayout(sfa);
+		lLayout.setOrientation(LinearLayout.VERTICAL);
+		TextView title = new TextView(sfa);
+		title.setTextColor(Color.WHITE);
+		title.setTextSize(24);
+		title.setText("Today's matches");
+		LinearLayout.LayoutParams titleLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		titleLayout.setMargins(20, 10, 0, 0);
+		LinearLayout.LayoutParams matchLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		matchLayout.setMargins(20, 20, 0, 0);
+		
+		TextView matchtable = new TextView(sfa);
+		matchtable.setSingleLine(false);
 
-		String Matchtext = "Today's match\n";
+		String Matchtext = "";
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 
 		for (int i = 0; i < 3; i++) {
 			Matchtext = Matchtext + matcharray[i] + "\n";
 		}
-		text.setText(Matchtext);
-		text.setTextColor(Color.WHITE);
+		matchtable.setText(Matchtext);
+		matchtable.setTextColor(Color.WHITE);
+		matchtable.setTextSize(18);
 		ImageView img1 = new ImageView(sfa);
 		img1.setBackgroundResource(R.drawable.bountyhunter);
 
 		flayout.addView(img1, new FrameLayout.LayoutParams(
 				LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT,
 				Gravity.CENTER));
-		flayout.addView(text, new FrameLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-				Gravity.CENTER));
+		
+		lLayout.addView(title, titleLayout);
+		lLayout.addView(matchtable, matchLayout);
+		flayout.addView(lLayout, new FrameLayout.LayoutParams(
+				LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		
 		advPics.add(flayout);
 
 		ImageView img2 = new ImageView(sfa);
@@ -161,9 +177,7 @@ public class LoadMore_News extends LoadMore_Base {
 		img4.setBackgroundResource(R.drawable.snk);
 		advPics.add(img4);
 
-		// 瀵筰mageviews杩涜濉厖
 		imageViews = new ImageView[advPics.size()];
-		// 灏忓浘鏍�
 		for (int i = 0; i < advPics.size(); i++) {
 			imageView = new ImageView(sfa);
 			imageView.setLayoutParams(new LayoutParams(20, 20));
