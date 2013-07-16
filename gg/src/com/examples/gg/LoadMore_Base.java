@@ -37,12 +37,12 @@ import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
 public class LoadMore_Base extends SherlockListFragment {
-	private LoadMoreListView myLoadMoreListView;
+	protected LoadMoreListView myLoadMoreListView;
 	protected ArrayList<String> titles;
-	private ArrayList<String> videos;
+	protected ArrayList<String> videos;
 	protected ArrayList<Video> videolist;
 
-	private boolean isMoreVideos;
+	protected boolean isMoreVideos;
 	protected InternetConnection ic;
 	protected SherlockFragmentActivity sfa;
 	protected ActionBar ab;
@@ -55,7 +55,8 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected ArrayList<String> API;
 	protected String nextAPI;
 	protected boolean taskCancel = false;
-
+	protected View view;
+	protected LayoutInflater mInflater;
 	protected VideoArrayAdapter vaa;
 	protected LoadMoreTask mLoadMoreTask = null;
 
@@ -63,11 +64,13 @@ public class LoadMore_Base extends SherlockListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+		mInflater = inflater;
+		
 		// For check internet connection
 		ic = new InternetConnection();
 
 		// set the layout
-		View view = inflater.inflate(R.layout.loadmore_list, null);
+		view = inflater.inflate(R.layout.loadmore_list, null);
 
 		// Get the current activity
 		sfa = this.getSherlockActivity();
@@ -91,7 +94,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Set action bar title
 		ab.setTitle(abTitle);
-
+		
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
@@ -132,8 +135,8 @@ public class LoadMore_Base extends SherlockListFragment {
 
 									// network ok
 									if (isMoreVideos == true) {
-										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask(
-												"");
+										new LoadMoreTask().execute(API.get(0));
+										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
 										mLoadMoreTask.execute(API.get(0));
 									}
 								} else {
@@ -152,8 +155,10 @@ public class LoadMore_Base extends SherlockListFragment {
 			ic.networkToast(sfa);
 		}
 
+
+
 		// sending Initial Get Request to Youtube
-		if (!API.isEmpty()) {
+		if (!API.isEmpty()){
 			// show loading screen
 			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
 					View.VISIBLE);
@@ -180,12 +185,12 @@ public class LoadMore_Base extends SherlockListFragment {
 			com.actionbarsherlock.view.MenuItem item) {
 
 		if (ic.isOnline(sfa)) {
-
+			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
-
+			
 			// Putting the current fragment into stack for later call back
-			// ft.addToBackStack(null);
-
+			//ft.addToBackStack(null);
+			
 			switch (item.getItemId()) {
 			case 11:
 				// Menu option 1
@@ -236,15 +241,13 @@ public class LoadMore_Base extends SherlockListFragment {
 	}
 
 	class LoadMoreTask extends AsyncTask<String, String, String> {
-		public LoadMoreTask(String s) {
-		}
-
+		protected String responseString = null;
 		@Override
 		protected String doInBackground(String... uri) {
 
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
-			String responseString = null;
+			
 			try {
 				response = httpclient.execute(new HttpGet(uri[0]));
 				StatusLine statusLine = response.getStatusLine();
@@ -268,19 +271,20 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		@Override
 		protected void onPostExecute(String result) {
+			// Do anything with response..
+			// System.out.println(result);
 
 			if (!taskCancel || result == null) {
-				// Do anything with response..
-				// System.out.println(result);
-
-				// ytf = switcher(ytf,result);
-
+					// Do anything with response..
+					// System.out.println(result);
+	
+					// ytf = switcher(ytf,result);
+	
 				feedManager.setmJSON(result);
-
+	
 				List<Video> newVideos = feedManager.getVideoPlaylist();
-
+	
 				// adding new loaded videos to our current video list
-				
 				for (Video v : newVideos) {
 					System.out.println("new id: " + v.getVideoId());
 					titles.add(v.getTitle());
@@ -299,24 +303,22 @@ public class LoadMore_Base extends SherlockListFragment {
 					e.printStackTrace();
 				}
 				vaa.notifyDataSetChanged();
-
+	
 				// Call onLoadMoreComplete when the LoadMore task, has finished
 				((LoadMoreListView) getListView()).onLoadMoreComplete();
-
+	
 				// loading done
-				sfa.findViewById(R.id.fullscreen_loading_indicator)
-						.setVisibility(View.GONE);
-
+				sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+						View.GONE);
+	
 				if (!isMoreVideos) {
 					((LoadMoreListView) getListView()).onNoMoreItems();
-
+	
 					myLoadMoreListView.setOnLoadMoreListener(null);
 				}
-
+	
 				super.onPostExecute(result);
-
 			}
-
 		}
 
 		@Override
@@ -332,7 +334,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API)
-			new LoadMoreTask("").execute(s);
+			new LoadMoreTask().execute(s);
 	}
 
 	public void Initializing() {

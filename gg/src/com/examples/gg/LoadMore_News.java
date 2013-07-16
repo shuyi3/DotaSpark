@@ -1,77 +1,40 @@
 package com.examples.gg;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
-import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
-public class Whatsnew_Fragment extends SherlockListFragment {
-
-	private LoadMoreListView myLoadMoreListView;
-	private ArrayList<String> titles;
-	private ArrayList<String> videos;
-	private ArrayList<Video> videolist;
-
-	private boolean isMoreVideos;
-	protected InternetConnection ic;
-	protected SherlockFragmentActivity sfa;
-	protected ActionBar ab;
-	protected String abTitle;
-	protected FeedManager_Base feedManager;
-	protected Fragment nextFragment;
-	private Fragment FragmentAll;
-	private Fragment FragmentUploader;
-	private Fragment FragmentPlaylist;
-	private ArrayList<String> API;
-
-	protected VideoArrayAdapter vaa;
+public class LoadMore_News extends LoadMore_Base {
 
 	private ImageView[] imageViews = null;
 	private ImageView imageView = null;
-	private TextView textView = null;
 	private ViewPager advPager = null;
 	private AtomicInteger what = new AtomicInteger(0);
 	private boolean isContinue = true;
@@ -81,42 +44,26 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 	boolean isPagerSet = false;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public void Initializing() {
+		// Inflating view
+		view = mInflater.inflate(R.layout.whatsnew, null);
 
-		// For check internet connection
-		ic = new InternetConnection();
+		// Give a title for the action bar
+		abTitle = "News";
 
-		// set the layout
-		View view = inflater.inflate(R.layout.whatsnew, null);
+		// Give API URLs
+		API.add("https://gdata.youtube.com/feeds/api/users/cpGJHANGum7tFm0kg6fh7g/newsubscriptionvideos?max-results=10&alt=json");
 
-		// Get the current activity
-		sfa = this.getSherlockActivity();
+		// initialize the fragments in the Menu
+		// FragmentAll = new LoadMore_H_Subscription();
+		// FragmentUploader = new LoadMore_H_Uploader();
+		// FragmentPlaylist = new LoadMore_H_Playlist();
 
-		// get action bar
-		ab = sfa.getSupportActionBar();
+		// set a feed manager
+		feedManager = new FeedManager_Subscription();
 
-		// Initilizing the empty arrays
-		titles = new ArrayList<String>();
-		videos = new ArrayList<String>();
-		videolist = new ArrayList<Video>();
-		// thumbList = new ArrayList<String>();
-
-		// set adapter
-		vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist);
-
-		// check whether there are more videos in the playlist
-		if (API.isEmpty())
-			isMoreVideos = false;
-		else if (API.get(0) != null)
-			isMoreVideos = true;
-
-		// set the adapter
-		setListAdapter(vaa);
-
-		// initViewPager();
-
-		return view;
+		// Show menu
+		setHasOptionsMenu(false);
 
 	}
 
@@ -144,7 +91,8 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 
 									// network ok
 									if (isMoreVideos == true) {
-										new LoadMoreTask("").execute(API.get(0));
+										new LoadMoreTask_News().execute(API
+												.get(0));
 									}
 								} else {
 									ic.networkToast(sfa);
@@ -169,9 +117,9 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 
 		if (!API.isEmpty())
 			doRequest();
+
 	}
 
-	//
 	@SuppressWarnings("deprecation")
 	private void initViewPager() {
 		advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
@@ -287,96 +235,6 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 
 	};
 
-	protected void doRequest() {
-		// TODO Auto-generated method stub
-		for (String s : API)
-			new LoadMoreTask("").execute(s);
-	}
-
-	public ArrayList<String> getTitles() {
-		return titles;
-	}
-
-	public void setTitles(ArrayList<String> titles) {
-		this.titles = titles;
-	}
-
-	public ArrayList<String> getVideos() {
-		return videos;
-	}
-
-	public void setVideos(ArrayList<String> videos) {
-		this.videos = videos;
-	}
-
-	public ArrayList<Video> getVideolist() {
-		return videolist;
-	}
-
-	public void setVideolist(ArrayList<Video> videolist) {
-		this.videolist = videolist;
-	}
-
-	public String getAbTitle() {
-		return abTitle;
-	}
-
-	public void setAbTitle(String abTitle) {
-		this.abTitle = abTitle;
-	}
-
-	public FeedManager_Base getFeedManager() {
-		return feedManager;
-	}
-
-	public void setFeedManager(FeedManager_Base feedManager) {
-		this.feedManager = feedManager;
-	}
-
-	public Fragment getNextFragment() {
-		return nextFragment;
-	}
-
-	public void setNextFragment(Fragment nextFragment) {
-		this.nextFragment = nextFragment;
-	}
-
-	public VideoArrayAdapter getVaa() {
-		return vaa;
-	}
-
-	public void setVaa(VideoArrayAdapter vaa) {
-		this.vaa = vaa;
-	}
-
-	public Fragment getFragmentAll() {
-		return FragmentAll;
-	}
-
-	public void setFragmentAll(Fragment fragmentAll) {
-		FragmentAll = fragmentAll;
-	}
-
-	public Fragment getFragmentUploader() {
-		return FragmentUploader;
-	}
-
-	public void setFragmentUploader(Fragment fragmentUploader) {
-		FragmentUploader = fragmentUploader;
-	}
-
-	public Fragment getFragmentPlaylist() {
-		return FragmentPlaylist;
-	}
-
-	public void setFragmentPlaylist(Fragment fragmentPlaylist) {
-		FragmentPlaylist = fragmentPlaylist;
-	}
-
-	public void setAPI(ArrayList<String> aPI) {
-		API = aPI;
-	}
-
 	private final class GuidePageChangeListener implements OnPageChangeListener {
 
 		@Override
@@ -453,34 +311,11 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 
 	}
 
-	class LoadMoreTask extends AsyncTask<String, String, String> {
-		public LoadMoreTask(String s) {
-		}
-
+	class LoadMoreTask_News extends LoadMoreTask {
 		@Override
 		protected String doInBackground(String... uri) {
 
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response;
-			String responseString = null;
-			try {
-				response = httpclient.execute(new HttpGet(uri[0]));
-				StatusLine statusLine = response.getStatusLine();
-				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					response.getEntity().writeTo(out);
-					out.close();
-					responseString = out.toString();
-				} else {
-					// Closes the connection.
-					response.getEntity().getContent().close();
-					throw new IOException(statusLine.getReasonPhrase());
-				}
-			} catch (ClientProtocolException e) {
-				// TODO Handle problems..
-			} catch (IOException e) {
-				// TODO Handle problems..
-			}
+			super.doInBackground(uri[0]);
 
 			if (!isPagerSet) {
 				String url = "http://www.gosugamers.net/dota2/gosubet";
@@ -504,83 +339,47 @@ public class Whatsnew_Fragment extends SherlockListFragment {
 			}
 
 			return responseString;
+
 		}
 
 		@Override
 		protected void onPostExecute(String result) {
-			// Do anything with response..
-			// System.out.println(result);
+			if (!taskCancel || result == null) {
+				if (!isPagerSet) {
+					for (Element link : links) {
 
-			// ytf = switcher(ytf,result);
+						String match;
 
-			if (!isPagerSet) {
-				for (Element link : links) {
+						match = link.select("span").first().text().trim()
+								+ " vs "
+								+ link.select("span").get(2).text().trim()
+								+ " ";
+						if (link.getElementsByClass("results").isEmpty())
+							match += link.select("td").get(3).text().trim();
+						else
+							match += link.select("span.hidden").first().text()
+									.trim();
 
-					String match;
+						matches.add(match);
+					}
 
-					match = link.select("span").first().text().trim() + " vs "
-							+ link.select("span").get(2).text().trim() + " ";
-					if (link.getElementsByClass("results").isEmpty())
-						match += link.select("td").get(3).text().trim();
-					else
-						match += link.select("span.hidden").first().text()
-								.trim();
+					initViewPager();
 
-					matches.add(match);
+					isPagerSet = true;
 				}
 
-				initViewPager();
-
-				isPagerSet = true;
+				super.onPostExecute(result);
 			}
-
-			feedManager.setmJSON(result);
-
-			List<Video> newVideos = feedManager.getVideoPlaylist();
-
-			// adding new loaded videos to our current video list
-			for (Video v : newVideos) {
-				System.out.println("new id: " + v.getVideoId());
-				titles.add(v.getTitle());
-				videos.add(v.getVideoId());
-				videolist.add(v);
-			}
-			try {
-				// put the next API in the first place of the array
-				API.set(0, feedManager.getNextApi());
-				if (API.get(0) == null) {
-					// No more videos left
-					isMoreVideos = false;
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			vaa.notifyDataSetChanged();
-
-			// Call onLoadMoreComplete when the LoadMore task, has finished
-			((LoadMoreListView) getListView()).onLoadMoreComplete();
-
-			// loading done
-			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-					View.GONE);
-
-			if (!isMoreVideos) {
-				((LoadMoreListView) getListView()).onNoMoreItems();
-
-				myLoadMoreListView.setOnLoadMoreListener(null);
-			}
-
-			super.onPostExecute(result);
 
 		}
 
-		@Override
-		protected void onCancelled() {
-			// Notify the loading more operation has finished
-			((LoadMoreListView) getListView()).onLoadMoreComplete();
-		}
+	}
 
+	@Override
+	protected void doRequest() {
+		// TODO Auto-generated method stub
+		for (String s : API)
+			new LoadMoreTask_News().execute(s);
 	}
 
 }

@@ -121,7 +121,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		if (savedInstanceState == null) {
-			selectItem(0);
+			selectItem(1);
 		}
 	}
 
@@ -170,22 +170,22 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 			case 1:
 				// Main Page
-				mActionBar.setTitle("Highlights");
-				Whatsnew_Fragment whatsnew = new Whatsnew_Fragment();
-				whatsnew.setAbTitle("What's New");
-				whatsnew.setHasOptionsMenu(true);
-
-				// set the APIs which will be sent to server
-				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
-				whatsnew.setAPI(al);
-
-				whatsnew.setFeedManager(new FeedManager_Subscription());
-				whatsnew.setNextFragment(null);
-				whatsnew.setTitles(new ArrayList<String>());
-				whatsnew.setVideos(new ArrayList<String>());
-				whatsnew.setVideolist(new ArrayList<Video>());
+//				mActionBar.setTitle("Highlights");
+//				Whatsnew_Fragment whatsnew = new Whatsnew_Fragment();
+//				whatsnew.setAbTitle("What's New");
+//				whatsnew.setHasOptionsMenu(true);
+//
+//				// set the APIs which will be sent to server
+//				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
+//				whatsnew.setAPI(al);
+//
+//				whatsnew.setFeedManager(new FeedManager_Subscription());
+//				whatsnew.setNextFragment(null);
+//				whatsnew.setTitles(new ArrayList<String>());
+//				whatsnew.setVideos(new ArrayList<String>());
+//				whatsnew.setVideolist(new ArrayList<Video>());
 				// Fragment byAll = new Fragment_Subscription();
-				ft.replace(R.id.content_frame, whatsnew);
+				ft.replace(R.id.content_frame, new LoadMore_News());
 				break;
 
 			case 3:
