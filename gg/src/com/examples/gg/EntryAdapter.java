@@ -3,8 +3,10 @@ package com.examples.gg;
 import java.util.ArrayList;
 
 import com.examples.gg.R;
+import com.examples.gg.R.color;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +54,8 @@ public class EntryAdapter extends ArrayAdapter<Item> {
 						.findViewById(R.id.list_item_entry_summary);
 				final ImageView icon = (ImageView) v
 						.findViewById(R.id.list_item_entry_drawable);
+				final ImageView header = (ImageView) v
+						.findViewById(R.id.list_item_entry_header); 
 
 				if (title != null)
 					title.setText(ei.title);
@@ -59,8 +63,18 @@ public class EntryAdapter extends ArrayAdapter<Item> {
 					subtitle.setText(ei.subtitle);
 				if (icon != null)
 					icon.setImageResource(ei.icon);
+				if (header != null)
+					header.setImageResource(color.transparent);
+
+				if (ei.isChecked()){
+					
+					v.setBackgroundResource(color.grey);
+					header.setImageResource(color.red);
+					
+				}
 			}
 		}
+
 		return v;
 	}
 

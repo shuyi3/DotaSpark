@@ -8,10 +8,17 @@
     android:paddingRight="?android:attr/scrollbarSize">
     
     <ImageView
+        android:id="@+id/list_item_entry_header"
+        android:layout_width="10dip"
+        android:layout_height="fill_parent"
+        android:paddingLeft="0dip"
+        android:src="@color/red" />
+    
+    <ImageView
         android:id="@+id/list_item_entry_drawable"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:paddingLeft="9dp"
+        android:paddingLeft="0dip"
         android:src="@android:drawable/ic_menu_preferences" />
     
     <RelativeLayout

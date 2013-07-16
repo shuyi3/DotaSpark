@@ -175,7 +175,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		subMenu1.add(0, 13, 0, "Playlists");
 
 		MenuItem subMenu1Item = subMenu1.getItem();
-		subMenu1Item.setTitle("Classify");
+		subMenu1Item.setTitle("All(Default)");
 		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
 				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 	}

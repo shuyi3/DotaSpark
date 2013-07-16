@@ -17,4 +17,22 @@ public class SectionItem implements Item {
 		return true;
 	}
 
+	@Override
+	public void setChecked() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isChecked() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setUnchecked() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

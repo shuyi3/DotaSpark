@@ -6,6 +6,10 @@ import org.json.JSONException;
 
 import android.view.View;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
@@ -34,6 +38,21 @@ public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 		setHasOptionsMenu(true);
 
 	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+		SubMenu subMenu1 = menu.addSubMenu(0, 1, 0, "Action Item");
+		subMenu1.add(0, 11, 0, "All(Default)");
+		subMenu1.add(0, 12, 0, "Uploaders");
+		subMenu1.add(0, 13, 0, "Playlists");
+
+		MenuItem subMenu1Item = subMenu1.getItem();
+		subMenu1Item.setTitle("Playlists");
+		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
+				| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+	}
+
 
 	// this method is used in the method "onListItemClick" to pass API to the
 	// next fragment

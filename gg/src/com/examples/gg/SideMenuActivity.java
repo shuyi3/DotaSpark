@@ -2,7 +2,9 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -34,6 +36,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	ArrayList<Item> items = new ArrayList<Item>();
 	ActionBar mActionBar;
+	EntryAdapter eAdapter;
+//	public View row;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -84,12 +88,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new EntryItem("Twitch lives", "Battle begins!",
 				R.drawable.collections_cloud));
 
-		EntryAdapter adapter = new EntryAdapter(this, items);
+	    eAdapter = new EntryAdapter(this, items);
 
 		// setListAdapter(adapter);
 
 		// Set the MenuListAdapter to the ListView
-		mDrawerList.setAdapter(adapter);
+		mDrawerList.setAdapter(eAdapter);
 
 		// Capture button clicks on side menu
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -152,6 +156,16 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
+//		    if (row != null) {
+//		        row.setBackgroundColor(Color.WHITE);
+//		    }
+//		    row = view;
+//		    view.setBackgroundColor(Color.YELLOW);
+//		    		    
+			for (Item i : items)
+			    i.setUnchecked();
+			items.get(position).setChecked();
+			eAdapter.notifyDataSetChanged();
 			selectItem(position);
 		}
 	}
@@ -203,8 +217,10 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				ft.replace(R.id.content_frame, new LoadMore_Twitch());
 				break;
 			}
+			
 			ft.commit();
 			mDrawerList.setItemChecked(position, true);
+//			mDrawerList.setSelection(position);
 			// Close drawer
 			mDrawerLayout.closeDrawer(mDrawerList);
 
