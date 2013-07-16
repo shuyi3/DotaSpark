@@ -27,7 +27,7 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 		feedManager = new FeedManager_Base();
 
 		// Show menu
-		setHasOptionsMenu(true);
+		setHasOptionsMenu(false);
 
 	}
 }

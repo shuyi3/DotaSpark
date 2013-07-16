@@ -104,20 +104,23 @@ public class LoadMore_News extends LoadMore_Base {
 							}
 						});
 
-			} else
+			} else{
 				myLoadMoreListView.setOnLoadMoreListener(null);
+			}
+			
+			// show loading screen
+			// sending Initial Get Request to Youtube
+			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+					View.VISIBLE);
+
+			if (!API.isEmpty())
+				doRequest();
 
 		} else {
 			ic.networkToast(sfa);
 		}
 
-		// show loading screen
-		// sending Initial Get Request to Youtube
-		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-				View.VISIBLE);
 
-		if (!API.isEmpty())
-			doRequest();
 
 	}
 

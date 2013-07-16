@@ -126,6 +126,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		if (savedInstanceState == null) {
 			selectItem(1);
+			
 		}
 	}
 
@@ -162,10 +163,6 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 //		    row = view;
 //		    view.setBackgroundColor(Color.YELLOW);
 //		    		    
-			for (Item i : items)
-			    i.setUnchecked();
-			items.get(position).setChecked();
-			eAdapter.notifyDataSetChanged();
 			selectItem(position);
 		}
 	}
@@ -175,6 +172,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		InternetConnection ic = new InternetConnection();
 
 		if (ic.isOnline(this)) {
+			for (Item i : items)
+			    i.setUnchecked();
+			items.get(position).setChecked();
+			eAdapter.notifyDataSetChanged();
+
+			
 			FragmentTransaction ft = getSupportFragmentManager()
 					.beginTransaction();
 			// Locate Position

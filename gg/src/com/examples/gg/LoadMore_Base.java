@@ -148,8 +148,17 @@ public class LoadMore_Base extends SherlockListFragment {
 							}
 						});
 
-			} else
+			} else{
 				myLoadMoreListView.setOnLoadMoreListener(null);
+			}
+			
+			// sending Initial Get Request to Youtube
+			if (!API.isEmpty()){
+				// show loading screen
+				sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+						View.VISIBLE);
+				doRequest();
+			}
 
 		} else {
 			ic.networkToast(sfa);
@@ -157,13 +166,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 
 
-		// sending Initial Get Request to Youtube
-		if (!API.isEmpty()){
-			// show loading screen
-			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-					View.VISIBLE);
-			doRequest();
-		}
+
 	}
 
 	@Override
