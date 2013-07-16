@@ -1,7 +1,5 @@
 package com.examples.gg;
 
-import com.examples.gg.SideMenuActivity.DummySectionFragment;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

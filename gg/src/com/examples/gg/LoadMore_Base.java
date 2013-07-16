@@ -16,6 +16,7 @@ import org.json.JSONException;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -53,8 +54,10 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected Fragment FragmentPlaylist;
 	protected ArrayList<String> API;
 	protected String nextAPI;
+	protected boolean taskCancel = false;
 
 	protected VideoArrayAdapter vaa;
+	protected LoadMoreTask mLoadMoreTask = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +91,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Set action bar title
 		ab.setTitle(abTitle);
-		
+
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
@@ -129,7 +132,9 @@ public class LoadMore_Base extends SherlockListFragment {
 
 									// network ok
 									if (isMoreVideos == true) {
-										new LoadMoreTask("").execute(API.get(0));
+										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask(
+												"");
+										mLoadMoreTask.execute(API.get(0));
 									}
 								} else {
 									ic.networkToast(sfa);
@@ -147,10 +152,8 @@ public class LoadMore_Base extends SherlockListFragment {
 			ic.networkToast(sfa);
 		}
 
-
-
 		// sending Initial Get Request to Youtube
-		if (!API.isEmpty()){
+		if (!API.isEmpty()) {
 			// show loading screen
 			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
 					View.VISIBLE);
@@ -177,12 +180,12 @@ public class LoadMore_Base extends SherlockListFragment {
 			com.actionbarsherlock.view.MenuItem item) {
 
 		if (ic.isOnline(sfa)) {
-			
+
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			
+
 			// Putting the current fragment into stack for later call back
-			//ft.addToBackStack(null);
-			
+			// ft.addToBackStack(null);
+
 			switch (item.getItemId()) {
 			case 11:
 				// Menu option 1
@@ -265,55 +268,61 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		@Override
 		protected void onPostExecute(String result) {
-			// Do anything with response..
-			// System.out.println(result);
 
-			// ytf = switcher(ytf,result);
+			if (!taskCancel || result == null) {
+				// Do anything with response..
+				// System.out.println(result);
 
-			feedManager.setmJSON(result);
+				// ytf = switcher(ytf,result);
 
-			List<Video> newVideos = feedManager.getVideoPlaylist();
+				feedManager.setmJSON(result);
 
-			// adding new loaded videos to our current video list
-			for (Video v : newVideos) {
-				System.out.println("new id: " + v.getVideoId());
-				titles.add(v.getTitle());
-				videos.add(v.getVideoId());
-				videolist.add(v);
-			}
-			try {
-				// put the next API in the first place of the array
-				API.set(0, feedManager.getNextApi());
-				if (API.get(0) == null) {
-					// No more videos left
-					isMoreVideos = false;
+				List<Video> newVideos = feedManager.getVideoPlaylist();
+
+				// adding new loaded videos to our current video list
+				
+				for (Video v : newVideos) {
+					System.out.println("new id: " + v.getVideoId());
+					titles.add(v.getTitle());
+					videos.add(v.getVideoId());
+					videolist.add(v);
 				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					// put the next API in the first place of the array
+					API.set(0, feedManager.getNextApi());
+					if (API.get(0) == null) {
+						// No more videos left
+						isMoreVideos = false;
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				vaa.notifyDataSetChanged();
+
+				// Call onLoadMoreComplete when the LoadMore task, has finished
+				((LoadMoreListView) getListView()).onLoadMoreComplete();
+
+				// loading done
+				sfa.findViewById(R.id.fullscreen_loading_indicator)
+						.setVisibility(View.GONE);
+
+				if (!isMoreVideos) {
+					((LoadMoreListView) getListView()).onNoMoreItems();
+
+					myLoadMoreListView.setOnLoadMoreListener(null);
+				}
+
+				super.onPostExecute(result);
+
 			}
-			vaa.notifyDataSetChanged();
-
-			// Call onLoadMoreComplete when the LoadMore task, has finished
-			((LoadMoreListView) getListView()).onLoadMoreComplete();
-
-			// loading done
-			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-					View.GONE);
-
-			if (!isMoreVideos) {
-				((LoadMoreListView) getListView()).onNoMoreItems();
-
-				myLoadMoreListView.setOnLoadMoreListener(null);
-			}
-
-			super.onPostExecute(result);
 
 		}
 
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
+			if (!taskCancel)
 			((LoadMoreListView) getListView()).onLoadMoreComplete();
 		}
 
@@ -328,6 +337,18 @@ public class LoadMore_Base extends SherlockListFragment {
 
 	public void Initializing() {
 
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		// check the state of the task
+		if (mLoadMoreTask != null
+				&& mLoadMoreTask.getStatus() == Status.RUNNING)
+			mLoadMoreTask.cancel(true);
+			taskCancel = true;
+			System.out.println("Task canceled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 }
