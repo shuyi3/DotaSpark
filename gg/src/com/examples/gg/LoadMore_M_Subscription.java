@@ -1,5 +1,7 @@
 package com.examples.gg;
 
+import android.view.View;
+
 public class LoadMore_M_Subscription extends LoadMore_Base {
 
 	@Override
@@ -22,6 +24,18 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 
 		// Show menu
 		setHasOptionsMenu(true);
+		
+		// Set retry button listener
+		mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				// Continue to check network status
+				networkHandler(new LoadMore_M_Subscription());
+
+			}
+		});
 
 	}
 }

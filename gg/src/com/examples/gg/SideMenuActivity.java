@@ -2,21 +2,17 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -37,13 +33,15 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	ArrayList<Item> items = new ArrayList<Item>();
 	ActionBar mActionBar;
 	EntryAdapter eAdapter;
+	
+	private Activity mActivity;
 //	public View row;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawer_main);
-
+		mActivity = this;
 		// Generate title
 		// title = new String[] { "Title Fragment 1", "Title Fragment 2",
 		// "Title Fragment 3" };
@@ -57,7 +55,10 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// icon = new int[] { R.drawable.action_about,
 		// R.drawable.action_settings,
 		// R.drawable.collections_cloud };
+		
 
+        
+        
 		// Locate DrawerLayout in drawer_main.xml
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -103,7 +104,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setTitle("Main Menu");
+		//mActionBar.setTitle("Main Menu");
 
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
@@ -128,6 +129,17 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			selectItem(1);
 			
 		}
+		
+        final Button button = (Button) findViewById(R.id.mRetryButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+        		mActivity.findViewById(R.id.mRetry).setVisibility(
+        				View.GONE);
+            	// Going to News section by default
+            	selectItem(1);
+            }
+        });
 	}
 
 	@Override
@@ -171,7 +183,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// check network
 		InternetConnection ic = new InternetConnection();
 
-		if (ic.isOnline(this)) {
+		if (ic.checkConnection(this)) {
 			for (Item i : items)
 			    i.setUnchecked();
 			items.get(position).setChecked();
@@ -186,22 +198,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			switch (position) {
 
 			case 1:
-				// Main Page
-//				mActionBar.setTitle("Highlights");
-//				Whatsnew_Fragment whatsnew = new Whatsnew_Fragment();
-//				whatsnew.setAbTitle("What's New");
-//				whatsnew.setHasOptionsMenu(true);
-//
-//				// set the APIs which will be sent to server
-//				al.add("https://gdata.youtube.com/feeds/api/users/WK3QT_GLR3y_lSNYSRkMHw/newsubscriptionvideos?max-results=10&alt=json");
-//				whatsnew.setAPI(al);
-//
-//				whatsnew.setFeedManager(new FeedManager_Subscription());
-//				whatsnew.setNextFragment(null);
-//				whatsnew.setTitles(new ArrayList<String>());
-//				whatsnew.setVideos(new ArrayList<String>());
-//				whatsnew.setVideolist(new ArrayList<Video>());
-				// Fragment byAll = new Fragment_Subscription();
+				// News
 				ft.replace(R.id.content_frame, new LoadMore_News());
 				break;
 
@@ -227,8 +224,6 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			// Close drawer
 			mDrawerLayout.closeDrawer(mDrawerList);
 
-		} else {
-			ic.networkToast(this);
 		}
 	}
 
@@ -244,6 +239,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	public void retry(View v){
+		this.findViewById(R.id.mRetry).setVisibility(
+				View.GONE);
+		
 	}
 
 }

@@ -19,5 +19,7 @@
  	<string name="loading">Loading...</string>
  	<string name="albumtitle">some title</string>
  	<string name="numberofvideos">50 videos</string>
+ 	<string name="network">Please check your network connection.</string>
+ 	<string name="retry">Retry</string>
 
 </resources>

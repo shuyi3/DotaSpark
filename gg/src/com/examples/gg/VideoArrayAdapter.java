@@ -3,6 +3,8 @@ package com.examples.gg;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,7 +34,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		InternetConnection ic = new InternetConnection();
 		ViewHolder holder;
 
 		// if (convertView == null) {
@@ -76,27 +78,28 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		// values for time and view counts should not be null
 		if (videos.get(position).getUpdateTime() != null
 				&& videos.get(position).getViewCount() != null) {
-			
+
 			// For Youtube videos, showing update date and views
 			holder.countView.setText(videos.get(position).getUpdateTime()
 					+ " | " + videos.get(position).getViewCount());
-		} else if(videos.get(position).getViewCount() != null){
-			
+		} else if (videos.get(position).getViewCount() != null) {
+
 			// For Twitch, only showing number of viewers
 			holder.countView.setText(videos.get(position).getViewCount());
-		} else{	
-			
+		} else {
+
 			holder.countView.setText(null);
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
 
-		if (videos.get(position).getThumbnail() == null)
-			new DownloadImage(videos.get(position).getThumbnailUrl(),
-					videos.get(position), holder.imageView).execute();
-		else
-			holder.imageView
-					.setImageBitmap(videos.get(position).getThumbnail());
-
+		if (videos.get(position).getThumbnail() == null){
+			if (ic.isOnline((Activity) context))
+				new DownloadImage(videos.get(position).getThumbnailUrl(),
+						videos.get(position), holder.imageView).execute();
+		}else{
+				holder.imageView.setImageBitmap(videos.get(position)
+						.getThumbnail());
+		}
 		return convertView;
 	}
 

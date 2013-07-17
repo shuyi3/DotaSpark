@@ -1,5 +1,7 @@
 package com.examples.gg;
 
+import android.view.View;
+
 public class LoadMore_H_L2 extends LoadMore_Base {
 	private String mAPI;
 
@@ -28,6 +30,18 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 
 		// Show menu
 		setHasOptionsMenu(false);
+		
+		// Set retry button listener
+		mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				// Continue to check network status
+				networkHandler(new LoadMore_H_L2(mAPI));
+
+			}
+		});
 
 	}
 }

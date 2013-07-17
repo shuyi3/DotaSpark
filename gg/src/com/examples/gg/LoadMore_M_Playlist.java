@@ -1,5 +1,7 @@
 package com.examples.gg;
 
+import android.view.View;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -25,6 +27,18 @@ public class LoadMore_M_Playlist extends LoadMore_Base_UP {
 
 		// Show menu component
 		setHasOptionsMenu(true);
+		
+		// Set retry button listener
+		mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				// Continue to check network status
+				networkHandler(new LoadMore_M_Playlist());
+
+			}
+		});
 
 	}
 	

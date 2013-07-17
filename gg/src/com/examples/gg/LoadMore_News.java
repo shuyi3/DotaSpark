@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
 public class LoadMore_News extends LoadMore_Base {
 
@@ -65,64 +67,74 @@ public class LoadMore_News extends LoadMore_Base {
 
 		// Show menu
 		setHasOptionsMenu(false);
+		
+		// Set retry button listener
+		mRetryButton.setOnClickListener(new View.OnClickListener() {
 
-	}
+			@Override
+			public void onClick(View v) {
+				
+				// Continue to check network status
+				networkHandler(new LoadMore_News());
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-
-		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);
-
-		if (ic.isOnline(sfa)) {
-			if (isMoreVideos) {
-				// there are more videos in the list
-				// set the listener for loading need
-				myLoadMoreListView
-						.setOnLoadMoreListener(new OnLoadMoreListener() {
-							public void onLoadMore() {
-								// Do the work to load more items at the end of
-								// list
-								// hereru
-
-								// checking network
-								if (ic.isOnline(sfa)) {
-
-									// network ok
-									if (isMoreVideos == true) {
-										new LoadMoreTask_News().execute(API
-												.get(0));
-									}
-								} else {
-									ic.networkToast(sfa);
-									((LoadMoreListView) getListView())
-											.onLoadMoreComplete();
-								}
-
-							}
-						});
-
-			} else{
-				myLoadMoreListView.setOnLoadMoreListener(null);
 			}
-			
-			// show loading screen
-			// sending Initial Get Request to Youtube
-			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-					View.VISIBLE);
-
-			if (!API.isEmpty())
-				doRequest();
-
-		} else {
-			ic.networkToast(sfa);
-		}
-
-
+		});
 
 	}
+
+//	@Override
+//	public void onActivityCreated(Bundle savedInstanceState) {
+//		// TODO Auto-generated method stub
+//		super.onActivityCreated(savedInstanceState);
+//
+//		myLoadMoreListView = (LoadMoreListView) this.getListView();
+//		myLoadMoreListView.setDivider(null);
+//
+//		if (ic.checkConnection(sfa)) {
+//			if (isMoreVideos) {
+//				// there are more videos in the list
+//				// set the listener for loading need
+//				myLoadMoreListView
+//						.setOnLoadMoreListener(new OnLoadMoreListener() {
+//							public void onLoadMore() {
+//								// Do the work to load more items at the end of
+//								// list
+//								// hereru
+//
+//								// checking network
+//								if (ic.checkConnection(sfa)) {
+//
+//									// network ok
+//									if (isMoreVideos == true) {
+//										new LoadMoreTask_News().execute(API
+//												.get(0));
+//									}
+//								} else {
+//									//ic.networkToast(sfa);
+//									((LoadMoreListView) getListView())
+//											.onLoadMoreComplete();
+//								}
+//
+//							}
+//						});
+//
+//			} else{
+//				myLoadMoreListView.setOnLoadMoreListener(null);
+//			}
+//			
+//			// show loading screen
+//			// sending Initial Get Request to Youtube
+//			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+//					View.VISIBLE);
+//
+//			if (!API.isEmpty())
+//				doRequest();
+//
+//		}
+//
+//
+//
+//	}
 
 	@SuppressWarnings("deprecation")
 	private void initViewPager() {
@@ -361,33 +373,47 @@ public class LoadMore_News extends LoadMore_Base {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (!taskCancel || result == null) {
-				if (!isPagerSet) {
-					for (Element link : links) {
-
-						String match;
-
-						match = link.select("span").first().text().trim()
-								+ " vs "
-								+ link.select("span").get(2).text().trim()
-								+ " ";
-						if (link.getElementsByClass("results").isEmpty())
-							match += link.select("td").get(3).text().trim();
-						else
-							match += link.select("span.hidden").first().text()
-									.trim();
-
-						matches.add(match);
+			if(ic.checkConnection(sfa)){
+				if (!taskCancel && result != null) {
+					if (!isPagerSet) {
+						for (Element link : links) {
+	
+							String match;
+	
+							match = link.select("span").first().text().trim()
+									+ " vs "
+									+ link.select("span").get(2).text().trim()
+									+ " ";
+							if (link.getElementsByClass("results").isEmpty())
+								match += link.select("td").get(3).text().trim();
+							else
+								match += link.select("span.hidden").first().text()
+										.trim();
+	
+							matches.add(match);
+						}
+	
+						initViewPager();
+	
+						isPagerSet = true;
 					}
-
-					initViewPager();
-
-					isPagerSet = true;
+	
+					super.onPostExecute(result);
 				}
-
-				super.onPostExecute(result);
+			}else{
+				// No internet
+				// Cancel the load more animation
+				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+				
+				if(sfa.findViewById(R.id.fullscreen_loading_indicator).getVisibility() == View.VISIBLE){
+					// Internet lost during fullscree loading
+					
+					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+				}else{
+					// Internet lost during loading more
+					ic.setNetworkError(InternetConnection.loadingMoreError);
+				}
 			}
-
 		}
 
 	}

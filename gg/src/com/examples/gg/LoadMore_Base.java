@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -59,13 +60,16 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected LayoutInflater mInflater;
 	protected VideoArrayAdapter vaa;
 	protected LoadMoreTask mLoadMoreTask = null;
+	protected Button mRetryButton;
+	protected View mRetryView;
+	protected boolean needFilter = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		mInflater = inflater;
-		
+
 		// For check internet connection
 		ic = new InternetConnection();
 
@@ -74,6 +78,12 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Get the current activity
 		sfa = this.getSherlockActivity();
+
+		// Get the button view in retry.xml
+		mRetryButton = (Button) sfa.findViewById(R.id.mRetryButton);
+
+		// Get Retry view
+		mRetryView = sfa.findViewById(R.id.mRetry);
 
 		// get action bar
 		ab = sfa.getSupportActionBar();
@@ -94,7 +104,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Set action bar title
 		ab.setTitle(abTitle);
-		
+
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
@@ -120,7 +130,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
-		if (ic.isOnline(sfa)) {
+		if (ic.checkConnection(sfa)) {
 			if (isMoreVideos) {
 				// there are more videos in the list
 				// set the listener for loading need
@@ -131,7 +141,7 @@ public class LoadMore_Base extends SherlockListFragment {
 								// list
 
 								// checking network
-								if (ic.isOnline(sfa)) {
+								if (ic.checkConnection(sfa)) {
 
 									// network ok
 									if (isMoreVideos == true) {
@@ -140,32 +150,29 @@ public class LoadMore_Base extends SherlockListFragment {
 										mLoadMoreTask.execute(API.get(0));
 									}
 								} else {
-									ic.networkToast(sfa);
-									((LoadMoreListView) getListView())
+
+									// ic.networkToast(sfa);
+
+									((LoadMoreListView) myLoadMoreListView)
 											.onLoadMoreComplete();
 								}
 
 							}
 						});
 
-			} else{
+			} else {
 				myLoadMoreListView.setOnLoadMoreListener(null);
 			}
-			
+
 			// sending Initial Get Request to Youtube
-			if (!API.isEmpty()){
+			if (!API.isEmpty()) {
 				// show loading screen
-				sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-						View.VISIBLE);
+				sfa.findViewById(R.id.fullscreen_loading_indicator)
+						.setVisibility(View.VISIBLE);
 				doRequest();
 			}
 
-		} else {
-			ic.networkToast(sfa);
 		}
-
-
-
 
 	}
 
@@ -187,36 +194,30 @@ public class LoadMore_Base extends SherlockListFragment {
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
 
-		if (ic.isOnline(sfa)) {
-			
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			
-			// Putting the current fragment into stack for later call back
-			//ft.addToBackStack(null);
-			
-			switch (item.getItemId()) {
-			case 11:
-				// Menu option 1
-				ft.replace(R.id.content_frame, FragmentAll);
-				break;
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-			case 12:
-				// Menu option 2
-				ft.replace(R.id.content_frame, FragmentUploader);
-				break;
+		// Putting the current fragment into stack for later call back
+		// ft.addToBackStack(null);
 
-			case 13:
-				// Menu option 3
-				ft.replace(R.id.content_frame, FragmentPlaylist);
-				break;
-			default:
-				return super.onOptionsItemSelected(item);
-			}
-			ft.commit();
+		switch (item.getItemId()) {
+		case 11:
+			// Menu option 1
+			ft.replace(R.id.content_frame, FragmentAll);
+			break;
 
-		} else {
-			ic.networkToast(this.getSherlockActivity());
+		case 12:
+			// Menu option 2
+			ft.replace(R.id.content_frame, FragmentUploader);
+			break;
+
+		case 13:
+			// Menu option 3
+			ft.replace(R.id.content_frame, FragmentPlaylist);
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
+		ft.commit();
 
 		return true;
 	}
@@ -225,7 +226,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		// check network first
-		if (ic.isOnline(this.getSherlockActivity())) {
+		if (ic.checkConnection(this.getSherlockActivity())) {
 			// get selected items
 
 			// String selectedValue = (String)
@@ -238,19 +239,20 @@ public class LoadMore_Base extends SherlockListFragment {
 			i.putExtra("video", videolist.get(position));
 			startActivity(i);
 		} else {
-			ic.networkToast(this.getSherlockActivity());
+			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
 		}
 
 	}
 
 	class LoadMoreTask extends AsyncTask<String, String, String> {
 		protected String responseString = null;
+
 		@Override
 		protected String doInBackground(String... uri) {
 
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
-			
+
 			try {
 				response = httpclient.execute(new HttpGet(uri[0]));
 				StatusLine statusLine = response.getStatusLine();
@@ -276,51 +278,72 @@ public class LoadMore_Base extends SherlockListFragment {
 		protected void onPostExecute(String result) {
 			// Do anything with response..
 			// System.out.println(result);
-
-			if (!taskCancel || result == null) {
+			if (ic.checkConnection(sfa)) {
+				if (!taskCancel && result != null) {
 					// Do anything with response..
 					// System.out.println(result);
-	
+
 					// ytf = switcher(ytf,result);
-	
-				feedManager.setmJSON(result);
-	
-				List<Video> newVideos = feedManager.getVideoPlaylist();
-	
-				// adding new loaded videos to our current video list
-				for (Video v : newVideos) {
-					System.out.println("new id: " + v.getVideoId());
-					titles.add(v.getTitle());
-					videos.add(v.getVideoId());
-					videolist.add(v);
-				}
-				try {
-					// put the next API in the first place of the array
-					API.set(0, feedManager.getNextApi());
-					if (API.get(0) == null) {
-						// No more videos left
-						isMoreVideos = false;
+
+					feedManager.setmJSON(result);
+
+					List<Video> newVideos = feedManager.getVideoPlaylist();
+
+					// adding new loaded videos to our current video list
+					for (Video v : newVideos) {
+						System.out.println("new id: " + v.getVideoId());
+						if (!needFilter) {
+							titles.add(v.getTitle());
+							videos.add(v.getVideoId());
+							videolist.add(v);
+						} else {
+							filtering(v);
+						}
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					try {
+						// put the next API in the first place of the array
+						API.set(0, feedManager.getNextApi());
+						if (API.get(0) == null) {
+							// No more videos left
+							isMoreVideos = false;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					vaa.notifyDataSetChanged();
+
+					// Call onLoadMoreComplete when the LoadMore task, has
+					// finished
+					((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+
+					// loading done
+					sfa.findViewById(R.id.fullscreen_loading_indicator)
+							.setVisibility(View.GONE);
+
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						myLoadMoreListView.setOnLoadMoreListener(null);
+					}
+
+					super.onPostExecute(result);
 				}
-				vaa.notifyDataSetChanged();
-	
-				// Call onLoadMoreComplete when the LoadMore task, has finished
-				((LoadMoreListView) getListView()).onLoadMoreComplete();
-	
-				// loading done
-				sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-						View.GONE);
-	
-				if (!isMoreVideos) {
-					((LoadMoreListView) getListView()).onNoMoreItems();
-	
-					myLoadMoreListView.setOnLoadMoreListener(null);
+			} else {
+
+				// No internet
+				// Cancel the load more animation
+				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+
+				if (sfa.findViewById(R.id.fullscreen_loading_indicator)
+						.getVisibility() == View.VISIBLE) {
+					// Internet lost during fullscree loading
+
+					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+				} else {
+					// Internet lost during loading more
+					ic.setNetworkError(InternetConnection.loadingMoreError);
 				}
-	
-				super.onPostExecute(result);
 			}
 		}
 
@@ -328,7 +351,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
 			if (!taskCancel)
-			((LoadMoreListView) getListView()).onLoadMoreComplete();
+				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 		}
 
 	}
@@ -352,8 +375,63 @@ public class LoadMore_Base extends SherlockListFragment {
 		if (mLoadMoreTask != null
 				&& mLoadMoreTask.getStatus() == Status.RUNNING)
 			mLoadMoreTask.cancel(true);
-			taskCancel = true;
-			System.out.println("Task canceled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		taskCancel = true;
+		System.out.println("Task canceled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
+	protected void filtering(Video v) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void networkHandler(Fragment mFragment) {
+
+		if (ic.isOnline(sfa)) {
+
+			switch (ic.getNetworkError()) {
+			case 1:
+				// network lost during fullscreen loading
+				Toast.makeText(sfa, "network lost during fullscreen loading",
+						Toast.LENGTH_SHORT).show();
+
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.content_frame, mFragment);
+				ft.commit();
+				mRetryView.setVisibility(View.GONE);
+				break;
+			case 2:
+				// Internet lost during loading more
+				// This is for loadMoreTask, Should not reload the fragment,
+				// only hide the view of retry
+				Toast.makeText(sfa, "Internet lost during loading more",
+						Toast.LENGTH_SHORT).show();
+
+				mRetryView.setVisibility(View.GONE);
+
+				// Continue previous loading
+				if (isMoreVideos == true) {
+					new LoadMoreTask().execute(API.get(0));
+					mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
+					mLoadMoreTask.execute(API.get(0));
+				}
+				break;
+
+			case 3:
+				// Internet lost during transition to video player
+				// Hide the retry view if it is online
+				Toast.makeText(sfa,
+						"Internet lost during transition to video player",
+						Toast.LENGTH_SHORT).show();
+				mRetryView.setVisibility(View.GONE);
+				break;
+
+			default:
+				Toast.makeText(sfa, "Other unknown internet error!",
+						Toast.LENGTH_SHORT).show();
+				break;
+
+			}
+		}
+	}
 }

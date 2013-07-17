@@ -13,7 +13,7 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		// check network first
-		if (ic.isOnline(sfa)) {
+		if (ic.checkConnection(sfa)) {
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			
@@ -29,6 +29,7 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 			ft.commit();
 		} else {
 			ic.networkToast(sfa);
+			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
 		}
 
 	}
@@ -38,4 +39,5 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 
 
 	}
+	
 }
