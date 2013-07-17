@@ -28,8 +28,8 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 			ft.replace(R.id.content_frame, mLoadMore);
 			ft.commit();
 		} else {
-			ic.networkToast(sfa);
-			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
+			//ic.networkToast(sfa);
+			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
 		}
 
 	}

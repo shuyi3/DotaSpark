@@ -172,13 +172,15 @@ public class LoadMore_Base extends SherlockListFragment {
 				doRequest();
 			}
 
+		}else{
+			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
 		}
 
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
+		//sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
 		SubMenu subMenu1 = menu.addSubMenu(0, 1, 0, "Action Item");
 		subMenu1.add(0, 11, 0, "All(Default)");
 		subMenu1.add(0, 12, 0, "Uploaders");
