@@ -24,6 +24,7 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 
 		// Show menu
 		setHasOptionsMenu(true);
+		setOptionMenu(true, true);
 		
 		// Set retry button listener
 		setRetryButtonListener(new LoadMore_M_Subscription());

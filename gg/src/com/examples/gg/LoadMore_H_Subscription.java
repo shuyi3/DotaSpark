@@ -20,8 +20,10 @@ public class LoadMore_H_Subscription extends LoadMore_Base {
 		// set a feed manager
 		feedManager = new FeedManager_Subscription();
 
-		// Show menu
+		// Show menu		
 		setHasOptionsMenu(true);
+		setOptionMenu(true, true);
+
 		
 		// Set retry button listener
 		setRetryButtonListener(new LoadMore_H_Subscription());
