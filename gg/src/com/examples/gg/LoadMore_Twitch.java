@@ -21,16 +21,12 @@ public class LoadMore_Twitch extends LoadMore_Base {
 		setHasOptionsMenu(false);
 
 		// Set retry button listener
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				// Continue to check network status
-				networkHandler(new LoadMore_Twitch());
-
-			}
-		});
+		setRetryButtonListener(new LoadMore_Twitch());
+		
+		// Clear fragment back stack
+		clearFragmentStack();
 
 	}
+	
+
 }

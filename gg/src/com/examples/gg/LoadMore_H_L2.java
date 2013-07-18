@@ -32,16 +32,7 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 		setHasOptionsMenu(false);
 		
 		// Set retry button listener
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				// Continue to check network status
-				networkHandler(new LoadMore_H_L2(mAPI));
-
-			}
-		});
+		setRetryButtonListener(new LoadMore_H_L2(mAPI));
 
 	}
 }

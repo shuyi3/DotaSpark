@@ -24,16 +24,10 @@ public class LoadMore_H_Subscription extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		
 		// Set retry button listener
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				// Continue to check network status
-				networkHandler(new LoadMore_H_Subscription());
-
-			}
-		});
+		setRetryButtonListener(new LoadMore_H_Subscription());
+		
+		// Clear fragment back stack
+		clearFragmentStack();
 
 	}
 

@@ -69,72 +69,12 @@ public class LoadMore_News extends LoadMore_Base {
 		setHasOptionsMenu(false);
 		
 		// Set retry button listener
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				// Continue to check network status
-				networkHandler(new LoadMore_News());
-
-			}
-		});
+		setRetryButtonListener(new LoadMore_News());
+		
+		// Clear fragment back stack
+		clearFragmentStack();
 
 	}
-
-//	@Override
-//	public void onActivityCreated(Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		super.onActivityCreated(savedInstanceState);
-//
-//		myLoadMoreListView = (LoadMoreListView) this.getListView();
-//		myLoadMoreListView.setDivider(null);
-//
-//		if (ic.checkConnection(sfa)) {
-//			if (isMoreVideos) {
-//				// there are more videos in the list
-//				// set the listener for loading need
-//				myLoadMoreListView
-//						.setOnLoadMoreListener(new OnLoadMoreListener() {
-//							public void onLoadMore() {
-//								// Do the work to load more items at the end of
-//								// list
-//								// hereru
-//
-//								// checking network
-//								if (ic.checkConnection(sfa)) {
-//
-//									// network ok
-//									if (isMoreVideos == true) {
-//										new LoadMoreTask_News().execute(API
-//												.get(0));
-//									}
-//								} else {
-//									//ic.networkToast(sfa);
-//									((LoadMoreListView) getListView())
-//											.onLoadMoreComplete();
-//								}
-//
-//							}
-//						});
-//
-//			} else{
-//				myLoadMoreListView.setOnLoadMoreListener(null);
-//			}
-//			
-//			// show loading screen
-//			// sending Initial Get Request to Youtube
-//			sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-//					View.VISIBLE);
-//
-//			if (!API.isEmpty())
-//				doRequest();
-//
-//		}
-//
-//
-//
-//	}
 
 	@SuppressWarnings("deprecation")
 	private void initViewPager() {

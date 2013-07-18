@@ -12,6 +12,9 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +24,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private final ArrayList<String> values;
 	private ArrayList<Video> videos;
 	private LayoutInflater inflater;
-
+	private Animation fadeAnimation;
+	private ImageView mImageView;
+	
 	public VideoArrayAdapter(Context context, ArrayList<String> values,
 			ArrayList<Video> videos) {
 		super(context, R.layout.videolist, values);
@@ -30,6 +35,31 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		this.videos = videos;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		// Set animation for loading image
+		fadeAnimation = AnimationUtils.loadAnimation(context, R.anim.fadein);
+		
+		fadeAnimation.setAnimationListener(new AnimationListener(){
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+				// TODO Auto-generated method stub
+				mImageView.setVisibility(View.VISIBLE);
+			}
+			
+		});
 	}
 
 	@Override
@@ -44,6 +74,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 
 		holder.titleView = (TextView) convertView.findViewById(R.id.videotitle);
 		holder.imageView = (ImageView) convertView.findViewById(R.id.thumbnail);
+		mImageView = holder.imageView;
 		holder.countView = (TextView) convertView.findViewById(R.id.Desc);
 		holder.videoLength = (TextView) convertView
 				.findViewById(R.id.videolength);
@@ -141,6 +172,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		@Override
 		protected void onPostExecute(Bitmap result) {
 			imageView.setImageBitmap(result);
+			imageView.startAnimation(fadeAnimation);
 		}
 
 	}

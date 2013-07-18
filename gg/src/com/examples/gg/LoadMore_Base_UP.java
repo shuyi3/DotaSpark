@@ -24,8 +24,8 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 			
 			//intialize  fragment by passing a API to it
 			InitializingNextFragment();
-			
-			ft.replace(R.id.content_frame, mLoadMore);
+			ft.hide(this);
+			ft.add(R.id.content_frame, mLoadMore);
 			ft.commit();
 		} else {
 			//ic.networkToast(sfa);

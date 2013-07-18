@@ -42,25 +42,7 @@ public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 		needFilter = true;
 
 		// Set retry button listener
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				// Set retry button listener
-				mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						// Continue to check network status
-						networkHandler(new LoadMore_H_Playlist());
-
-					}
-				});
-
-			}
-		});
+		setRetryButtonListener(new LoadMore_H_Playlist());
 
 	}
 

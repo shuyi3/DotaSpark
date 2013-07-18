@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,8 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected Button mRetryButton;
 	protected View mRetryView;
 	protected boolean needFilter = false;
+	protected FragmentManager fm;
+	protected View fullscreenLoadingView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,12 +82,18 @@ public class LoadMore_Base extends SherlockListFragment {
 		// Get the current activity
 		sfa = this.getSherlockActivity();
 
+		// Initial fragment manager
+		fm = sfa.getSupportFragmentManager();
+		
 		// Get the button view in retry.xml
 		mRetryButton = (Button) sfa.findViewById(R.id.mRetryButton);
 
 		// Get Retry view
 		mRetryView = sfa.findViewById(R.id.mRetry);
-
+		
+		// Get loading view
+		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
+		
 		// get action bar
 		ab = sfa.getSupportActionBar();
 
@@ -167,12 +176,12 @@ public class LoadMore_Base extends SherlockListFragment {
 			// sending Initial Get Request to Youtube
 			if (!API.isEmpty()) {
 				// show loading screen
-				sfa.findViewById(R.id.fullscreen_loading_indicator)
+				fullscreenLoadingView
 						.setVisibility(View.VISIBLE);
 				doRequest();
 			}
 
-		}else{
+		} else {
 			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
 		}
 
@@ -180,7 +189,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		//sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(View.VISIBLE);
+		
 		SubMenu subMenu1 = menu.addSubMenu(0, 1, 0, "Action Item");
 		subMenu1.add(0, 11, 0, "All(Default)");
 		subMenu1.add(0, 12, 0, "Uploaders");
@@ -317,10 +326,11 @@ public class LoadMore_Base extends SherlockListFragment {
 
 					// Call onLoadMoreComplete when the LoadMore task, has
 					// finished
-					((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+					((LoadMoreListView) myLoadMoreListView)
+							.onLoadMoreComplete();
 
 					// loading done
-					sfa.findViewById(R.id.fullscreen_loading_indicator)
+					fullscreenLoadingView
 							.setVisibility(View.GONE);
 
 					if (!isMoreVideos) {
@@ -337,7 +347,7 @@ public class LoadMore_Base extends SherlockListFragment {
 				// Cancel the load more animation
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 
-				if (sfa.findViewById(R.id.fullscreen_loading_indicator)
+				if (fullscreenLoadingView
 						.getVisibility() == View.VISIBLE) {
 					// Internet lost during fullscree loading
 
@@ -379,6 +389,10 @@ public class LoadMore_Base extends SherlockListFragment {
 			mLoadMoreTask.cancel(true);
 		taskCancel = true;
 		System.out.println("Task canceled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
+		// Hide loading view
+		fullscreenLoadingView.setVisibility(View.GONE);
+		
 	}
 
 	protected void filtering(Video v) {
@@ -435,5 +449,25 @@ public class LoadMore_Base extends SherlockListFragment {
 
 			}
 		}
+	}
+
+	// set a listener for "Retry" button
+	public void setRetryButtonListener(final Fragment mFragment) {
+
+		mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				// Continue to check network status
+				networkHandler(mFragment);
+
+			}
+		});
+	}
+	
+	// Clear fragment back stack
+	public void clearFragmentStack(){
+		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
 }

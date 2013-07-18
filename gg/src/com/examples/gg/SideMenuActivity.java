@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -34,14 +35,17 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	ActionBar mActionBar;
 	EntryAdapter eAdapter;
 	
-	private Activity mActivity;
+	private Activity sfa;
+	private int currentDrawerFragmentId = 1;
+	private Button retryButton;
+	private View mRetryView;
 //	public View row;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawer_main);
-		mActivity = this;
+		sfa = this;
 		// Generate title
 		// title = new String[] { "Title Fragment 1", "Title Fragment 2",
 		// "Title Fragment 3" };
@@ -91,6 +95,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	    eAdapter = new EntryAdapter(this, items);
 
+		mRetryView = sfa.findViewById(R.id.mRetry);
+	    
 		// setListAdapter(adapter);
 
 		// Set the MenuListAdapter to the ListView
@@ -125,21 +131,16 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+		// set a listener for retry button
+        retryButton = (Button) findViewById(R.id.mRetryButton);
+        setRetryListener();
+		
 		if (savedInstanceState == null) {
 			selectItem(1);
 			
 		}
 		
-        final Button button = (Button) findViewById(R.id.mRetryButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-        		mActivity.findViewById(R.id.mRetry).setVisibility(
-        				View.GONE);
-            	// Going to News section by default
-            	selectItem(1);
-            }
-        });
+
 	}
 
 	@Override
@@ -224,6 +225,15 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			// Close drawer
 			mDrawerLayout.closeDrawer(mDrawerList);
 
+		}else{
+			// All errors should be full screen loading error
+			// Reset listener since listener may be changed by other fragments
+			setRetryListener();
+			currentDrawerFragmentId = position;
+			
+			// Close drawer
+			mDrawerLayout.closeDrawer(mDrawerList);
+			
 		}
 	}
 
@@ -245,6 +255,17 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		this.findViewById(R.id.mRetry).setVisibility(
 				View.GONE);
 		
+	}
+	
+	public void setRetryListener(){
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	mRetryView.setVisibility(View.GONE);
+            	// Going to News section by default
+            	selectItem(currentDrawerFragmentId);
+            }
+        });
 	}
 
 }
