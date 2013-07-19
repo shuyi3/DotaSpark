@@ -272,7 +272,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
         retryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	if(ic.isOnline(sfa)){
-            		fullscreenLoadingView.setVisibility(View.GONE);
+            		//fullscreenLoadingView.setVisibility(View.GONE);
 	                // Perform action on click
 	            	mRetryView.setVisibility(View.GONE);
 	            	// Going to News section by default

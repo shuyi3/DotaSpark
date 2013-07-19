@@ -55,7 +55,6 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected Fragment FragmentUploader;
 	protected Fragment FragmentPlaylist;
 	protected ArrayList<String> API;
-	protected String nextAPI;
 	protected boolean taskCancel = false;
 	protected View view;
 	protected LayoutInflater mInflater;
@@ -80,8 +79,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// Get loading view
 		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
 
-		// show loading screen
-		fullscreenLoadingView.setVisibility(View.VISIBLE);
+
 		
 		// default no filter for videos
 		needFilter = false;
@@ -172,7 +170,7 @@ public class LoadMore_Base extends SherlockListFragment {
 									if (isMoreVideos == true) {
 										//new LoadMoreTask().execute(API.get(0));
 										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-										mLoadMoreTask.execute(nextAPI);
+										mLoadMoreTask.execute(API.get(0));
 									}
 								} else {
 
@@ -191,6 +189,8 @@ public class LoadMore_Base extends SherlockListFragment {
 
 			// sending Initial Get Request to Youtube
 			if (!API.isEmpty()) {
+				// show loading screen
+				fullscreenLoadingView.setVisibility(View.VISIBLE);
 				doRequest();
 			}
 
@@ -337,7 +337,7 @@ public class LoadMore_Base extends SherlockListFragment {
 						System.out.println("new id: " + v.getVideoId());
 						if (needFilter) {
 							filtering(v);
-							System.out.println("need filter!");
+							//System.out.println("need filter!");
 						} else {
 							titles.add(v.getTitle());
 							videos.add(v.getVideoId());
@@ -346,9 +346,9 @@ public class LoadMore_Base extends SherlockListFragment {
 					}
 					try {
 						// put the next API in the first place of the array
-						// API.set(0, feedManager.getNextApi());
-						nextAPI = feedManager.getNextApi();
-						if (nextAPI == null) {
+						API.set(0, feedManager.getNextApi());
+						//nextAPI = feedManager.getNextApi();
+						if (API.get(0) == null) {
 							// No more videos left
 							isMoreVideos = false;
 						}
@@ -437,7 +437,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void networkHandler(Fragment mFragment) {
 
 		if (ic.isOnline(sfa)) {
-			fullscreenLoadingView.setVisibility(View.GONE);
+			//fullscreenLoadingView.setVisibility(View.GONE);
 			switch (ic.getNetworkError()) {
 			case 1:
 				// network lost during fullscreen loading
