@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,6 +40,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	private int currentDrawerFragmentId = 1;
 	private Button retryButton;
 	private View mRetryView;
+	private FragmentManager fm;
 //	public View row;
 
 	@Override
@@ -46,6 +48,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawer_main);
 		sfa = this;
+		
+		// Initial fragment manager
+		fm = this.getSupportFragmentManager();
 		// Generate title
 		// title = new String[] { "Title Fragment 1", "Title Fragment 2",
 		// "Title Fragment 3" };
@@ -195,6 +200,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 					.beginTransaction();
 			// Locate Position
 			ArrayList<String> al = new ArrayList<String>();
+			
+			// Clear the fragment stack first
+			clearFragmentStack();
 
 			switch (position) {
 
@@ -266,6 +274,10 @@ public class SideMenuActivity extends SherlockFragmentActivity {
             	selectItem(currentDrawerFragmentId);
             }
         });
+	}
+	// Clear fragment back stack
+	public void clearFragmentStack(){
+		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
 
 }

@@ -28,8 +28,6 @@ public class LoadMore_H_Subscription extends LoadMore_Base {
 		// Set retry button listener
 		setRetryButtonListener(new LoadMore_H_Subscription());
 		
-		// Clear fragment back stack
-		clearFragmentStack();
 
 	}
 	

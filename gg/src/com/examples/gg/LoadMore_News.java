@@ -79,8 +79,6 @@ public class LoadMore_News extends LoadMore_Base {
 		
 		setRetryButtonListener(new LoadMore_News());
 		
-		// Clear fragment back stack
-		clearFragmentStack();
 
 
 	}

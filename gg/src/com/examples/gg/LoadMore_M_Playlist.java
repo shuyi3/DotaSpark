@@ -38,7 +38,7 @@ public class LoadMore_M_Playlist extends LoadMore_Base_UP {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		
 		if (hasRefresh)
-	        menu.add(0, 2, 0, "Refresh")
+	        menu.add(0, 0, 0, "Refresh")
 	        .setIcon(R.drawable.ic_refresh)
 	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 

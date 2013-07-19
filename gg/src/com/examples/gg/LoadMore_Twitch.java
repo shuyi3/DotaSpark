@@ -30,8 +30,6 @@ public class LoadMore_Twitch extends LoadMore_Base {
 		// Set retry button listener
 		setRetryButtonListener(new LoadMore_Twitch());
 		
-		// Clear fragment back stack
-		clearFragmentStack();
 
 	}
 	
