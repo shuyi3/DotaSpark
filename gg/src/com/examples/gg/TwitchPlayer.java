@@ -1,6 +1,7 @@
 package com.examples.gg;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -37,11 +38,16 @@ public class TwitchPlayer extends Activity {
 	private ToggleButton lockButton;
 	private Video video;
 	private String ua;
+	private View loadingIndicator;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.twitchplayer);
+		
+		loadingIndicator = findViewById(R.id.fullscreen_loading_indicator);
+		loadingIndicator.setVisibility(View.VISIBLE);
+		
 		
 		Intent intent = getIntent();
 		video = intent.getParcelableExtra("video");
@@ -84,9 +90,9 @@ public class TwitchPlayer extends Activity {
 //		mWebChat.loadUrl("file:///android_asset/chat.html");
         
 //		mWebChat.loadUrl("http://www.twitch.tv/chat/embed?channel=beyondthesummit&popout_chat=true");
-		mWebView.loadData(stream, "text/html", null);
+//		mWebView.loadData(stream, "text/html", null);
 //		mWebView.loadUrl("file:///android_asset/stream.html");
-//		mWebView.loadUrl("http://www.twitch.tv/beyondthesummit/popout");
+		mWebView.loadUrl("http://www.twitch.tv/"+video.getVideoId()+"/popout");
 	}
 	
 	@Override
@@ -262,6 +268,18 @@ public class TwitchPlayer extends Activity {
 //			return super.shouldOverrideUrlLoading(view, url);
 			return true;
 		}
+		
+		 @Override
+		 public void onPageFinished(WebView view, String url) {
+			 
+			    Handler handler = new Handler(); 
+			    handler.postDelayed(new Runnable() { 
+			         public void run() { 
+			        	 loadingIndicator.setVisibility(View.GONE);
+			         } 
+			    }, 2000); 
+//			    loadingIndicator.setVisibility(View.GONE);
+		 }
 
 	}
 
