@@ -59,6 +59,12 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name=".TwitchPlayer"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:screenOrientation="landscape"
+            android:label="@string/title_activity_main" >
+        </activity>
+        <activity
             android:name="com.examples.gg.SideMenuActivity"
             android:label="@string/app_name" >
             <intent-filter>

@@ -81,6 +81,12 @@ public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 					| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		}
 	}
+	
+	@Override
+	public void refreshFragment(){
+		currentFragment = new LoadMore_H_Playlist();
+	}
+
 
 	// this method is used in the method "onListItemClick" to pass API to the
 	// next fragment

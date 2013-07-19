@@ -1,0 +1,52 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+  
+   <FrameLayout
+       android:id="@+id/fullscreen_custom_content"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:measureAllChildren="true"
+       android:visibility="gone" />
+  
+   <FrameLayout
+       android:id="@+id/main_content"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="@color/red" >
+  
+       <WebView  
+           android:id="@+id/webview_player"  
+           android:layout_width="match_parent" 
+           android:layout_height="match_parent" 
+           android:scrollbars="none" 
+           android:background="@color/red"/>  
+           
+       <LinearLayout
+       android:id="@+id/side_content"  
+       android:orientation="vertical"
+       android:layout_width="400dip"  
+       android:layout_gravity="right"
+       android:layout_height="match_parent"
+       android:visibility="gone" >  
+       
+       <WebView  
+           android:id="@+id/webview_chat"  
+           android:layout_width="match_parent"  
+           android:layout_height="match_parent"
+           android:layout_weight="1"
+           android:scrollbars="none" /> 
+           
+      <ToggleButton 
+    		android:id="@+id/lockButton"
+    		android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:textOn="Lock on"
+    		android:textOff="Lock off"
+           	android:layout_weight="5"/>
+
+       
+      </LinearLayout >
+    </FrameLayout > 
+</FrameLayout> 
+

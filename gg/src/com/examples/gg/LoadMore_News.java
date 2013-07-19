@@ -146,6 +146,11 @@ public class LoadMore_News extends LoadMore_Base {
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
 	}
+	
+	@Override
+	public void refreshFragment(){
+		currentFragment = new LoadMore_News();
+	}
 
 
 	@SuppressWarnings("deprecation")

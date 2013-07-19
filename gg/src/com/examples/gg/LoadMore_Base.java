@@ -68,6 +68,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected View fullscreenLoadingView;
 	protected boolean hasRefresh;
 	protected boolean hasDropDown;
+	protected Fragment currentFragment;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +134,10 @@ public class LoadMore_Base extends SherlockListFragment {
 		this.hasRefresh = hasRefresh;
 		this.hasDropDown = hasDropDown;
 	}
+	
+	public void refreshFragment(){
+		currentFragment = new LoadMore_Base();
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -194,7 +199,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		
 		if (hasRefresh)
-        menu.add(0, 2, 0, "Refresh")
+        menu.add(0, 0, 0, "Refresh")
         .setIcon(R.drawable.ic_refresh)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
@@ -215,7 +220,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
 
-	    Fragment currentFragment = getFragmentManager().findFragmentByTag(this.getTag());
+//	    Fragment currentFragment = getFragmentManager().findFragmentByTag(this.getTag());
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 
 		// Putting the current fragment into stack for later call back
@@ -223,10 +228,12 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		switch (item.getItemId()) {
 		
-		case 2:
+		case 0:
 			// Menu option 1
-		    ft.detach(currentFragment);
-		    ft.attach(currentFragment);
+	        Toast.makeText(sfa, "Got click: " + item.getItemId(), Toast.LENGTH_SHORT).show();
+//		    ft.remove(currentFragment);
+	        refreshFragment();
+		    ft.replace(R.id.content_frame, currentFragment);
 //		    fragTransaction.commit();
 //			ft.replace(R.id.content_frame, this);
 			break;

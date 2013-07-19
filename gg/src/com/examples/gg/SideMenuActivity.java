@@ -90,7 +90,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				R.drawable.collections_cloud));
 
 		items.add(new SectionItem("Lives"));
-		items.add(new EntryItem("Twitch lives", "Battle begins!",
+		items.add(new EntryItem("Twitch Dota2 Streams", "Battle begins!",
 				R.drawable.collections_cloud));
 
 	    eAdapter = new EntryAdapter(this, items);

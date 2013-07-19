@@ -59,6 +59,11 @@ public class LoadMore_H_Uploader extends LoadMore_Base_UP {
 			}
 
 	}
+	
+	@Override
+	public void refreshFragment(){
+		currentFragment = new LoadMore_H_Uploader();
+	}
 
 	// this method is used in the method "onListItemClick" to pass API to the
 	// next fragment

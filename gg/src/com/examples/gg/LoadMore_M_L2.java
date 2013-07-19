@@ -31,4 +31,9 @@ public class LoadMore_M_L2 extends LoadMore_Base {
 		setRetryButtonListener(new LoadMore_M_L2(mAPI));
 
 	}
+	
+	@Override
+	public void refreshFragment(){
+		currentFragment = new LoadMore_M_L2(mAPI);
+	}
 }

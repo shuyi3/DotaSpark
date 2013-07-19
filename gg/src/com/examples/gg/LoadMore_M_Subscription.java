@@ -33,4 +33,12 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 		clearFragmentStack();
 
 	}
+	
+	@Override
+	public void refreshFragment(){
+		currentFragment = new LoadMore_M_Subscription();
+	}
+
+	
+	
 }
