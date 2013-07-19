@@ -1,6 +1,5 @@
 package com.examples.gg;
 
-import android.view.View;
 
 public class LoadMore_M_L2 extends LoadMore_Base {
 	private String mAPI;

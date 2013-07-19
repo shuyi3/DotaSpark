@@ -40,7 +40,7 @@ public class FeedManager_Playlist extends FeedManager_Base {
 				String videoDesc = oneVideo.getJSONObject("summary").getString(
 						"$t");
 				String thumbUrl = oneVideo.getJSONObject("media$group")
-						.getJSONArray("media$thumbnail").getJSONObject(0)
+						.getJSONArray("media$thumbnail").getJSONObject(2)
 						.getString("url");
 				String updateTime = oneVideo.getJSONObject("updated")
 						.getString("$t");

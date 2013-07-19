@@ -6,15 +6,17 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,7 +28,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private LayoutInflater inflater;
 	private Animation fadeAnimation;
 	private ImageView mImageView;
-	
+
 	public VideoArrayAdapter(Context context, ArrayList<String> values,
 			ArrayList<Video> videos) {
 		super(context, R.layout.videolist, values);
@@ -36,30 +38,6 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
-		// Set animation for loading image
-		fadeAnimation = AnimationUtils.loadAnimation(context, R.anim.fadein);
-		
-		fadeAnimation.setAnimationListener(new AnimationListener(){
-
-			@Override
-			public void onAnimationEnd(Animation arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationStart(Animation arg0) {
-				// TODO Auto-generated method stub
-				mImageView.setVisibility(View.VISIBLE);
-			}
-			
-		});
 	}
 
 	@Override
@@ -123,13 +101,13 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
 
-		if (videos.get(position).getThumbnail() == null){
+		if (videos.get(position).getThumbnail() == null) {
 			if (ic.isOnline((Activity) context))
 				new DownloadImage(videos.get(position).getThumbnailUrl(),
 						videos.get(position), holder.imageView).execute();
-		}else{
-				holder.imageView.setImageBitmap(videos.get(position)
-						.getThumbnail());
+		} else {
+			holder.imageView
+					.setImageBitmap(videos.get(position).getThumbnail());
 		}
 		return convertView;
 	}
@@ -171,9 +149,33 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			imageView.setImageBitmap(result);
-			imageView.startAnimation(fadeAnimation);
+			setImageBitmapWithFade(imageView, result);
 		}
 
+	}
+
+	// This is for image animation 
+	public static void setImageBitmapWithFade(final ImageView imageView,
+			final Bitmap bitmap) {
+		Resources resources = imageView.getResources();
+		BitmapDrawable bitmapDrawable = new BitmapDrawable(resources, bitmap);
+		setImageDrawableWithFade(imageView, bitmapDrawable);
+	}
+
+	public static void setImageDrawableWithFade(final ImageView imageView,
+			final Drawable drawable) {
+		Drawable currentDrawable = imageView.getDrawable();
+		if (currentDrawable != null) {
+			Drawable[] arrayDrawable = new Drawable[2];
+			arrayDrawable[0] = currentDrawable;
+			arrayDrawable[1] = drawable;
+			TransitionDrawable transitionDrawable = new TransitionDrawable(
+					arrayDrawable);
+			transitionDrawable.setCrossFadeEnabled(true);
+			imageView.setImageDrawable(transitionDrawable);
+			transitionDrawable.startTransition(250);
+		} else {
+			imageView.setImageDrawable(drawable);
+		}
 	}
 }
