@@ -41,6 +41,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	private Button retryButton;
 	private View mRetryView;
 	private FragmentManager fm;
+	private InternetConnection ic;
+	private View fullscreenLoadingView;
 //	public View row;
 
 	@Override
@@ -65,9 +67,10 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// R.drawable.action_settings,
 		// R.drawable.collections_cloud };
 		
-
+		ic = new InternetConnection();
         
-        
+		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
+		
 		// Locate DrawerLayout in drawer_main.xml
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -187,7 +190,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	private void selectItem(int position) {
 		// check network
-		InternetConnection ic = new InternetConnection();
+		
 
 		if (ic.checkConnection(this)) {
 			for (Item i : items)
@@ -268,10 +271,13 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	public void setRetryListener(){
         retryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Perform action on click
-            	mRetryView.setVisibility(View.GONE);
-            	// Going to News section by default
-            	selectItem(currentDrawerFragmentId);
+            	if(ic.isOnline(sfa)){
+            		fullscreenLoadingView.setVisibility(View.GONE);
+	                // Perform action on click
+	            	mRetryView.setVisibility(View.GONE);
+	            	// Going to News section by default
+	            	selectItem(currentDrawerFragmentId);
+            	}
             }
         });
 	}

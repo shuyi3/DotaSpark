@@ -63,7 +63,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected LoadMoreTask mLoadMoreTask = null;
 	protected Button mRetryButton;
 	protected View mRetryView;
-	protected boolean needFilter = false;
+	protected boolean needFilter;
 	protected FragmentManager fm;
 	protected View fullscreenLoadingView;
 	protected boolean hasRefresh;
@@ -73,7 +73,19 @@ public class LoadMore_Base extends SherlockListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		// Get the current activity
+		sfa = this.getSherlockActivity();
+		
+		// Get loading view
+		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
 
+		// show loading screen
+		fullscreenLoadingView.setVisibility(View.VISIBLE);
+		
+		// default no filter for videos
+		needFilter = false;
+		
 		mInflater = inflater;
 
 		// For check internet connection
@@ -81,10 +93,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// set the layout
 		view = inflater.inflate(R.layout.loadmore_list, null);
-
-		// Get the current activity
-		sfa = this.getSherlockActivity();
-
+		
 		// Initial fragment manager
 		fm = sfa.getSupportFragmentManager();
 		
@@ -94,8 +103,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// Get Retry view
 		mRetryView = sfa.findViewById(R.id.mRetry);
 		
-		// Get loading view
-		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
+
 		
 		// get action bar
 		ab = sfa.getSupportActionBar();
@@ -162,9 +170,9 @@ public class LoadMore_Base extends SherlockListFragment {
 
 									// network ok
 									if (isMoreVideos == true) {
-										new LoadMoreTask().execute(API.get(0));
+										// Continue getting data
 										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-										mLoadMoreTask.execute(API.get(0));
+										mLoadMoreTask.execute(nextAPI);
 									}
 								} else {
 
@@ -183,9 +191,6 @@ public class LoadMore_Base extends SherlockListFragment {
 
 			// sending Initial Get Request to Youtube
 			if (!API.isEmpty()) {
-				// show loading screen
-				fullscreenLoadingView
-						.setVisibility(View.VISIBLE);
 				doRequest();
 			}
 
@@ -330,18 +335,20 @@ public class LoadMore_Base extends SherlockListFragment {
 					// adding new loaded videos to our current video list
 					for (Video v : newVideos) {
 						System.out.println("new id: " + v.getVideoId());
-						if (!needFilter) {
+						if (needFilter) {
+							filtering(v);
+							System.out.println("need filter!");
+						} else {
 							titles.add(v.getTitle());
 							videos.add(v.getVideoId());
 							videolist.add(v);
-						} else {
-							filtering(v);
 						}
 					}
 					try {
 						// put the next API in the first place of the array
-						API.set(0, feedManager.getNextApi());
-						if (API.get(0) == null) {
+						// API.set(0, feedManager.getNextApi());
+						nextAPI = feedManager.getNextApi();
+						if (nextAPI == null) {
 							// No more videos left
 							isMoreVideos = false;
 						}
@@ -430,7 +437,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void networkHandler(Fragment mFragment) {
 
 		if (ic.isOnline(sfa)) {
-
+			fullscreenLoadingView.setVisibility(View.GONE);
 			switch (ic.getNetworkError()) {
 			case 1:
 				// network lost during fullscreen loading
@@ -441,7 +448,7 @@ public class LoadMore_Base extends SherlockListFragment {
 						.beginTransaction();
 				ft.replace(R.id.content_frame, mFragment);
 				ft.commit();
-				mRetryView.setVisibility(View.GONE);
+
 				break;
 			case 2:
 				// Internet lost during loading more
@@ -450,13 +457,10 @@ public class LoadMore_Base extends SherlockListFragment {
 				Toast.makeText(sfa, "Internet lost during loading more",
 						Toast.LENGTH_SHORT).show();
 
-				mRetryView.setVisibility(View.GONE);
-
 				// Continue previous loading
 				if (isMoreVideos == true) {
-					new LoadMoreTask().execute(API.get(0));
 					mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-					mLoadMoreTask.execute(API.get(0));
+					mLoadMoreTask.execute(nextAPI);
 				}
 				break;
 
@@ -466,7 +470,7 @@ public class LoadMore_Base extends SherlockListFragment {
 				Toast.makeText(sfa,
 						"Internet lost during transition to video player",
 						Toast.LENGTH_SHORT).show();
-				mRetryView.setVisibility(View.GONE);
+				
 				break;
 
 			default:
@@ -475,6 +479,7 @@ public class LoadMore_Base extends SherlockListFragment {
 				break;
 
 			}
+			mRetryView.setVisibility(View.GONE);
 		}
 	}
 
