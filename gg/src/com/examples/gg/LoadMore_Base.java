@@ -128,7 +128,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
-		else if (API.get(0) != null)
+		else
 			isMoreVideos = true;
 
 		// set the adapter
