@@ -128,7 +128,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
 			isMoreVideos = false;
-		else
+		else if (API.get(0) != null)
 			isMoreVideos = true;
 
 		// set the adapter
@@ -170,7 +170,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 									// network ok
 									if (isMoreVideos == true) {
-										// Continue getting data
+										//new LoadMoreTask().execute(API.get(0));
 										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
 										mLoadMoreTask.execute(nextAPI);
 									}
@@ -459,8 +459,9 @@ public class LoadMore_Base extends SherlockListFragment {
 
 				// Continue previous loading
 				if (isMoreVideos == true) {
+					//new LoadMoreTask().execute(API.get(0));
 					mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-					mLoadMoreTask.execute(nextAPI);
+					mLoadMoreTask.execute(API.get(0));
 				}
 				break;
 
