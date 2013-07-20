@@ -1,6 +1,9 @@
 package com.examples.gg;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -38,6 +41,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
+		BitmapManager.INSTANCE.setPlaceholder(BitmapFactory.decodeResource(
+				    context.getResources(), R.drawable.loading));
+				 
 	}
 
 	@Override
@@ -45,7 +51,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		InternetConnection ic = new InternetConnection();
 		ViewHolder holder;
 
-		// if (convertView == null) {
+		 if (convertView == null) {
 		convertView = inflater.inflate(R.layout.videolist, parent, false);
 
 		holder = new ViewHolder();
@@ -77,9 +83,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		// new
 		// DownloadImage(videos.get(position).getUploaderThumUrl()).execute(uploaderView);
 		convertView.setTag(holder);
-		// }else{
-		// holder = (ViewHolder) convertView.getTag();
-		// }
+		 }else{
+			 holder = (ViewHolder) convertView.getTag();
+		 }
 
 		holder.titleView.setText(values.get(position));
 		holder.authorView.setText(videos.get(position).getAuthor());
@@ -101,14 +107,19 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
 
-		if (videos.get(position).getThumbnail() == null) {
-			if (ic.isOnline((Activity) context))
-				new DownloadImage(videos.get(position).getThumbnailUrl(),
-						videos.get(position), holder.imageView).execute();
-		} else {
-			holder.imageView
-					.setImageBitmap(videos.get(position).getThumbnail());
-		}
+//		if (videos.get(position).getThumbnail() == null) {
+//			if (ic.isOnline((Activity) context))
+//				new DownloadImage(videos.get(position).getThumbnailUrl(),
+//						videos.get(position), holder.imageView).execute();
+//		} else {
+//			holder.imageView
+//					.setImageBitmap(videos.get(position).getThumbnail());
+//		}
+		
+		holder.imageView.setTag(videos.get(position).getThumbnailUrl());
+		BitmapManager.INSTANCE.loadBitmap(videos.get(position).getThumbnailUrl(), holder.imageView, 160,
+		    100);
+		 
 		return convertView;
 	}
 
@@ -121,61 +132,39 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 
 	}
 
-	private class DownloadImage extends AsyncTask<Object, String, Bitmap> {
-		private ImageView imageView;
-		private Bitmap thumbnail = null;
-		private String url = null;
-		private Video mVideo;
-
-		public DownloadImage(String url, Video video, ImageView imageView) {
-			this.url = url;
-			this.mVideo = video;
-			this.imageView = imageView;
-		}
-
-		@Override
-		protected Bitmap doInBackground(Object... params) {
-			// TODO Auto-generated method stub
-
-			try {
-				InputStream in = (InputStream) new URL(url).getContent();
-				mVideo.thumbnail = BitmapFactory.decodeStream(in);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return mVideo.thumbnail;
-		}
-
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			setImageBitmapWithFade(imageView, result);
-		}
-
-	}
+//	private class DownloadImage extends AsyncTask<Object, String, Bitmap> {
+//		private ImageView imageView;
+//		private Bitmap thumbnail = null;
+//		private String url = null;
+//		private Video mVideo;
+//
+//		public DownloadImage(String url, Video video, ImageView imageView) {
+//			this.url = url;
+//			this.mVideo = video;
+//			this.imageView = imageView;
+//		}
+//
+//		@Override
+//		protected Bitmap doInBackground(Object... params) {
+//			// TODO Auto-generated method stub
+//
+//			try {
+//				InputStream in = (InputStream) new URL(url).getContent();
+//				mVideo.thumbnail = BitmapFactory.decodeStream(in);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//			return mVideo.thumbnail;
+//		}
+//
+//		@Override
+//		protected void onPostExecute(Bitmap result) {
+//			setImageBitmapWithFade(imageView, result);
+//		}
+//
+//	}
 
 	// This is for image animation 
-	public static void setImageBitmapWithFade(final ImageView imageView,
-			final Bitmap bitmap) {
-		Resources resources = imageView.getResources();
-		BitmapDrawable bitmapDrawable = new BitmapDrawable(resources, bitmap);
-		setImageDrawableWithFade(imageView, bitmapDrawable);
-	}
-
-	public static void setImageDrawableWithFade(final ImageView imageView,
-			final Drawable drawable) {
-		Drawable currentDrawable = imageView.getDrawable();
-		if (currentDrawable != null) {
-			Drawable[] arrayDrawable = new Drawable[2];
-			arrayDrawable[0] = currentDrawable;
-			arrayDrawable[1] = drawable;
-			TransitionDrawable transitionDrawable = new TransitionDrawable(
-					arrayDrawable);
-			transitionDrawable.setCrossFadeEnabled(true);
-			imageView.setImageDrawable(transitionDrawable);
-			transitionDrawable.startTransition(250);
-		} else {
-			imageView.setImageDrawable(drawable);
-		}
-	}
+	
 }
