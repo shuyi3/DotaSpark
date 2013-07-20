@@ -417,6 +417,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void onDestroy() {
 		super.onDestroy();
 
+		vaa.imageLoader.clearCache();
 		// check the state of the task
 		if (mLoadMoreTask != null
 				&& mLoadMoreTask.getStatus() == Status.RUNNING)
@@ -503,4 +504,5 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void clearFragmentStack(){
 		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
+	
 }

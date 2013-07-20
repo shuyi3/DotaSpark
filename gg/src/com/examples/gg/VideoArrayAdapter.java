@@ -6,7 +6,6 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -31,6 +30,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private LayoutInflater inflater;
 	private Animation fadeAnimation;
 	private ImageView mImageView;
+	public ImageLoader imageLoader;
 
 	public VideoArrayAdapter(Context context, ArrayList<String> values,
 			ArrayList<Video> videos) {
@@ -41,8 +41,12 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
-		BitmapManager.INSTANCE.setPlaceholder(BitmapFactory.decodeResource(
-				    context.getResources(), R.drawable.loading));
+		
+		imageLoader=new ImageLoader(context.getApplicationContext());
+		
+//		
+//		BitmapManager.INSTANCE.setPlaceholder(BitmapFactory.decodeResource(
+//				    context.getResources(), R.drawable.loading));
 				 
 	}
 
@@ -116,9 +120,11 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 //					.setImageBitmap(videos.get(position).getThumbnail());
 //		}
 		
-		holder.imageView.setTag(videos.get(position).getThumbnailUrl());
-		BitmapManager.INSTANCE.loadBitmap(videos.get(position).getThumbnailUrl(), holder.imageView, 160,
-		    100);
+//		holder.imageView.setTag(videos.get(position).getThumbnailUrl());
+//		BitmapManager.INSTANCE.loadBitmap(videos.get(position).getThumbnailUrl(), holder.imageView, 160,
+//		    100);
+		
+        imageLoader.DisplayImage(videos.get(position).getThumbnailUrl(), holder.imageView);
 		 
 		return convertView;
 	}
