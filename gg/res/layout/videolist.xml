@@ -6,7 +6,7 @@
     
 	<FrameLayout
     	android:id="@+id/thumbholder"
-        android:layout_width="160dip"
+        android:layout_width="120dip"
         android:layout_height="90dip"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"

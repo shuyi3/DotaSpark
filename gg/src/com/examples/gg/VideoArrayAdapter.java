@@ -1,20 +1,12 @@
 package com.examples.gg;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.SoftReference;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import android.app.Activity;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +15,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.costum.android.widget.LoadMoreListView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+
 public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private final Context context;
 	private final ArrayList<String> values;
@@ -30,24 +30,35 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private LayoutInflater inflater;
 	private Animation fadeAnimation;
 	private ImageView mImageView;
-	public ImageLoader imageLoader;
-
+	private LoadMoreListView mLoadMore;
+	DisplayImageOptions options;
+	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
+	private ImageLoader imageLoader;
+	
 	public VideoArrayAdapter(Context context, ArrayList<String> values,
-			ArrayList<Video> videos) {
+			ArrayList<Video> videos, ImageLoader imageLoader) {
 		super(context, R.layout.videolist, values);
 		this.context = context;
 		this.values = values;
 		this.videos = videos;
+		this.imageLoader = imageLoader;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
+		this.imageLoader.init(ImageLoaderConfiguration.createDefault(context));		
+//		imageLoader=new ImageLoader(context.getApplicationContext());
 		
-		imageLoader=new ImageLoader(context.getApplicationContext());
 		
-//		
-//		BitmapManager.INSTANCE.setPlaceholder(BitmapFactory.decodeResource(
-//				    context.getResources(), R.drawable.loading));
-				 
+		
+		options = new DisplayImageOptions.Builder()
+		.showStubImage(R.drawable.loading)
+		.showImageForEmptyUri(R.drawable.loading)
+		.showImageOnFail(R.drawable.loading)
+		.cacheInMemory(true)
+		.cacheOnDisc(true)
+//		.displayer(new RoundedBitmapDisplayer(20))
+		.build();
+//						 
 	}
 
 	@Override
@@ -66,21 +77,10 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		holder.countView = (TextView) convertView.findViewById(R.id.Desc);
 		holder.videoLength = (TextView) convertView
 				.findViewById(R.id.videolength);
-		// ImageView uploaderView = (ImageView)
-		// rowView.findViewById(R.id.uploaderImage);
-
-		// set the description
-		// TextView descView = (TextView)
-		// rowView.findViewById(R.id.description);
-		// descView.setText(videos.get(position).getVideoDesc());
 
 		// set the author
 		holder.authorView = (TextView) convertView
 				.findViewById(R.id.videouploader);
-
-		// set the update time
-		// TextView timeView = (TextView) rowView.findViewById(R.id.updatetime);
-		// timeView.setText(videos.get(position).getUpdateTime());
 
 		// Change icon based on name
 
@@ -110,21 +110,8 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 			holder.countView.setText(null);
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
-
-//		if (videos.get(position).getThumbnail() == null) {
-//			if (ic.isOnline((Activity) context))
-//				new DownloadImage(videos.get(position).getThumbnailUrl(),
-//						videos.get(position), holder.imageView).execute();
-//		} else {
-//			holder.imageView
-//					.setImageBitmap(videos.get(position).getThumbnail());
-//		}
 		
-//		holder.imageView.setTag(videos.get(position).getThumbnailUrl());
-//		BitmapManager.INSTANCE.loadBitmap(videos.get(position).getThumbnailUrl(), holder.imageView, 160,
-//		    100);
-		
-        imageLoader.DisplayImage(videos.get(position).getThumbnailUrl(), holder.imageView);
+		imageLoader.displayImage(videos.get(position).getThumbnailUrl(), holder.imageView, options, animateFirstListener);
 		 
 		return convertView;
 	}
@@ -137,40 +124,22 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		ImageView imageView;
 
 	}
+	
+	private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-//	private class DownloadImage extends AsyncTask<Object, String, Bitmap> {
-//		private ImageView imageView;
-//		private Bitmap thumbnail = null;
-//		private String url = null;
-//		private Video mVideo;
-//
-//		public DownloadImage(String url, Video video, ImageView imageView) {
-//			this.url = url;
-//			this.mVideo = video;
-//			this.imageView = imageView;
-//		}
-//
-//		@Override
-//		protected Bitmap doInBackground(Object... params) {
-//			// TODO Auto-generated method stub
-//
-//			try {
-//				InputStream in = (InputStream) new URL(url).getContent();
-//				mVideo.thumbnail = BitmapFactory.decodeStream(in);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//
-//			return mVideo.thumbnail;
-//		}
-//
-//		@Override
-//		protected void onPostExecute(Bitmap result) {
-//			setImageBitmapWithFade(imageView, result);
-//		}
-//
-//	}
+		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
-	// This is for image animation 
+		@Override
+		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+			if (loadedImage != null) {
+				ImageView imageView = (ImageView) view;
+				boolean firstDisplay = !displayedImages.contains(imageUri);
+				if (firstDisplay) {
+					FadeInBitmapDisplayer.animate(imageView, 500);
+					displayedImages.add(imageUri);
+				}
+			}
+		}
+	}
 	
 }

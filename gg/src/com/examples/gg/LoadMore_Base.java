@@ -24,6 +24,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class LoadMore_Base extends SherlockListFragment {
 	protected LoadMoreListView myLoadMoreListView;
@@ -68,6 +71,8 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected boolean hasRefresh;
 	protected boolean hasDropDown;
 	protected Fragment currentFragment;
+	public boolean isBusy = false;
+	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,7 +118,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// thumbList = new ArrayList<String>();
 
 		// set adapter
-		vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist);
+//		vaa = new VideoArrayAdapter(inflater.getContext(), titles, videolist, this);
 
 		API = new ArrayList<String>();
 
@@ -130,7 +135,7 @@ public class LoadMore_Base extends SherlockListFragment {
 			isMoreVideos = true;
 
 		// set the adapter
-		setListAdapter(vaa);
+//		setListAdapter(vaa);
 		
 		return view;
 
@@ -151,7 +156,10 @@ public class LoadMore_Base extends SherlockListFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);
+		myLoadMoreListView.setDivider(null);		
+		
+		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
+		setListAdapter(vaa);
 
 		if (ic.checkConnection(sfa)) {
 			if (isMoreVideos) {
@@ -417,7 +425,8 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void onDestroy() {
 		super.onDestroy();
 
-		vaa.imageLoader.clearCache();
+		imageLoader.clearDiscCache();
+		imageLoader.clearMemoryCache();
 		// check the state of the task
 		if (mLoadMoreTask != null
 				&& mLoadMoreTask.getStatus() == Status.RUNNING)

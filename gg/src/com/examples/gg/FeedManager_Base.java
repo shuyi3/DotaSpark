@@ -62,7 +62,7 @@ public class FeedManager_Base {
 				String videoDesc = oneVideo.getJSONObject("media$group")
 						.getJSONObject("media$description").getString("$t");
 				String thumbUrl = oneVideo.getJSONObject("media$group")
-						.getJSONArray("media$thumbnail").getJSONObject(2)
+						.getJSONArray("media$thumbnail").getJSONObject(0)
 						.getString("url");
 				String updateTime = oneVideo.getJSONObject("published")
 						.getString("$t");

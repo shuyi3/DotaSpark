@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -206,7 +207,19 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			
 			// Clear the fragment stack first
 			clearFragmentStack();
-
+			
+			mDrawerList.setItemChecked(position, true);
+//			mDrawerList.setSelection(position);
+			// Close drawer
+//			mDrawerLayout.closeDrawer(mDrawerList);
+			
+		    Handler handler = new Handler(); 
+		    handler.postDelayed(new Runnable() { 
+		         public void run() { 
+		 			mDrawerLayout.closeDrawer(mDrawerList);
+		         } 
+		    }, 0);
+			
 			switch (position) {
 
 			case 1:
@@ -231,10 +244,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			}
 			
 			ft.commit();
-			mDrawerList.setItemChecked(position, true);
-//			mDrawerList.setSelection(position);
-			// Close drawer
-			mDrawerLayout.closeDrawer(mDrawerList);
+
 
 		}else{
 			// All errors should be full screen loading error
