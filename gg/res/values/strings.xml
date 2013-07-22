@@ -21,5 +21,9 @@
  	<string name="numberofvideos">50 videos</string>
  	<string name="network">Please check your network connection.</string>
  	<string name="retry">Retry</string>
+ 	<string name="teamName">Team</string>
+ 	<string name="iconDesc">ICON</string>
+ 	<string name="versus">vs</string>
+ 	<string name="matchTime">2h+</string>
 
 </resources>
