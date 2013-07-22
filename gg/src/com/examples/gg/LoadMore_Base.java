@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -381,7 +382,6 @@ public class LoadMore_Base extends SherlockListFragment {
 						myLoadMoreListView.setOnLoadMoreListener(null);
 					}
 
-					super.onPostExecute(result);
 				}
 			} else {
 
@@ -425,8 +425,11 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void onDestroy() {
 		super.onDestroy();
 
-		imageLoader.clearDiscCache();
-		imageLoader.clearMemoryCache();
+		if (sfa.isTaskRoot()){
+			Log.d("UniversalImageLoader", "It's task root!");
+			imageLoader.clearDiscCache();
+			imageLoader.clearMemoryCache();
+		}
 		// check the state of the task
 		if (mLoadMoreTask != null
 				&& mLoadMoreTask.getStatus() == Status.RUNNING)

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +14,8 @@ import org.jsoup.select.Elements;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +23,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -53,6 +57,8 @@ public class LoadMore_News extends LoadMore_Base {
 	private ArrayList<String> results = new ArrayList();
 	private Elements links;
 	boolean isPagerSet = false;
+	boolean matchRequestDone = false;
+	boolean loadMoreRequestDone = false;
 
 	@Override
 	public void Initializing() {
@@ -76,229 +82,244 @@ public class LoadMore_News extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
-		
-		setRetryButtonListener(new LoadMore_News());
-		
 
+		setRetryButtonListener(new LoadMore_News());
 
 	}
 
-//	@Override
-//	public void onActivityCreated(Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		super.onActivityCreated(savedInstanceState);
-//
-//		myLoadMoreListView = (LoadMoreListView) this.getListView();
-//		myLoadMoreListView.setDivider(null);
-//
-//		if (ic.isOnline(sfa)) {
-//			if (isMoreVideos) {
-//				// there are more videos in the list
-//				// set the listener for loading need
-//				myLoadMoreListView
-//						.setOnLoadMoreListener(new OnLoadMoreListener() {
-//							public void onLoadMore() {
-//								// Do the work to load more items at the end of
-//								// list
-//								// hereru
-//
-//								// checking network
-//								if (ic.checkConnection(sfa)) {
-//
-//									// network ok
-//									if (isMoreVideos == true) {
-//										new LoadMoreTask_News().execute(API
-//												.get(0));
-//									}
-//								} else {
-//									ic.networkToast(sfa);
-//									((LoadMoreListView) myLoadMoreListView)
-//											.onLoadMoreComplete();
-//								}
-//
-//							}
-//						});
-//
-//			} else
-//				myLoadMoreListView.setOnLoadMoreListener(null);
-//
-//		} else {
-//			ic.networkToast(sfa);
-//		}
-//
-//		// show loading screen
-//		// sending Initial Get Request to Youtube
-//		sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-//				View.VISIBLE);
-//
-//		if (!API.isEmpty())
-//			doRequest();
-//
-//	}
-	
+	// @Override
+	// public void onActivityCreated(Bundle savedInstanceState) {
+	// // TODO Auto-generated method stub
+	// super.onActivityCreated(savedInstanceState);
+	//
+	// myLoadMoreListView = (LoadMoreListView) this.getListView();
+	// myLoadMoreListView.setDivider(null);
+	//
+	// if (ic.isOnline(sfa)) {
+	// if (isMoreVideos) {
+	// // there are more videos in the list
+	// // set the listener for loading need
+	// myLoadMoreListView
+	// .setOnLoadMoreListener(new OnLoadMoreListener() {
+	// public void onLoadMore() {
+	// // Do the work to load more items at the end of
+	// // list
+	// // hereru
+	//
+	// // checking network
+	// if (ic.checkConnection(sfa)) {
+	//
+	// // network ok
+	// if (isMoreVideos == true) {
+	// new LoadMoreTask_News().execute(API
+	// .get(0));
+	// }
+	// } else {
+	// ic.networkToast(sfa);
+	// ((LoadMoreListView) myLoadMoreListView)
+	// .onLoadMoreComplete();
+	// }
+	//
+	// }
+	// });
+	//
+	// } else
+	// myLoadMoreListView.setOnLoadMoreListener(null);
+	//
+	// } else {
+	// ic.networkToast(sfa);
+	// }
+	//
+	// // show loading screen
+	// // sending Initial Get Request to Youtube
+	// sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
+	// View.VISIBLE);
+	//
+	// if (!API.isEmpty())
+	// doRequest();
+	//
+	// }
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		
-        menu.add("Refresh")
-        .setIcon(R.drawable.ic_refresh)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		
+
+		menu.add("Refresh")
+				.setIcon(R.drawable.ic_refresh)
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
 	}
-	
+
 	@Override
-	public void refreshFragment(){
+	public void refreshFragment() {
 		currentFragment = new LoadMore_News();
 	}
 
-
 	@SuppressWarnings("deprecation")
 	private void initViewPager() {
+
+		for (Element link : links) {
+
+			String match;
+
+			match = link.select("span").first().text().trim() + " vs "
+					+ link.select("span").get(2).text().trim() + " ";
+			if (link.getElementsByClass("results").isEmpty()) {
+				match += link.select("td").get(3).text().trim();
+				matches.add(match);
+			} else {
+				match += link.select("span.hidden").first().text().trim();
+				results.add(match);
+			}
+		}
+
 		advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
 		group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
 
 		List<View> advPics = new ArrayList<View>();
-//		FrameLayout flayout = new FrameLayout(sfa);
-//		LinearLayout lLayout = new LinearLayout(sfa);
-//		lLayout.setOrientation(LinearLayout.VERTICAL);
-//		TextView title = new TextView(sfa);
-//		title.setTextColor(Color.WHITE);
-//		title.setTextSize(24);
-//		title.setText("Today's matches");
-//		LinearLayout.LayoutParams titleLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//		titleLayout.setMargins(20, 10, 0, 0);
-//		LinearLayout.LayoutParams matchLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//		matchLayout.setMargins(20, 20, 0, 0);
-//		
-//		TextView matchtable = new TextView(sfa);
-//		matchtable.setSingleLine(false);
-//
-//		String Matchtext = "";
+		// FrameLayout flayout = new FrameLayout(sfa);
+		// LinearLayout lLayout = new LinearLayout(sfa);
+		// lLayout.setOrientation(LinearLayout.VERTICAL);
+		// TextView title = new TextView(sfa);
+		// title.setTextColor(Color.WHITE);
+		// title.setTextSize(24);
+		// title.setText("Today's matches");
+		// LinearLayout.LayoutParams titleLayout = new
+		// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+		// LinearLayout.LayoutParams.WRAP_CONTENT);
+		// titleLayout.setMargins(20, 10, 0, 0);
+		// LinearLayout.LayoutParams matchLayout = new
+		// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+		// LinearLayout.LayoutParams.WRAP_CONTENT);
+		// matchLayout.setMargins(20, 20, 0, 0);
+		//
+		// TextView matchtable = new TextView(sfa);
+		// matchtable.setSingleLine(false);
+		//
+		// String Matchtext = "";
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
-		
-//		for (String s : matcharray){
-//			System.out.println(s);
-//		}
-//		
-//		for (String s : resultarray){
-//			System.out.println(s);
-//		}
 
-//		matchtable.setTextColor(Color.WHITE);
-//		
-//		for (int i = 0; i < 3; i++) {
-////			if (matcharray[i].endsWith("m"))
-////			{
-////				final LinearLayout liveline = (LinearLayout) sfa.findViewById(R.id.liveview);
-////				lLayout.addView(liveline,0);
-////			}
-//			Matchtext = Matchtext + matcharray[i] + "\n";
-//		}
-//		matchtable.setText(Matchtext);
-//		matchtable.setTextSize(18);
-//		ImageView img1 = new ImageView(sfa);
-//		img1.setBackgroundResource(R.drawable.bountyhunter);
-//
-//		flayout.addView(img1, new FrameLayout.LayoutParams(
-//				LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT,
-//				Gravity.CENTER));
-//		
-//		lLayout.addView(title, titleLayout);
-//		lLayout.addView(matchtable, matchLayout);
-//		flayout.addView(lLayout, new FrameLayout.LayoutParams(
-//				LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-//		
-//		advPics.add(flayout);
-//
-//		ImageView img2 = new ImageView(sfa);
-//		img2.setBackgroundResource(R.drawable.centaurwarlord);
-//		advPics.add(img2);
-//
-//		ImageView img3 = new ImageView(sfa);
-//		img3.setBackgroundResource(R.drawable.razor);
-//		advPics.add(img3);
-//
-//		ImageView img4 = new ImageView(sfa);
-//		img4.setBackgroundResource(R.drawable.snk);
-//		advPics.add(img4);
-		
-	    View v1 = new View(sfa);
-	    View v2 = new View(sfa);
-        final LayoutInflater inflater = (LayoutInflater) sfa
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		// for (String s : matcharray){
+		// System.out.println(s);
+		// }
+		//
+		// for (String s : resultarray){
+		// System.out.println(s);
+		// }
 
-        v1 = inflater.inflate(R.layout.livetext, null, false);
-        v1.setBackgroundResource(R.drawable.bountyhunter);
-        
-        TextView liveTitle = (TextView) v1.findViewById(R.id.livetitle);
-        TextView liveMatch1 = (TextView) v1.findViewById(R.id.lineup1);
-        TextView liveMatch2 = (TextView) v1.findViewById(R.id.lineup2);
-        TextView liveMatch3 = (TextView) v1.findViewById(R.id.lineup3);
-        TextView live1 = (TextView) v1.findViewById(R.id.live1);
-        TextView live2 = (TextView) v1.findViewById(R.id.live2);
-        TextView live3 = (TextView) v1.findViewById(R.id.live3);
+		// matchtable.setTextColor(Color.WHITE);
+		//
+		// for (int i = 0; i < 3; i++) {
+		// // if (matcharray[i].endsWith("m"))
+		// // {
+		// // final LinearLayout liveline = (LinearLayout)
+		// sfa.findViewById(R.id.liveview);
+		// // lLayout.addView(liveline,0);
+		// // }
+		// Matchtext = Matchtext + matcharray[i] + "\n";
+		// }
+		// matchtable.setText(Matchtext);
+		// matchtable.setTextSize(18);
+		// ImageView img1 = new ImageView(sfa);
+		// img1.setBackgroundResource(R.drawable.bountyhunter);
+		//
+		// flayout.addView(img1, new FrameLayout.LayoutParams(
+		// LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT,
+		// Gravity.CENTER));
+		//
+		// lLayout.addView(title, titleLayout);
+		// lLayout.addView(matchtable, matchLayout);
+		// flayout.addView(lLayout, new FrameLayout.LayoutParams(
+		// LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		//
+		// advPics.add(flayout);
+		//
+		// ImageView img2 = new ImageView(sfa);
+		// img2.setBackgroundResource(R.drawable.centaurwarlord);
+		// advPics.add(img2);
+		//
+		// ImageView img3 = new ImageView(sfa);
+		// img3.setBackgroundResource(R.drawable.razor);
+		// advPics.add(img3);
+		//
+		// ImageView img4 = new ImageView(sfa);
+		// img4.setBackgroundResource(R.drawable.snk);
+		// advPics.add(img4);
 
+		View v1 = new View(sfa);
+		View v2 = new View(sfa);
+		final LayoutInflater inflater = (LayoutInflater) sfa
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        liveTitle.setText("Upcoming Matches");
-        if (matcharray[0].endsWith("Live")){
-        	liveMatch1.setText(matcharray[0].substring(0, matcharray[0].length()-4));
-        }else{
-        	liveMatch1.setText(matcharray[0]);
-        	live1.setVisibility(View.GONE);
-        }
-        System.out.println(matcharray[0]);
-        
-        if (matcharray[1].endsWith("Live")){
-        	liveMatch2.setText(matcharray[1].substring(0, matcharray[1].length()-4));
-        }else{
-        	liveMatch2.setText(matcharray[1]);
-        	live2.setVisibility(View.GONE);
-        }
-        System.out.println(matcharray[1]);
-        
-        if (matcharray[2].endsWith("Live")){
-        	liveMatch3.setText(matcharray[2].substring(0, matcharray[2].length()-4));
-        }else{
-        	liveMatch3.setText(matcharray[2]);
-        	live3.setVisibility(View.GONE);
-        }
-        System.out.println(matcharray[2]);
-        
-        advPics.add(v1);
-        
-        v2 = inflater.inflate(R.layout.livetext, null, false);
-        v2.setBackgroundResource(R.drawable.centaurwarlord);
-        
-        liveTitle = (TextView) v2.findViewById(R.id.livetitle);
-        liveMatch1 = (TextView) v2.findViewById(R.id.lineup1);
-        liveMatch2 = (TextView) v2.findViewById(R.id.lineup2);
-        liveMatch3 = (TextView) v2.findViewById(R.id.lineup3);
-        live1 = (TextView) v2.findViewById(R.id.live1);
-        live2 = (TextView) v2.findViewById(R.id.live2);
-        live3 = (TextView) v2.findViewById(R.id.live3);
+		v1 = inflater.inflate(R.layout.livetext, null, false);
+		v1.setBackgroundResource(R.drawable.bountyhunter);
 
+		TextView liveTitle = (TextView) v1.findViewById(R.id.livetitle);
+		TextView liveMatch1 = (TextView) v1.findViewById(R.id.lineup1);
+		TextView liveMatch2 = (TextView) v1.findViewById(R.id.lineup2);
+		TextView liveMatch3 = (TextView) v1.findViewById(R.id.lineup3);
+		TextView live1 = (TextView) v1.findViewById(R.id.live1);
+		TextView live2 = (TextView) v1.findViewById(R.id.live2);
+		TextView live3 = (TextView) v1.findViewById(R.id.live3);
 
-        liveTitle.setText("Resent Result");
-        
-        	liveMatch1.setText(resultarray[0]);
-    
-        	live1.setVisibility(View.GONE);
-       
-        
+		liveTitle.setText("Upcoming Matches");
+		if (matcharray[0].endsWith("Live")) {
+			liveMatch1.setText(matcharray[0].substring(0,
+					matcharray[0].length() - 4));
+		} else {
+			liveMatch1.setText(matcharray[0]);
+			live1.setVisibility(View.GONE);
+		}
+		System.out.println(matcharray[0]);
 
-        	liveMatch2.setText(resultarray[1]);
+		if (matcharray[1].endsWith("Live")) {
+			liveMatch2.setText(matcharray[1].substring(0,
+					matcharray[1].length() - 4));
+		} else {
+			liveMatch2.setText(matcharray[1]);
+			live2.setVisibility(View.GONE);
+		}
+		System.out.println(matcharray[1]);
 
-        	live2.setVisibility(View.GONE);
-        
-        
+		if (matcharray[2].endsWith("Live")) {
+			liveMatch3.setText(matcharray[2].substring(0,
+					matcharray[2].length() - 4));
+		} else {
+			liveMatch3.setText(matcharray[2]);
+			live3.setVisibility(View.GONE);
+		}
+		System.out.println(matcharray[2]);
 
-        	liveMatch3.setText(resultarray[2]);
-    
-        	live3.setVisibility(View.GONE);
-        
-        advPics.add(v2);
+		advPics.add(v1);
 
-		
+		v2 = inflater.inflate(R.layout.livetext, null, false);
+		v2.setBackgroundResource(R.drawable.centaurwarlord);
+
+		liveTitle = (TextView) v2.findViewById(R.id.livetitle);
+		liveMatch1 = (TextView) v2.findViewById(R.id.lineup1);
+		liveMatch2 = (TextView) v2.findViewById(R.id.lineup2);
+		liveMatch3 = (TextView) v2.findViewById(R.id.lineup3);
+		live1 = (TextView) v2.findViewById(R.id.live1);
+		live2 = (TextView) v2.findViewById(R.id.live2);
+		live3 = (TextView) v2.findViewById(R.id.live3);
+
+		liveTitle.setText("Resent Result");
+
+		liveMatch1.setText(resultarray[0]);
+
+		live1.setVisibility(View.GONE);
+
+		liveMatch2.setText(resultarray[1]);
+
+		live2.setVisibility(View.GONE);
+
+		liveMatch3.setText(resultarray[2]);
+
+		live3.setVisibility(View.GONE);
+
+		advPics.add(v2);
 
 		imageViews = new ImageView[advPics.size()];
 		for (int i = 0; i < advPics.size(); i++) {
@@ -348,6 +369,10 @@ public class LoadMore_News extends LoadMore_Base {
 			}
 
 		}).start();
+
+		isPagerSet = true;
+
+		fullscreenLoadingView.setVisibility(View.GONE);
 	}
 
 	private void whatOption() {
@@ -422,51 +447,45 @@ public class LoadMore_News extends LoadMore_Base {
 
 		@Override
 		public Object instantiateItem(View collection, int position) {
-			
-//			    View v = new View(sfa);
-//		        final LayoutInflater inflater = (LayoutInflater) sfa
-//		                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//		        switch (position) {
-//		        case 0:
-//		            v = inflater.inflate(R.layout.livetext, null, false);
-//		            v.setBackgroundResource(R.drawable.bountyhunter);
-//		            break;
-//		        case 1:
-//		            v = inflater.inflate(R.layout.livetext, null, false);
-//		            v.setBackgroundResource(R.drawable.centaurwarlord);
-//		            break;
-//		            
-//		        case 2:
-//		            v = inflater.inflate(R.layout.livetext, null, false);
-//		            v.setBackgroundResource(R.drawable.snk);
-//		            break;
-//		            
-//		        case 3:
-//		            v = inflater.inflate(R.layout.livetext, null, false);
-//		            v.setBackgroundResource(R.drawable.razor);
-//		            break;
-//		            
-//		        default:
-//
-//		            TextView tv = new TextView(sfa);
-//		            tv.setText("Page " + position);
-//		            tv.setTextColor(Color.WHITE);
-//		            tv.setTextSize(30);
-//		            v = tv;
-//		            break;
-//		        }
-//		        
-//		        ((ViewPager) collection).addView(v, 0);
-//
-//		        return v;
 
-			
-			
-			
-			
-			
-			
+			// View v = new View(sfa);
+			// final LayoutInflater inflater = (LayoutInflater) sfa
+			// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			//
+			// switch (position) {
+			// case 0:
+			// v = inflater.inflate(R.layout.livetext, null, false);
+			// v.setBackgroundResource(R.drawable.bountyhunter);
+			// break;
+			// case 1:
+			// v = inflater.inflate(R.layout.livetext, null, false);
+			// v.setBackgroundResource(R.drawable.centaurwarlord);
+			// break;
+			//
+			// case 2:
+			// v = inflater.inflate(R.layout.livetext, null, false);
+			// v.setBackgroundResource(R.drawable.snk);
+			// break;
+			//
+			// case 3:
+			// v = inflater.inflate(R.layout.livetext, null, false);
+			// v.setBackgroundResource(R.drawable.razor);
+			// break;
+			//
+			// default:
+			//
+			// TextView tv = new TextView(sfa);
+			// tv.setText("Page " + position);
+			// tv.setTextColor(Color.WHITE);
+			// tv.setTextSize(30);
+			// v = tv;
+			// break;
+			// }
+			//
+			// ((ViewPager) collection).addView(v, 0);
+			//
+			// return v;
+
 			((ViewPager) collection).addView(views.get(position), 0);
 			return views.get(position);
 		}
@@ -493,80 +512,191 @@ public class LoadMore_News extends LoadMore_Base {
 
 	}
 
-	class LoadMoreTask_News extends LoadMoreTask {
+	private class getMatchInfo extends AsyncTask<Void, Void, Elements> {
+
 		@Override
-		protected String doInBackground(String... uri) {
+		protected Elements doInBackground(Void... params) {
 
-			super.doInBackground(uri[0]);
+			String url = "http://www.gosugamers.net/dota2/gosubet";
+			Document doc;
+			try {
+				doc = Jsoup
+						.connect(url)
+						.header("User-Agent",
+								"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
+						.get();
 
-			if (!isPagerSet) {
-				String url = "http://www.gosugamers.net/dota2/gosubet";
-				Document doc;
-				try {
-					doc = Jsoup
-							.connect(url)
-							.header("User-Agent",
-									"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
-							.get();
+				links = doc.select("tr:has(td.opp)");
 
-					links = doc.select("tr:has(td.opp)");
+				// for (String match: matches){
+				// System.out.println(match);
+				// }
 
-					// for (String match: matches){
-					// System.out.println(match);
-					// }
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
-			return responseString;
-
+			return links;
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			if(ic.checkConnection(sfa)){
-			if (!taskCancel || result == null) {
-				if (!isPagerSet) {
-					for (Element link : links) {
+		protected void onPostExecute(Elements links) {
 
-						String match;
+			if (ic.checkConnection(sfa)) {
 
-						match = link.select("span").first().text().trim()
-								+ " vs "
-								+ link.select("span").get(2).text().trim()
-								+ " ";
-						if (link.getElementsByClass("results").isEmpty()){
-							match += link.select("td").get(3).text().trim();
-							matches.add(match);
-							}
-						else{
-							match += link.select("span.hidden").first().text()
-									.trim();
-							results.add(match);
-						}
-					}
+				matchRequestDone = true;
 
+				if (loadMoreRequestDone && !isPagerSet) {
 					initViewPager();
-
-					isPagerSet = true;
+					Log.d("initViewpager", "pagerInitialized!");
+				} else {
+					Log.d("initViewpager",
+							"in getMatchInfo loadMoreRequestDone = "
+									+ loadMoreRequestDone
+									+ "and matchRequestDone = "
+									+ matchRequestDone);
 				}
 
-				super.onPostExecute(result);
+			} else {
+
+				// No internet
+
+				if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
+					// Internet lost during fullscree loading
+
+					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+				} else {
+					// Internet lost during loading more
+					ic.setNetworkError(InternetConnection.loadingMoreError);
+				}
 			}
 
-		}else
-			{
+		}
+
+	}
+
+	class LoadMoreTask_News extends LoadMoreTask {
+
+		// @Override
+		// protected void onPostExecute(String result) {
+		// if(ic.checkConnection(sfa)){
+		// if (!taskCancel || result == null) {
+		//
+		// loadMoreRequestDone = true;
+		//
+		// if (matchRequestDone && !isPagerSet) {
+		// initViewPager();
+		// Log.d("initViewpager", "pagerInitialized!");
+		// }else{
+		// Log.d("initViewpager",
+		// "in LoadMore loadMoreRequestDone = "+loadMoreRequestDone +
+		// "and matchRequestDone = " + matchRequestDone);
+		//
+		// }
+		//
+		// super.onPostExecute(result);
+		// }
+		//
+		// }else
+		// {
+		// // No internet
+		// // Cancel the load more animation
+		// ((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+		//
+		// if(sfa.findViewById(R.id.fullscreen_loading_indicator).getVisibility()
+		// == View.VISIBLE){
+		// // Internet lost during fullscree loading
+		//
+		// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+		// }else{
+		// // Internet lost during loading more
+		// ic.setNetworkError(InternetConnection.loadingMoreError);
+		// }
+		// }
+		// }
+
+		@Override
+		protected void onPostExecute(String result) {
+			// Do anything with response..
+			// System.out.println(result);
+			if (ic.checkConnection(sfa)) {
+				if (!taskCancel && result != null) {
+					// Do anything with response..
+					// System.out.println(result);
+
+					// ytf = switcher(ytf,result);
+
+					feedManager.setmJSON(result);
+
+					List<Video> newVideos = feedManager.getVideoPlaylist();
+
+					// adding new loaded videos to our current video list
+					for (Video v : newVideos) {
+						System.out.println("new id: " + v.getVideoId());
+						if (needFilter) {
+							filtering(v);
+							// System.out.println("need filter!");
+						} else {
+							titles.add(v.getTitle());
+							videos.add(v.getVideoId());
+							videolist.add(v);
+						}
+					}
+					try {
+						// put the next API in the first place of the array
+						API.set(0, feedManager.getNextApi());
+						// nextAPI = feedManager.getNextApi();
+						if (API.get(0) == null) {
+							// No more videos left
+							isMoreVideos = false;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					vaa.notifyDataSetChanged();
+
+					// Call onLoadMoreComplete when the LoadMore task, has
+					// finished
+					((LoadMoreListView) myLoadMoreListView)
+							.onLoadMoreComplete();
+
+					// loading done
+					// fullscreenLoadingView
+					// .setVisibility(View.GONE);
+
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						myLoadMoreListView.setOnLoadMoreListener(null);
+					}
+
+					loadMoreRequestDone = true;
+
+					if (matchRequestDone && !isPagerSet) {
+						initViewPager();
+						Log.d("initViewpager", "pagerInitialized!");
+					} else {
+						Log.d("initViewpager",
+								"in LoadMore loadMoreRequestDone = "
+										+ loadMoreRequestDone
+										+ "and matchRequestDone = "
+										+ matchRequestDone);
+
+					}
+
+				}
+			} else {
+
 				// No internet
 				// Cancel the load more animation
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-				
-				if(sfa.findViewById(R.id.fullscreen_loading_indicator).getVisibility() == View.VISIBLE){
+
+				if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
 					// Internet lost during fullscree loading
-					
+
 					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-				}else{
+				} else {
 					// Internet lost during loading more
 					ic.setNetworkError(InternetConnection.loadingMoreError);
 				}
@@ -578,8 +708,22 @@ public class LoadMore_News extends LoadMore_Base {
 	@Override
 	protected void doRequest() {
 		// TODO Auto-generated method stub
-		for (String s : API)
-			new LoadMoreTask_News().execute(s);
+		for (String s : API) {
+			LoadMoreTask_News mLoadMore = new LoadMoreTask_News();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				mLoadMore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+			} else {
+				mLoadMore.execute(s);
+			}
+		}
+
+		getMatchInfo mMatchInfo = new getMatchInfo();
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		} else {
+			mMatchInfo.execute();
+		}
 	}
 
 }
