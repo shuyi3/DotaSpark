@@ -95,11 +95,17 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new SectionItem("Latest Videos"));
 		items.add(new EntryItem("Highlights", "Dota excitements",
 				R.drawable.action_about));
-		items.add(new EntryItem("Recent matches", "You don't wanna miss it",
+		items.add(new EntryItem("Matches", "You don't wanna miss it",
 				R.drawable.collections_cloud));
 
 		items.add(new SectionItem("Lives"));
-		items.add(new EntryItem("Twitch Dota2 Streams", "Battle begins!",
+		items.add(new EntryItem("Twitch Streams", "Battle begins!",
+				R.drawable.collections_cloud));
+		
+		items.add(new SectionItem("Match Table"));
+		items.add(new EntryItem("Upcoming Matches", "matches approaching!",
+				R.drawable.collections_cloud));
+		items.add(new EntryItem("Recent Results", "It's in the bag!",
 				R.drawable.collections_cloud));
 
 	    eAdapter = new EntryAdapter(this, items);
@@ -240,6 +246,11 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			case 6:
 				// Twitch section
 				ft.replace(R.id.content_frame, new LoadMore_Twitch());
+				break;
+				
+			case 8:
+				// Twitch section
+				ft.replace(R.id.content_frame, new UpcomingFragment());
 				break;
 			}
 			

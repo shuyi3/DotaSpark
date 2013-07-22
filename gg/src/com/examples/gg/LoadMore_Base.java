@@ -16,6 +16,7 @@ import org.json.JSONException;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.examples.gg.LoadMore_News.LoadMoreTask_News;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class LoadMore_Base extends SherlockListFragment {
@@ -150,18 +152,15 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void refreshFragment(){
 		currentFragment = new LoadMore_Base();
 	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-
+	
+	public void setListView(){
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);		
 		
 		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
 		setListAdapter(vaa);
 
+		//Why check internet here?
 		if (ic.checkConnection(sfa)) {
 			if (isMoreVideos) {
 				// there are more videos in the list
@@ -206,6 +205,15 @@ public class LoadMore_Base extends SherlockListFragment {
 		} else {
 			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
 		}
+
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+
+		setListView();
 
 	}
 
@@ -413,8 +421,14 @@ public class LoadMore_Base extends SherlockListFragment {
 	// sending the http request
 	protected void doRequest() {
 		// TODO Auto-generated method stub
-		for (String s : API)
-			new LoadMoreTask().execute(s);
+		for (String s : API) {
+			mLoadMoreTask = new LoadMoreTask();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				mLoadMoreTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+			} else {
+				mLoadMoreTask.execute(s);
+			}
+		}
 	}
 
 	public void Initializing() {
@@ -434,6 +448,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		if (mLoadMoreTask != null
 				&& mLoadMoreTask.getStatus() == Status.RUNNING)
 			mLoadMoreTask.cancel(true);
+		
 		taskCancel = true;
 		System.out.println("Task canceled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.os.AsyncTask.Status;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -59,6 +60,7 @@ public class LoadMore_News extends LoadMore_Base {
 	boolean isPagerSet = false;
 	boolean matchRequestDone = false;
 	boolean loadMoreRequestDone = false;
+	private getMatchInfo mMatchInfo;
 
 	@Override
 	public void Initializing() {
@@ -709,15 +711,15 @@ public class LoadMore_News extends LoadMore_Base {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			LoadMoreTask_News mLoadMore = new LoadMoreTask_News();
+			mLoadMoreTask = new LoadMoreTask_News();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				mLoadMore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+				mLoadMoreTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
-				mLoadMore.execute(s);
+				mLoadMoreTask.execute(s);
 			}
 		}
 
-		getMatchInfo mMatchInfo = new getMatchInfo();
+		mMatchInfo = new getMatchInfo();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -725,5 +727,16 @@ public class LoadMore_News extends LoadMore_Base {
 			mMatchInfo.execute();
 		}
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		if (mMatchInfo != null
+				&& mMatchInfo.getStatus() == Status.RUNNING)
+			mMatchInfo.cancel(true);
+		
+	}
+
 
 }
