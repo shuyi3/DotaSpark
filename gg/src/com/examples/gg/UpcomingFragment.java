@@ -30,17 +30,17 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class UpcomingFragment extends LoadMore_Base{
-	
+public class UpcomingFragment extends LoadMore_Base {
+
 	private Elements links;
 	private ArrayList<Match> matchArray = new ArrayList<Match>();
 	private MatchArrayAdapter mArrayAdatper;
-	
+
 	@Override
-	public void refreshFragment(){
+	public void refreshFragment() {
 		currentFragment = new UpcomingFragment();
 	}
-	
+
 	@Override
 	public void Initializing() {
 		// Inflating view
@@ -57,7 +57,7 @@ public class UpcomingFragment extends LoadMore_Base{
 		// FragmentPlaylist = new LoadMore_H_Playlist();
 
 		// set a feed manager
-//		feedManager = new FeedManager_Subscription();
+		// feedManager = new FeedManager_Subscription();
 
 		// Show menu
 		setHasOptionsMenu(true);
@@ -67,15 +67,12 @@ public class UpcomingFragment extends LoadMore_Base{
 
 	}
 
-	
-	
-	
 	@Override
-	public void setListView(){
-		
+	public void setListView() {
+
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);		
-		
+		myLoadMoreListView.setDivider(null);
+
 		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader);
 		setListAdapter(mArrayAdatper);
 
@@ -94,9 +91,11 @@ public class UpcomingFragment extends LoadMore_Base{
 
 									// network ok
 									if (isMoreVideos == true) {
-										//new LoadMoreTask().execute(API.get(0));
-//										mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-//										mLoadMoreTask.execute(API.get(0));
+										// new
+										// LoadMoreTask().execute(API.get(0));
+										// mLoadMoreTask = (LoadMoreTask) new
+										// LoadMoreTask();
+										// mLoadMoreTask.execute(API.get(0));
 									}
 								} else {
 
@@ -127,9 +126,32 @@ public class UpcomingFragment extends LoadMore_Base{
 	}
 	
 	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+
+		// check network first
+		if (ic.checkConnection(this.getSherlockActivity())) {
+			// get selected items
+
+			// String selectedValue = (String)
+			// getListAdapter().getItem(position);
+
+			Toast.makeText(this.getSherlockActivity(), matchArray.get(position).getGosuLink(),
+					Toast.LENGTH_SHORT).show();
+
+			Intent i = new Intent(this.getSherlockActivity(), MatchDetailsActivity.class);
+			i.putExtra("link",  matchArray.get(position).getGosuLink());
+			startActivity(i);
+		} else {
+			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
+		}
+
+	}
+
+
+	@Override
 	protected void doRequest() {
 		// TODO Auto-generated method stub
-		
+
 		System.out.println("DO!!!!!");
 		for (String s : API) {
 			getMatchInfo mLoadMore = new getMatchInfo();
@@ -140,8 +162,7 @@ public class UpcomingFragment extends LoadMore_Base{
 			}
 		}
 	}
-	
-	
+
 	private class getMatchInfo extends AsyncTask<String, Void, Elements> {
 
 		@Override
@@ -174,50 +195,56 @@ public class UpcomingFragment extends LoadMore_Base{
 
 			if (ic.checkConnection(sfa)) {
 
-				//Setting layout
-				
+				// Setting layout
+
 				String baseUrl = "http://www.gosugamers.net";
-				
+
 				for (Element link : links) {
 
-					Match newMatch = new Match();
-					Element opp_1 = link.select("td.opp").first();
-					Element opp_2 = link.select("td.opp").get(1);
-					
-					newMatch.setTeamName1(opp_1.select("span").first().text().trim());
-					newMatch.setTeamName2(opp_2.select("span").first().text().trim());			
-						
-					newMatch.setTeamIcon1(baseUrl + opp_1.select("img").attr("src"));
-					newMatch.setTeamIcon2(baseUrl + opp_2.select("img").attr("src"));
-					
-					if (link.getElementsByClass("results").isEmpty()){
+					if (link.getElementsByClass("results").isEmpty()) {
+
+						Match newMatch = new Match();
+						Element opp_1 = link.select("td.opp").first();
+						Element opp_2 = link.select("td.opp").get(1);
+
+						newMatch.setTeamName1(opp_1.select("span").first()
+								.text().trim());
+						newMatch.setTeamName2(opp_2.select("span").first()
+								.text().trim());
+
+						newMatch.setTeamIcon1(baseUrl
+								+ opp_1.select("img").attr("src"));
+						newMatch.setTeamIcon2(baseUrl
+								+ opp_2.select("img").attr("src"));
+
+						// if (link.getElementsByClass("results").isEmpty()){
 						newMatch.setTime(link.select("td").get(3).text().trim());
-					}else{
-						newMatch.setTime(link.select("span.hidden").first().text().trim());
-					
+						// }else{
+						// newMatch.setTime(link.select("span.hidden").first().text().trim());
+						//
+						// }
+
+						newMatch.setGosuLink(baseUrl
+								+ opp_1.select("a[href]").attr("href"));
+
+						matchArray.add(newMatch);
+
+						// } else {
+						// match +=
+						// link.select("span.hidden").first().text().trim();
+						// results.add(match);
+						// }
 					}
-					
-					newMatch.setGosuLink(baseUrl + opp_1.select("a[href]").attr("href"));
-						
-					matchArray.add(newMatch);
-					
-						
-//					} else {
-//						match += link.select("span.hidden").first().text().trim();
-//						results.add(match);
-//					}
-	
+
 				}
-				
-				for (Match m:matchArray){
+
+				for (Match m : matchArray) {
 					System.out.println(m.getTeamName1());
 				}
-				
+
 				mArrayAdatper.notifyDataSetChanged();
-				
+
 				fullscreenLoadingView.setVisibility(View.GONE);
-
-
 
 			} else {
 
@@ -236,18 +263,5 @@ public class UpcomingFragment extends LoadMore_Base{
 		}
 
 	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-
-		// check network first
-		if (ic.checkConnection(this.getSherlockActivity())) {
-
-		} else {
-			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
-		}
-
-	}
-	
 
 }

@@ -65,6 +65,10 @@
             android:label="@string/title_activity_main" >
         </activity>
         <activity
+            android:name="com.examples.gg.MatchDetailsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name="com.examples.gg.SideMenuActivity"
             android:label="@string/app_name" >
             <intent-filter>

@@ -10,6 +10,8 @@ public class Match {
 	private String gosuLink;
 	
 	private String time;
+	
+	private boolean isResult;
 
 	
 	public String getTeamName1() {

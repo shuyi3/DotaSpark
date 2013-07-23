@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+>
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -131,9 +138,18 @@
             android:textSize="18sp" />
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
 
 </LinearLayout>
+
+    <include
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/fullscreen_loading_indicator"
+        android:visibility="gone" >
+    </include>
+    
+</FrameLayout>
