@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -234,7 +237,17 @@ public class UpcomingFragment extends LoadMore_Base{
 
 	}
 
-	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+
+		// check network first
+		if (ic.checkConnection(this.getSherlockActivity())) {
+
+		} else {
+			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
+		}
+
+	}
 	
 
 }

@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class MatchArrayAdapter extends ArrayAdapter<Match> {
 	private final Context context;
@@ -54,7 +55,7 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 				.showImageForEmptyUri(R.drawable.loading)
 				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
 				.cacheOnDisc(true)
-				// .displayer(new RoundedBitmapDisplayer(20))
+				.displayer(new RoundedBitmapDisplayer(20))
 				.build();
 		
 		this.matches = matches;
