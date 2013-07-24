@@ -35,6 +35,8 @@ public class UpcomingFragment extends LoadMore_Base {
 	private Elements links;
 	private ArrayList<Match> matchArray = new ArrayList<Match>();
 	private MatchArrayAdapter mArrayAdatper;
+	private getMatchInfo mgetMatchInfo;
+	private int pageNum;
 
 	@Override
 	public void refreshFragment() {
@@ -50,6 +52,8 @@ public class UpcomingFragment extends LoadMore_Base {
 
 		// Give API URLs
 		API.add("http://www.gosugamers.net/dota2/gosubet");
+		
+		pageNum = 1;
 
 		// initialize the fragments in the Menu
 		// FragmentAll = new LoadMore_H_Subscription();
@@ -91,11 +95,9 @@ public class UpcomingFragment extends LoadMore_Base {
 
 									// network ok
 									if (isMoreVideos == true) {
-										// new
-										// LoadMoreTask().execute(API.get(0));
-										// mLoadMoreTask = (LoadMoreTask) new
-										// LoadMoreTask();
-										// mLoadMoreTask.execute(API.get(0));
+
+										mgetMatchInfo = (getMatchInfo) new getMatchInfo();
+										mgetMatchInfo.execute(API.get(0));
 									}
 								} else {
 
@@ -154,11 +156,11 @@ public class UpcomingFragment extends LoadMore_Base {
 
 		System.out.println("DO!!!!!");
 		for (String s : API) {
-			getMatchInfo mLoadMore = new getMatchInfo();
+			mgetMatchInfo = new getMatchInfo();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				mLoadMore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+				mgetMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
-				mLoadMore.execute(s);
+				mgetMatchInfo.execute(s);
 			}
 		}
 	}
@@ -182,6 +184,18 @@ public class UpcomingFragment extends LoadMore_Base {
 				// for (String match: matches){
 				// System.out.println(match);
 				// }
+				Element paginator = doc.select("div.box").get(1).select("div.paginator").first();
+				if (paginator == null){
+					isMoreVideos = false;
+				}else{
+					if (paginator.select("a").last().hasAttr("class")){
+						isMoreVideos = false;
+					}else {
+						isMoreVideos = true;
+						pageNum++;
+						API.set(0, "http://www.gosugamers.net/dota2/gosubet?u-page="+pageNum);
+					}
+				}
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -244,7 +258,20 @@ public class UpcomingFragment extends LoadMore_Base {
 
 				mArrayAdatper.notifyDataSetChanged();
 
-				fullscreenLoadingView.setVisibility(View.GONE);
+				// Call onLoadMoreComplete when the LoadMore task, has
+				// finished
+				((LoadMoreListView) myLoadMoreListView)
+						.onLoadMoreComplete();
+
+				// loading done
+				fullscreenLoadingView
+						.setVisibility(View.GONE);
+
+				if (!isMoreVideos) {
+					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+					myLoadMoreListView.setOnLoadMoreListener(null);
+				}
 
 			} else {
 
