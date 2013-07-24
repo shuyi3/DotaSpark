@@ -1,7 +1,11 @@
 package com.examples.gg;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -144,7 +148,12 @@ public class MatchDetailsActivity extends SherlockListActivity{
 
 		tournamentName.setText("Tournament: " + contents.get(2).select("td").get(1).text().trim());
 		format.setText("Format: " + contents.get(2).select("td").get(3).text().trim());
-		startTime.setText("Start Time: " + contents.get(2).select("td").first().text().trim());
+		String dateInString = contents.get(2).select("td").first().text().trim();
+		startTime.setText("Start Time: " + dateInString);
+		processDate(dateInString);
+		
+		
+		
 		
 		if (lives.isEmpty()){
 			liveLabel.setVisibility(View.GONE);
@@ -284,6 +293,27 @@ public class MatchDetailsActivity extends SherlockListActivity{
 
 		}
 
+	}
+	
+	public void processDate(String s){
+		
+		String dateInString = s.substring(0, s.indexOf("at")-1);
+		String hourInString = s.substring(s.indexOf(":")-2, s.indexOf(":"));
+		String minuteInString = s.substring(s.indexOf(":")+1, s.length());
+		System.out.println("Date: " + dateInString);
+		System.out.println("Hour: " + hourInString);
+		System.out.println("Minute: " + minuteInString);
+		Date date = null;
+		//Calendar c = new Calendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy at HH:mm"); 
+//		try {
+//			date = (Date) sdf.parse(s);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		date.setHours(Integer.parseInt(hourInString));
+		//return date;
 	}
 
 	
