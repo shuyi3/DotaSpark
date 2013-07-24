@@ -168,11 +168,21 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		if (item.getItemId() == android.R.id.home) {
+			
+		    Handler handler = new Handler(); 
 
 			if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-				mDrawerLayout.closeDrawer(mDrawerList);
+			    handler.postDelayed(new Runnable() { 
+			         public void run() { 
+						mDrawerLayout.closeDrawer(mDrawerList);
+			         } 
+			    }, 0);
 			} else {
-				mDrawerLayout.openDrawer(mDrawerList);
+			    handler.postDelayed(new Runnable() { 
+			         public void run() { 
+						mDrawerLayout.openDrawer(mDrawerList);
+			         } 
+			    }, 0);
 			}
 		}
 

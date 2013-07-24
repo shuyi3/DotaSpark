@@ -76,7 +76,7 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 			holder.teamName1 = (TextView) convertView.findViewById(R.id.teamName1);
 			holder.teamName2 = (TextView) convertView.findViewById(R.id.teamName2);
 			
-			holder.teamIcon1 = (ImageView) convertView.findViewById(R.id.teamIcon1);
+			holder.teamIcon1 = (ImageView) convertView.findViewById(R.id.icon1);
 			holder.teamIcon2 = (ImageView) convertView.findViewById(R.id.teamIcon2);
 			
 			convertView.setTag(holder);
@@ -110,24 +110,5 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 
 	}
 
-	private static class AnimateFirstDisplayListener extends
-			SimpleImageLoadingListener {
-
-		static final List<String> displayedImages = Collections
-				.synchronizedList(new LinkedList<String>());
-
-		@Override
-		public void onLoadingComplete(String imageUri, View view,
-				Bitmap loadedImage) {
-			if (loadedImage != null) {
-				ImageView imageView = (ImageView) view;
-				boolean firstDisplay = !displayedImages.contains(imageUri);
-				if (firstDisplay) {
-					FadeInBitmapDisplayer.animate(imageView, 500);
-					displayedImages.add(imageUri);
-				}
-			}
-		}
-	}
 
 }

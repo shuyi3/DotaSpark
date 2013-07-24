@@ -36,7 +36,7 @@ public class TwitchPlayer extends Activity {
 	private WebView mWebView;
 	private WebView mWebChat;
 	private ToggleButton lockButton;
-	private Video video;
+	private String video;
 	private String ua;
 	private View loadingIndicator;
 
@@ -50,7 +50,7 @@ public class TwitchPlayer extends Activity {
 		
 		
 		Intent intent = getIntent();
-		video = intent.getParcelableExtra("video");
+		video = intent.getStringExtra("video");
 
 		initViews();
 		initWebView();
@@ -70,7 +70,7 @@ public class TwitchPlayer extends Activity {
         "<param name=\"allowScriptAccess\" value=\"never\" />"+
         "<param name=\"allowNetworking\" value=\"internal\" />"+
         "<param name=\"movie\" value=\"http://www.twitch.tv/widgets/live_embed_player.swf\" />"+
-        "<param name=\"flashvars\" value=\"hostname=www.twitch.tv&channel="+video.getVideoId()+"&auto_play=true&start_volume=25\" />"+
+        "<param name=\"flashvars\" value=\"hostname=www.twitch.tv&channel="+video+"&auto_play=true&start_volume=25\" />"+
         "</object>"+
         "</body>"+
         "</html>";
@@ -79,7 +79,7 @@ public class TwitchPlayer extends Activity {
         chat =  "<html>"+
         "<body style=\"margin:0; padding:0\">"+
         "<iframe width=\"400\" height=\"500\" scrolling=\"yes\""+
-        "src=\"http://www.justin.tv/chat/embed?channel="+video.getVideoId()+"\">"+
+        "src=\"http://www.justin.tv/chat/embed?channel="+video+"\">"+
         "</iframe>"+
         "</body>"+
         "</html>";
@@ -92,7 +92,7 @@ public class TwitchPlayer extends Activity {
 //		mWebChat.loadUrl("http://www.twitch.tv/chat/embed?channel=beyondthesummit&popout_chat=true");
 //		mWebView.loadData(stream, "text/html", null);
 //		mWebView.loadUrl("file:///android_asset/stream.html");
-		mWebView.loadUrl("http://www.twitch.tv/"+video.getVideoId()+"/popout");
+		mWebView.loadUrl("http://www.twitch.tv/"+video+"/popout");
 	}
 	
 	@Override

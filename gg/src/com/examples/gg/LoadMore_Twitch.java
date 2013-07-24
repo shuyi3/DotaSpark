@@ -61,7 +61,7 @@ public class LoadMore_Twitch extends LoadMore_Base {
 					Toast.LENGTH_SHORT).show();
 
 			Intent i = new Intent(this.getSherlockActivity(), TwitchPlayer.class);
-			i.putExtra("video", videolist.get(position));
+			i.putExtra("video", videolist.get(position).getVideoId());
 			startActivity(i);
 		} else {
 			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
