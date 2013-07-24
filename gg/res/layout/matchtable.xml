@@ -8,20 +8,27 @@
         android:layout_width="match_parent"
         android:layout_height="110dip" >
 
-        <TextView
-            android:id="@+id/matchTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:text="@string/matchTime"
-            android:textSize="16sp" />
+        <RelativeLayout
+            android:id="@+id/myTimeLayout"
+            android:layout_width="100dip"
+            android:layout_height="fill_parent" >
 
-        <LinearLayout
+            <TextView
+                android:id="@+id/matchTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:text="@string/matchTime"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/myTimeLayout"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:gravity="center"
             android:orientation="horizontal" >
@@ -30,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_alignParentLeft="true"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -55,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_centerInParent="true"
                 android:text="@string/versus"
                 android:textSize="16sp" />
 
@@ -62,7 +71,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical" 
+                                android:layout_alignParentRight="true">
 
                 <ImageView
                     android:id="@+id/teamIcon2"
@@ -80,18 +90,17 @@
                     android:text="@string/teamName"
                     android:textSize="16sp" />
             </LinearLayout>
-        </LinearLayout>
-        
-            <!-- Draw a red line -->
+        </RelativeLayout>
 
+        <!-- Draw a red line -->
 
-        
     </RelativeLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:layout_alignParentLeft="true"
-        android:layout_alignBottom="@+id/myLayout"
-        android:background="#FF0000" />
+        android:id="@+id/divider1"
+        android:layout_width="fill_parent"
+        android:layout_height="10dip"
+        android:background="@drawable/black_white_gradient" 
+        android:layout_below="@+id/myLayout"/>
+
 </RelativeLayout>
