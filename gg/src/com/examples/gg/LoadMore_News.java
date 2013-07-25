@@ -450,44 +450,6 @@ public class LoadMore_News extends LoadMore_Base {
 		@Override
 		public Object instantiateItem(View collection, int position) {
 
-			// View v = new View(sfa);
-			// final LayoutInflater inflater = (LayoutInflater) sfa
-			// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			//
-			// switch (position) {
-			// case 0:
-			// v = inflater.inflate(R.layout.livetext, null, false);
-			// v.setBackgroundResource(R.drawable.bountyhunter);
-			// break;
-			// case 1:
-			// v = inflater.inflate(R.layout.livetext, null, false);
-			// v.setBackgroundResource(R.drawable.centaurwarlord);
-			// break;
-			//
-			// case 2:
-			// v = inflater.inflate(R.layout.livetext, null, false);
-			// v.setBackgroundResource(R.drawable.snk);
-			// break;
-			//
-			// case 3:
-			// v = inflater.inflate(R.layout.livetext, null, false);
-			// v.setBackgroundResource(R.drawable.razor);
-			// break;
-			//
-			// default:
-			//
-			// TextView tv = new TextView(sfa);
-			// tv.setText("Page " + position);
-			// tv.setTextColor(Color.WHITE);
-			// tv.setTextSize(30);
-			// v = tv;
-			// break;
-			// }
-			//
-			// ((ViewPager) collection).addView(v, 0);
-			//
-			// return v;
-
 			((ViewPager) collection).addView(views.get(position), 0);
 			return views.get(position);
 		}
@@ -514,37 +476,71 @@ public class LoadMore_News extends LoadMore_Base {
 
 	}
 
-	private class getMatchInfo extends AsyncTask<Void, Void, Elements> {
+	private class getMatchInfo extends LoadMoreTask {
+
+		// @Override
+		// protected Elements doInBackground(Void... params) {
+		//
+		// String url = "http://www.gosugamers.net/dota2/gosubet";
+		// Document doc;
+		// try {
+		// doc = Jsoup
+		// .connect(url)
+		// .header("User-Agent",
+		// "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
+		// .get();
+		//
+		// links = doc.select("tr:has(td.opp)");
+		//
+		// // for (String match: matches){
+		// // System.out.println(match);
+		// // }
+		//
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		//
+		// return links;
+		// }
 
 		@Override
-		protected Elements doInBackground(Void... params) {
+		protected void onPostExecute(String result) {
 
-			String url = "http://www.gosugamers.net/dota2/gosubet";
-			Document doc;
-			try {
-				doc = Jsoup
-						.connect(url)
-						.header("User-Agent",
-								"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
-						.get();
+			// if (ic.checkConnection(sfa)) {
+			//
+			// matchRequestDone = true;
+			//
+			// if (loadMoreRequestDone && !isPagerSet) {
+			// initViewPager();
+			// Log.d("initViewpager", "pagerInitialized!");
+			// } else {
+			// Log.d("initViewpager",
+			// "in getMatchInfo loadMoreRequestDone = "
+			// + loadMoreRequestDone
+			// + "and matchRequestDone = "
+			// + matchRequestDone);
+			// }
+			//
+			// } else {
+			//
+			// // No internet
+			//
+			// if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
+			// // Internet lost during fullscree loading
+			//
+			// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+			// } else {
+			// // Internet lost during loading more
+			// ic.setNetworkError(InternetConnection.loadingMoreError);
+			// }
+			// }
 
+			Log.d("AsyncDebug", "Into onPostExecute!");
+
+			if (!taskCancel && result != null) {
+				// Do anything with response..
+				Document doc = Jsoup.parse(result);
 				links = doc.select("tr:has(td.opp)");
-
-				// for (String match: matches){
-				// System.out.println(match);
-				// }
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return links;
-		}
-
-		@Override
-		protected void onPostExecute(Elements links) {
-
-			if (ic.checkConnection(sfa)) {
 
 				matchRequestDone = true;
 
@@ -560,17 +556,7 @@ public class LoadMore_News extends LoadMore_Base {
 				}
 
 			} else {
-
-				// No internet
-
-				if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
-					// Internet lost during fullscree loading
-
-					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-				} else {
-					// Internet lost during loading more
-					ic.setNetworkError(InternetConnection.loadingMoreError);
-				}
+				cancelSingleTask(this);
 			}
 
 		}
@@ -579,129 +565,66 @@ public class LoadMore_News extends LoadMore_Base {
 
 	class LoadMoreTask_News extends LoadMoreTask {
 
-		// @Override
-		// protected void onPostExecute(String result) {
-		// if(ic.checkConnection(sfa)){
-		// if (!taskCancel || result == null) {
-		//
-		// loadMoreRequestDone = true;
-		//
-		// if (matchRequestDone && !isPagerSet) {
-		// initViewPager();
-		// Log.d("initViewpager", "pagerInitialized!");
-		// }else{
-		// Log.d("initViewpager",
-		// "in LoadMore loadMoreRequestDone = "+loadMoreRequestDone +
-		// "and matchRequestDone = " + matchRequestDone);
-		//
-		// }
-		//
-		// super.onPostExecute(result);
-		// }
-		//
-		// }else
-		// {
-		// // No internet
-		// // Cancel the load more animation
-		// ((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-		//
-		// if(sfa.findViewById(R.id.fullscreen_loading_indicator).getVisibility()
-		// == View.VISIBLE){
-		// // Internet lost during fullscree loading
-		//
-		// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-		// }else{
-		// // Internet lost during loading more
-		// ic.setNetworkError(InternetConnection.loadingMoreError);
-		// }
-		// }
-		// }
-
 		@Override
 		protected void onPostExecute(String result) {
 			// Do anything with response..
 			// System.out.println(result);
-			if (ic.checkConnection(sfa)) {
-				if (!taskCancel && result != null) {
-					// Do anything with response..
-					// System.out.println(result);
+			Log.d("AsyncDebug", "Into onPostExecute!");
 
-					// ytf = switcher(ytf,result);
+			if (!taskCancel && result != null) {
 
-					feedManager.setmJSON(result);
+				feedManager.setmJSON(result);
 
-					List<Video> newVideos = feedManager.getVideoPlaylist();
+				List<Video> newVideos = feedManager.getVideoPlaylist();
 
-					// adding new loaded videos to our current video list
-					for (Video v : newVideos) {
-						System.out.println("new id: " + v.getVideoId());
-						if (needFilter) {
-							filtering(v);
-							// System.out.println("need filter!");
-						} else {
-							titles.add(v.getTitle());
-							videos.add(v.getVideoId());
-							videolist.add(v);
-						}
-					}
-					try {
-						// put the next API in the first place of the array
-						API.set(0, feedManager.getNextApi());
-						// nextAPI = feedManager.getNextApi();
-						if (API.get(0) == null) {
-							// No more videos left
-							isMoreVideos = false;
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					vaa.notifyDataSetChanged();
-
-					// Call onLoadMoreComplete when the LoadMore task, has
-					// finished
-					((LoadMoreListView) myLoadMoreListView)
-							.onLoadMoreComplete();
-
-					// loading done
-					// fullscreenLoadingView
-					// .setVisibility(View.GONE);
-
-					if (!isMoreVideos) {
-						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
-						myLoadMoreListView.setOnLoadMoreListener(null);
-					}
-
-					loadMoreRequestDone = true;
-
-					if (matchRequestDone && !isPagerSet) {
-						initViewPager();
-						Log.d("initViewpager", "pagerInitialized!");
+				// adding new loaded videos to our current video list
+				for (Video v : newVideos) {
+					System.out.println("new id: " + v.getVideoId());
+					if (needFilter) {
+						filtering(v);
+						// System.out.println("need filter!");
 					} else {
-						Log.d("initViewpager",
-								"in LoadMore loadMoreRequestDone = "
-										+ loadMoreRequestDone
-										+ "and matchRequestDone = "
-										+ matchRequestDone);
-
+						titles.add(v.getTitle());
+						videos.add(v.getVideoId());
+						videolist.add(v);
 					}
-
 				}
-			} else {
+				try {
+					// put the next API in the first place of the array
+					API.set(0, feedManager.getNextApi());
+					// nextAPI = feedManager.getNextApi();
+					if (API.get(0) == null) {
+						// No more videos left
+						isMoreVideos = false;
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				vaa.notifyDataSetChanged();
 
-				// No internet
-				// Cancel the load more animation
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 
-				if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
-					// Internet lost during fullscree loading
+				if (!isMoreVideos) {
+					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
 
-					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-				} else {
-					// Internet lost during loading more
-					ic.setNetworkError(InternetConnection.loadingMoreError);
+					myLoadMoreListView.setOnLoadMoreListener(null);
 				}
+
+				loadMoreRequestDone = true;
+
+				if (matchRequestDone && !isPagerSet) {
+					initViewPager();
+					Log.d("initViewpager", "pagerInitialized!");
+				} else {
+					Log.d("initViewpager", "in LoadMore loadMoreRequestDone = "
+							+ loadMoreRequestDone + "and matchRequestDone = "
+							+ matchRequestDone);
+
+				}
+
+			} else {
+				cancelSingleTask(this);
 			}
 		}
 
@@ -711,11 +634,11 @@ public class LoadMore_News extends LoadMore_Base {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			mLoadMoreTask = new LoadMoreTask_News();
+			LoadMoreTask newTask = new LoadMoreTask_News();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				mLoadMoreTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
-				mLoadMoreTask.execute(s);
+				newTask.execute(s);
 			}
 		}
 
@@ -724,19 +647,19 @@ public class LoadMore_News extends LoadMore_Base {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		} else {
-			mMatchInfo.execute();
+			String url = "http://www.gosugamers.net/dota2/gosubet";
+			mMatchInfo.execute(url);
 		}
 	}
-	
+
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
-		
-		if (mMatchInfo != null
-				&& mMatchInfo.getStatus() == Status.RUNNING)
-			mMatchInfo.cancel(true);
-		
-	}
 
+		super.onDestroy();
+
+		if (mMatchInfo != null && mMatchInfo.getStatus() == Status.RUNNING)
+			mMatchInfo.cancel(true);
+
+	}
 
 }

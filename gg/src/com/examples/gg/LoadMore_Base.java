@@ -13,6 +13,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONException;
@@ -64,11 +65,10 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected Fragment FragmentUploader;
 	protected Fragment FragmentPlaylist;
 	protected ArrayList<String> API;
-	protected boolean taskCancel = false;
 	protected View view;
 	protected LayoutInflater mInflater;
 	protected VideoArrayAdapter vaa;
-	protected LoadMoreTask mLoadMoreTask = null;
+	protected ArrayList<LoadMoreTask> mLoadMoreTasks = new ArrayList<LoadMoreTask>();
 	protected Button mRetryButton;
 	protected View mRetryView;
 	protected boolean needFilter;
@@ -110,6 +110,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Get Retry view
 		mRetryView = sfa.findViewById(R.id.mRetry);
+		mRetryView.setVisibility(View.GONE);
 
 		// get action bar
 		ab = sfa.getSupportActionBar();
@@ -177,16 +178,10 @@ public class LoadMore_Base extends SherlockListFragment {
 					// network ok
 					if (isMoreVideos == true) {
 						// new LoadMoreTask().execute(API.get(0));
-						mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-						mLoadMoreTask.execute(API.get(0));
+						LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask();
+						newTask.execute(API.get(0));
+						mLoadMoreTasks.add(newTask);
 					}
-					// } else {
-					//
-					// // ic.networkToast(sfa);
-					//
-					// ((LoadMoreListView) myLoadMoreListView)
-					// .onLoadMoreComplete();
-					// }
 
 				}
 			});
@@ -201,10 +196,6 @@ public class LoadMore_Base extends SherlockListFragment {
 			fullscreenLoadingView.setVisibility(View.VISIBLE);
 			doRequest();
 		}
-
-		// } else {
-		// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-		// }
 
 	}
 
@@ -244,12 +235,7 @@ public class LoadMore_Base extends SherlockListFragment {
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
 
-		// Fragment currentFragment =
-		// getFragmentManager().findFragmentByTag(this.getTag());
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-		// Putting the current fragment into stack for later call back
-		// ft.addToBackStack(null);
 
 		switch (item.getItemId()) {
 
@@ -257,11 +243,8 @@ public class LoadMore_Base extends SherlockListFragment {
 			// Menu option 1
 			Toast.makeText(sfa, "Got click: " + item.getItemId(),
 					Toast.LENGTH_SHORT).show();
-			// ft.remove(currentFragment);
 			refreshFragment();
 			ft.replace(R.id.content_frame, currentFragment);
-			// fragTransaction.commit();
-			// ft.replace(R.id.content_frame, this);
 			break;
 
 		case 11:
@@ -293,23 +276,18 @@ public class LoadMore_Base extends SherlockListFragment {
 		// if (ic.checkConnection(this.getSherlockActivity())) {
 		// get selected items
 
-		// String selectedValue = (String)
-		// getListAdapter().getItem(position);
-
 		Toast.makeText(this.getSherlockActivity(), videos.get(position),
 				Toast.LENGTH_SHORT).show();
 
 		Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
 		i.putExtra("video", videolist.get(position));
 		startActivity(i);
-		// } else {
-		// ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
-		// }
 
 	}
 
 	class LoadMoreTask extends AsyncTask<String, String, String> {
 		protected String responseString = null;
+		protected boolean taskCancel = false;
 
 		@Override
 		protected String doInBackground(String... uri) {
@@ -319,13 +297,16 @@ public class LoadMore_Base extends SherlockListFragment {
 //			int timeoutSocket = 500;
 //			HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
 //			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+//			Log.d("UriGot",uri[0]);
 			HttpClient httpclient = new DefaultHttpClient();
+			httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 			HttpResponse response;
 
 			if (!ic.isOnline(sfa)){
 				Log.d("AsyncDebug", "Ic not online!");
 				
-				cancelTask();
+				cancel(true);
+				taskCancel = true;
 			}else
 			try {
 				HttpGet myGet = new HttpGet(uri[0]);
@@ -347,21 +328,10 @@ public class LoadMore_Base extends SherlockListFragment {
 					// Closes the connection.
 					response.getEntity().getContent().close();
 //					throw new IOException(statusLine.getReasonPhrase());
-
-					if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
-						// Internet lost during fullscree loading
-						ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-					} else {
-						// Internet lost during loading more
-						ic.setNetworkError(InternetConnection.loadingMoreError);
-					}
-					
-//					fullscreenLoadingView.setVisibility(View.GONE);
-//					
-//					mRetryView.setVisibility(View.VISIBLE);
 										
-					cancelTask();
-										
+					cancel(true);
+					taskCancel = true;
+															
 					throw new IOException(statusLine.getReasonPhrase());
 
 				}
@@ -369,20 +339,9 @@ public class LoadMore_Base extends SherlockListFragment {
 //				throw new IOException(statusLine.getReasonPhrase());
 			
 				Log.d("AsyncDebug", e.toString());
-
-				if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
-					// Internet lost during fullscree loading
-					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-				} else {
-					// Internet lost during loading more
-					ic.setNetworkError(InternetConnection.loadingMoreError);
-				}
-				
-//				fullscreenLoadingView.setVisibility(View.GONE);
-				
-//				mRetryView.setVisibility(View.VISIBLE);
-								
-				cancelTask();
+												
+				cancel(true);
+				taskCancel = true;
 				
 
 			} finally{
@@ -400,14 +359,11 @@ public class LoadMore_Base extends SherlockListFragment {
 		protected void onPostExecute(String result) {
 			// Do anything with response..
 			// System.out.println(result);
-			// if (ic.checkConnection(sfa)) {
+
 			Log.d("AsyncDebug", "Into onPostExecute!");
 			
 			if (!taskCancel && result != null) {
 				// Do anything with response..
-				// System.out.println(result);
-
-				// ytf = switcher(ytf,result);
 
 				feedManager.setmJSON(result);
 
@@ -451,80 +407,57 @@ public class LoadMore_Base extends SherlockListFragment {
 
 					myLoadMoreListView.setOnLoadMoreListener(null);
 				}
-
+				
 			}else {
-				if (!taskCancel)
-					((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-				
-				Log.d("AsyncDebug", "Cannelled in onPostExecute!");
-				
-				mRetryView.setVisibility(View.VISIBLE);
-				fullscreenLoadingView.setVisibility(View.GONE);
-				
-				
+				cancelSingleTask(this);
 			}
-			// } else {
-			//
-			// // No internet
-			// // Cancel the load more animation
-			// ((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-			//
-			// if (fullscreenLoadingView
-			// .getVisibility() == View.VISIBLE) {
-			// // Internet lost during fullscree loading
-			//
-			// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-			// } else {
-			// // Internet lost during loading more
-			// ic.setNetworkError(InternetConnection.loadingMoreError);
-			// }
-			// }
+
 		}
 
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
-			if (!taskCancel)
-				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-			
 			Log.d("AsyncDebug", "Into OnCancelled!");
-			
-//			mRetryView.setVisibility(View.VISIBLE);
-//			fullscreenLoadingView.setVisibility(View.GONE);
-
-			
+			cancelSingleTask(this);
 		}
 		
-		  @Override
-		  protected void onCancelled(String result) {
-			  
-				if (!taskCancel)
-					((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-				
-				Log.d("AsyncDebug", "Into OnCancelled!");
-				
-//				mRetryView.setVisibility(View.VISIBLE);
-//				fullscreenLoadingView.setVisibility(View.GONE);
-
-		  }
-
 	}
 
 	// sending the http request
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			mLoadMoreTask = new LoadMoreTask();
+			LoadMoreTask newTask = new LoadMoreTask();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				mLoadMoreTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 						s);
 			} else {
-				mLoadMoreTask.execute(s);
+				newTask.execute(s);
 			}
+			
+			mLoadMoreTasks.add(newTask);
 		}
 	}
 
 	public void Initializing() {
+
+	}
+	
+	public void cancelSingleTask(LoadMoreTask mTask){
+		
+		
+		((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+				
+		if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
+			// Internet lost during fullscree loading
+			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+		} else {
+			// Internet lost during loading more
+			ic.setNetworkError(InternetConnection.loadingMoreError);
+		}
+		
+		if (mRetryView != null) mRetryView.setVisibility(View.VISIBLE);
+		if (fullscreenLoadingView != null) fullscreenLoadingView.setVisibility(View.GONE);
 
 	}
 
@@ -538,25 +471,23 @@ public class LoadMore_Base extends SherlockListFragment {
 			imageLoader.clearMemoryCache();
 		}
 		// check the state of the task
-		cancelTask();
+		cancelAllTask();
 		
 		fullscreenLoadingView.setVisibility(View.GONE);
 
 	}
 	
-	public void cancelTask(){
-		if (mLoadMoreTask != null
-				&& mLoadMoreTask.getStatus() == Status.RUNNING){
-			mLoadMoreTask.cancel(true);
+	public void cancelAllTask(){
+		
+		for (LoadMoreTask mTask : mLoadMoreTasks)
+		if (mTask != null
+				&& mTask.getStatus() == Status.RUNNING){
+			mTask.cancel(true);
 
-		taskCancel = true;
 		Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
 		}
 		else Log.d("AsyncDebug", "Task cancellation failed!!!!");
 
-
-		// Hide loading view
-//		fullscreenLoadingView.setVisibility(View.GONE);
 	}
 
 	protected void filtering(Video v) {
@@ -590,8 +521,9 @@ public class LoadMore_Base extends SherlockListFragment {
 				// Continue previous loading
 				if (isMoreVideos == true) {
 					// new LoadMoreTask().execute(API.get(0));
-					mLoadMoreTask = (LoadMoreTask) new LoadMoreTask();
-					mLoadMoreTask.execute(API.get(0));
+					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask();
+					newTask.execute(API.get(0));
+					mLoadMoreTasks.add(newTask);
 				}
 				break;
 

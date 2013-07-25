@@ -159,7 +159,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		teamName_1.setText(contents.get(0).select("a").first().text().trim());
 		teamName_2.setText(contents.get(1).select("a").first().text().trim());
-
+		
 		imageLoader.displayImage(baseUrl
 				+ contents.get(0).select("img").first().attr("src"), icon_1,
 				options, animateFirstListener);
@@ -168,14 +168,25 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				+ contents.get(1).select("img").first().attr("src"), icon_2,
 				options, animateFirstListener);
 
-		tournamentName.setText("Tournament: "
-				+ contents.get(2).select("td").get(1).text().trim());
-		format.setText("Format: Best of "
-				+ contents.get(2).select("td").get(3).text().trim());
-		String dateInString = contents.get(2).select("td").first().text()
-				.trim();
-		startTime.setText("Start Time: " + processDate(dateInString)
-				+ " (Local)");
+		Elements detailTd = contents.get(2).select("td");
+		
+		if (detailTd.size() == 4){
+		
+			tournamentName.setText("Tournament: "
+					+ detailTd.get(2).text().trim());
+			format.setText("Format: Best of "
+					+ detailTd.get(3).text().trim());
+			String dateInString = detailTd.first().text()
+					.trim();
+			startTime.setText("Start Time: " + processDate(dateInString)
+					+ " (Local)");
+		}else{
+			tournamentName.setText("Tournament: "
+					+ detailTd.get(1).text().trim());
+			format.setText("Format: Best of "
+					+ detailTd.get(2).text().trim());
+			startTime.setText("Start Time: ");			
+		}
 
 		if (lives.isEmpty()) {
 			liveLabel.setVisibility(View.GONE);
