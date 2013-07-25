@@ -52,7 +52,7 @@ public class UpcomingFragment extends LoadMore_Base {
 
 		// Give API URLs
 		API.add("http://www.gosugamers.net/dota2/gosubet");
-		
+
 		pageNum = 1;
 
 		// initialize the fragments in the Menu
@@ -126,7 +126,7 @@ public class UpcomingFragment extends LoadMore_Base {
 		}
 
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
@@ -137,18 +137,19 @@ public class UpcomingFragment extends LoadMore_Base {
 			// String selectedValue = (String)
 			// getListAdapter().getItem(position);
 
-			Toast.makeText(this.getSherlockActivity(), matchArray.get(position).getGosuLink(),
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getSherlockActivity(),
+					matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
+					.show();
 
-			Intent i = new Intent(this.getSherlockActivity(), MatchDetailsActivity.class);
-			i.putExtra("link",  matchArray.get(position).getGosuLink());
+			Intent i = new Intent(this.getSherlockActivity(),
+					MatchDetailsActivity.class);
+			i.putExtra("link", matchArray.get(position).getGosuLink());
 			startActivity(i);
 		} else {
 			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
 		}
 
 	}
-
 
 	@Override
 	protected void doRequest() {
@@ -158,7 +159,8 @@ public class UpcomingFragment extends LoadMore_Base {
 		for (String s : API) {
 			mgetMatchInfo = new getMatchInfo();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				mgetMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
+				mgetMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+						s);
 			} else {
 				mgetMatchInfo.execute(s);
 			}
@@ -184,16 +186,19 @@ public class UpcomingFragment extends LoadMore_Base {
 				// for (String match: matches){
 				// System.out.println(match);
 				// }
-				Element paginator = doc.select("div.box").get(1).select("div.paginator").first();
-				if (paginator == null){
+				Element paginator = doc.select("div.box").get(1)
+						.select("div.paginator").first();
+				if (paginator == null) {
 					isMoreVideos = false;
-				}else{
-					if (paginator.select("a").last().hasAttr("class")){
+				} else {
+					if (paginator.select("a").last().hasAttr("class")) {
 						isMoreVideos = false;
-					}else {
+					} else {
 						isMoreVideos = true;
 						pageNum++;
-						API.set(0, "http://www.gosugamers.net/dota2/gosubet?u-page="+pageNum);
+						API.set(0,
+								"http://www.gosugamers.net/dota2/gosubet?u-page="
+										+ pageNum);
 					}
 				}
 
@@ -208,71 +213,75 @@ public class UpcomingFragment extends LoadMore_Base {
 		protected void onPostExecute(Elements links) {
 
 			if (ic.checkConnection(sfa)) {
+				if (links != null) {
+					// Setting layout
 
-				// Setting layout
+					String baseUrl = "http://www.gosugamers.net";
 
-				String baseUrl = "http://www.gosugamers.net";
+					for (Element link : links) {
 
-				for (Element link : links) {
+						if (link.getElementsByClass("results").isEmpty()) {
 
-					if (link.getElementsByClass("results").isEmpty()) {
+							Match newMatch = new Match();
+							Element opp_1 = link.select("td.opp").first();
+							Element opp_2 = link.select("td.opp").get(1);
 
-						Match newMatch = new Match();
-						Element opp_1 = link.select("td.opp").first();
-						Element opp_2 = link.select("td.opp").get(1);
+							newMatch.setTeamName1(opp_1.select("span").first()
+									.text().trim());
+							newMatch.setTeamName2(opp_2.select("span").first()
+									.text().trim());
 
-						newMatch.setTeamName1(opp_1.select("span").first()
-								.text().trim());
-						newMatch.setTeamName2(opp_2.select("span").first()
-								.text().trim());
+							newMatch.setTeamIcon1(baseUrl
+									+ opp_1.select("img").attr("src"));
+							newMatch.setTeamIcon2(baseUrl
+									+ opp_2.select("img").attr("src"));
 
-						newMatch.setTeamIcon1(baseUrl
-								+ opp_1.select("img").attr("src"));
-						newMatch.setTeamIcon2(baseUrl
-								+ opp_2.select("img").attr("src"));
+							// if
+							// (link.getElementsByClass("results").isEmpty()){
+							newMatch.setTime(link.select("td").get(3).text()
+									.trim());
+							// }else{
+							// newMatch.setTime(link.select("span.hidden").first().text().trim());
+							//
+							// }
 
-						// if (link.getElementsByClass("results").isEmpty()){
-						newMatch.setTime(link.select("td").get(3).text().trim());
-						// }else{
-						// newMatch.setTime(link.select("span.hidden").first().text().trim());
-						//
-						// }
+							newMatch.setGosuLink(baseUrl
+									+ opp_1.select("a[href]").attr("href"));
 
-						newMatch.setGosuLink(baseUrl
-								+ opp_1.select("a[href]").attr("href"));
+							matchArray.add(newMatch);
 
-						matchArray.add(newMatch);
+							// } else {
+							// match +=
+							// link.select("span.hidden").first().text().trim();
+							// results.add(match);
+							// }
+						}
 
-						// } else {
-						// match +=
-						// link.select("span.hidden").first().text().trim();
-						// results.add(match);
-						// }
 					}
 
+					for (Match m : matchArray) {
+						System.out.println(m.getTeamName1());
+					}
+
+					mArrayAdatper.notifyDataSetChanged();
+
+					// Call onLoadMoreComplete when the LoadMore task, has
+					// finished
+					((LoadMoreListView) myLoadMoreListView)
+							.onLoadMoreComplete();
+
+					// loading done
+					fullscreenLoadingView.setVisibility(View.GONE);
+
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						myLoadMoreListView.setOnLoadMoreListener(null);
+					}
+				} else {
+					mRetryView.setVisibility(View.VISIBLE);
+					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
 				}
-
-				for (Match m : matchArray) {
-					System.out.println(m.getTeamName1());
-				}
-
-				mArrayAdatper.notifyDataSetChanged();
-
-				// Call onLoadMoreComplete when the LoadMore task, has
-				// finished
-				((LoadMoreListView) myLoadMoreListView)
-						.onLoadMoreComplete();
-
-				// loading done
-				fullscreenLoadingView
-						.setVisibility(View.GONE);
-
-				if (!isMoreVideos) {
-					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
-					myLoadMoreListView.setOnLoadMoreListener(null);
-				}
-
 			} else {
 
 				// No internet

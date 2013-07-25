@@ -170,11 +170,12 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		tournamentName.setText("Tournament: "
 				+ contents.get(2).select("td").get(1).text().trim());
-		format.setText("Format: "
+		format.setText("Format: Best of "
 				+ contents.get(2).select("td").get(3).text().trim());
 		String dateInString = contents.get(2).select("td").first().text()
 				.trim();
-		startTime.setText("Start Time: " + processDate(dateInString));
+		startTime.setText("Start Time: " + processDate(dateInString)
+				+ " (Local)");
 
 		if (lives.isEmpty()) {
 			liveLabel.setVisibility(View.GONE);
@@ -236,9 +237,15 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		protected void onPostExecute(Elements contents) {
 			// Checking network status first
 			if (ic.checkConnection(sfa)) {
-				initMatchView();
+				if (contents != null) {
+					
+					initMatchView();
 
-				fullscreenLoadingView.setVisibility(View.GONE);
+					fullscreenLoadingView.setVisibility(View.GONE);
+				}else{
+					// may be network problem, let user retry
+					mRetryView.setVisibility(View.VISIBLE);
+				}
 			}
 		}
 
@@ -257,7 +264,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		sdf = new SimpleDateFormat("MMMM d 'at' hh:mm a z");
+		sdf = new SimpleDateFormat("MMMM d 'at' hh:mm a");
 		sdf.setTimeZone(TimeZone.getDefault());
 		// date.setHours(Integer.parseInt(hourInString));
 		return sdf.format(date);

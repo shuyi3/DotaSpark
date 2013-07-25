@@ -325,6 +325,7 @@ public class LoadMore_Base extends SherlockListFragment {
 					// Closes the connection.
 					response.getEntity().getContent().close();
 					throw new IOException(statusLine.getReasonPhrase());
+					
 				}
 			} catch (ClientProtocolException e) {
 				// TODO Handle problems..
