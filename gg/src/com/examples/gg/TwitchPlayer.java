@@ -111,7 +111,6 @@ public class TwitchPlayer extends Activity {
 		mWebView = (WebView) findViewById(R.id.webview_player);
 		mWebChat = (WebView) findViewById(R.id.webview_chat);
 		mSideView = (LinearLayout) findViewById(R.id.side_content);
-		lockButton = (ToggleButton) findViewById(R.id.lockButton);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -168,35 +167,6 @@ public class TwitchPlayer extends Activity {
 
 		mWebView.setWebChromeClient(new MyWebChromeClient());
 		mWebView.setWebViewClient(new MyWebViewClient());
-
-		lockButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-
-				if (isChecked) {
-					mWebView.setOnTouchListener(new View.OnTouchListener() {
-						@Override
-						public boolean onTouch(View v, MotionEvent event) {
-							return true;
-						}
-
-					});
-
-				} else {
-
-					mWebView.setOnTouchListener(new View.OnTouchListener() {
-						@Override
-						public boolean onTouch(View v, MotionEvent event) {
-							return false;
-						}
-
-					});
-				}
-
-			}
-		});
 
 	}
 
