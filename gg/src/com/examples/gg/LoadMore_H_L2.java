@@ -39,4 +39,5 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 	public void refreshFragment(){
 		currentFragment = new LoadMore_H_L2(mAPI);
 	}
+	
 }

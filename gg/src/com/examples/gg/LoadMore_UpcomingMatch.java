@@ -30,7 +30,7 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class UpcomingFragment extends LoadMore_Base {
+public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 	private Elements links;
 	private ArrayList<Match> matchArray = new ArrayList<Match>();
@@ -40,7 +40,7 @@ public class UpcomingFragment extends LoadMore_Base {
 
 	@Override
 	public void refreshFragment() {
-		currentFragment = new UpcomingFragment();
+		currentFragment = new LoadMore_UpcomingMatch();
 	}
 
 	@Override
@@ -55,19 +55,11 @@ public class UpcomingFragment extends LoadMore_Base {
 
 		pageNum = 1;
 
-		// initialize the fragments in the Menu
-		// FragmentAll = new LoadMore_H_Subscription();
-		// FragmentUploader = new LoadMore_H_Uploader();
-		// FragmentPlaylist = new LoadMore_H_Playlist();
-
-		// set a feed manager
-		// feedManager = new FeedManager_Subscription();
-
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		setRetryButtonListener(new UpcomingFragment());
+		setRetryButtonListener(new LoadMore_UpcomingMatch());
 
 	}
 
@@ -265,7 +257,7 @@ public class UpcomingFragment extends LoadMore_Base {
 
 					mArrayAdatper.notifyDataSetChanged();
 
-					// Call onLoadMoreComplete when the LoadMore task, has
+					// Call onLoadMoreComplete when the LoadMore task has
 					// finished
 					((LoadMoreListView) myLoadMoreListView)
 							.onLoadMoreComplete();

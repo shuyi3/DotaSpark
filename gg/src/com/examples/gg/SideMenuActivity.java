@@ -36,7 +36,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	ArrayList<Item> items = new ArrayList<Item>();
 	ActionBar mActionBar;
 	EntryAdapter eAdapter;
-	
+
 	private Activity sfa;
 	private int currentDrawerFragmentId = 1;
 	private Button retryButton;
@@ -44,14 +44,16 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	private FragmentManager fm;
 	private InternetConnection ic;
 	private View fullscreenLoadingView;
-//	public View row;
+	private boolean doubleBackToExitPressedOnce = false;
+
+	// public View row;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawer_main);
 		sfa = this;
-		
+
 		// Initial fragment manager
 		fm = this.getSupportFragmentManager();
 		// Generate title
@@ -67,17 +69,18 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// icon = new int[] { R.drawable.action_about,
 		// R.drawable.action_settings,
 		// R.drawable.collections_cloud };
-		
+
 		ic = new InternetConnection();
-        
-		fullscreenLoadingView = sfa.findViewById(R.id.fullscreen_loading_indicator);
-		
+
+		fullscreenLoadingView = sfa
+				.findViewById(R.id.fullscreen_loading_indicator);
+
 		// Locate DrawerLayout in drawer_main.xml
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		// Locate ListView in drawer_main.xml
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
-		
+
 		// Do not allow list view to scroll over
 		mDrawerList.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
 
@@ -101,17 +104,17 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new SectionItem("Lives"));
 		items.add(new EntryItem("Twitch Streams", "Battle begins!",
 				R.drawable.collections_cloud));
-		
+
 		items.add(new SectionItem("Match Table"));
 		items.add(new EntryItem("Upcoming Matches", "matches approaching!",
 				R.drawable.collections_cloud));
 		items.add(new EntryItem("Recent Results", "It's in the bag!",
 				R.drawable.collections_cloud));
 
-	    eAdapter = new EntryAdapter(this, items);
+		eAdapter = new EntryAdapter(this, items);
 
 		mRetryView = sfa.findViewById(R.id.mRetry);
-	    
+
 		// setListAdapter(adapter);
 
 		// Set the MenuListAdapter to the ListView
@@ -125,7 +128,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		//mActionBar.setTitle("Main Menu");
+		// mActionBar.setTitle("Main Menu");
 
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
@@ -147,14 +150,13 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		// set a listener for retry button
-        retryButton = (Button) findViewById(R.id.mRetryButton);
-        setRetryListener();
-		
+		retryButton = (Button) findViewById(R.id.mRetryButton);
+		setRetryListener();
+
 		if (savedInstanceState == null) {
 			selectItem(1);
-			
+
 		}
-		
 
 	}
 
@@ -168,21 +170,21 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		if (item.getItemId() == android.R.id.home) {
-			
-		    Handler handler = new Handler(); 
+
+			Handler handler = new Handler();
 
 			if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-			    handler.postDelayed(new Runnable() { 
-			         public void run() { 
+				handler.postDelayed(new Runnable() {
+					public void run() {
 						mDrawerLayout.closeDrawer(mDrawerList);
-			         } 
-			    }, 0);
+					}
+				}, 0);
 			} else {
-			    handler.postDelayed(new Runnable() { 
-			         public void run() { 
+				handler.postDelayed(new Runnable() {
+					public void run() {
 						mDrawerLayout.openDrawer(mDrawerList);
-			         } 
-			    }, 0);
+					}
+				}, 0);
 			}
 		}
 
@@ -195,47 +197,45 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-//		    if (row != null) {
-//		        row.setBackgroundColor(Color.WHITE);
-//		    }
-//		    row = view;
-//		    view.setBackgroundColor(Color.YELLOW);
-//		    		    
+			// if (row != null) {
+			// row.setBackgroundColor(Color.WHITE);
+			// }
+			// row = view;
+			// view.setBackgroundColor(Color.YELLOW);
+			//
 			selectItem(position);
 		}
 	}
 
 	private void selectItem(int position) {
 		// check network
-		
 
 		if (ic.checkConnection(this)) {
 			for (Item i : items)
-			    i.setUnchecked();
+				i.setUnchecked();
 			items.get(position).setChecked();
 			eAdapter.notifyDataSetChanged();
 
-			
 			FragmentTransaction ft = getSupportFragmentManager()
 					.beginTransaction();
 			// Locate Position
 			ArrayList<String> al = new ArrayList<String>();
-			
+
 			// Clear the fragment stack first
 			clearFragmentStack();
-			
+
 			mDrawerList.setItemChecked(position, true);
-//			mDrawerList.setSelection(position);
+			// mDrawerList.setSelection(position);
 			// Close drawer
-//			mDrawerLayout.closeDrawer(mDrawerList);
-			
-		    Handler handler = new Handler(); 
-		    handler.postDelayed(new Runnable() { 
-		         public void run() { 
-		 			mDrawerLayout.closeDrawer(mDrawerList);
-		         } 
-		    }, 0);
-			
+			// mDrawerLayout.closeDrawer(mDrawerList);
+
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				public void run() {
+					mDrawerLayout.closeDrawer(mDrawerList);
+				}
+			}, 0);
+
 			switch (position) {
 
 			case 1:
@@ -257,25 +257,24 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				// Twitch section
 				ft.replace(R.id.content_frame, new LoadMore_Twitch());
 				break;
-				
+
 			case 8:
 				// Twitch section
-				ft.replace(R.id.content_frame, new UpcomingFragment());
+				ft.replace(R.id.content_frame, new LoadMore_UpcomingMatch());
 				break;
 			}
-			
+
 			ft.commit();
 
-
-		}else{
+		} else {
 			// All errors should be full screen loading error
 			// Reset listener since listener may be changed by other fragments
 			setRetryListener();
 			currentDrawerFragmentId = position;
-			
+
 			// Close drawer
 			mDrawerLayout.closeDrawer(mDrawerList);
-			
+
 		}
 	}
 
@@ -292,29 +291,61 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-	
-	public void retry(View v){
-		this.findViewById(R.id.mRetry).setVisibility(
-				View.GONE);
-		
+
+	public void retry(View v) {
+		this.findViewById(R.id.mRetry).setVisibility(View.GONE);
+
 	}
-	
-	public void setRetryListener(){
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	if(ic.isOnline(sfa)){
-            		//fullscreenLoadingView.setVisibility(View.GONE);
-	                // Perform action on click
-	            	mRetryView.setVisibility(View.GONE);
-	            	// Going to News section by default
-	            	selectItem(currentDrawerFragmentId);
-            	}
-            }
-        });
+
+	public void setRetryListener() {
+		retryButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				if (ic.isOnline(sfa)) {
+					// fullscreenLoadingView.setVisibility(View.GONE);
+					// Perform action on click
+					mRetryView.setVisibility(View.GONE);
+					// Going to News section by default
+					selectItem(currentDrawerFragmentId);
+				}
+			}
+		});
 	}
+
 	// Clear fragment back stack
-	public void clearFragmentStack(){
+	public void clearFragmentStack() {
 		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+	}
+
+	// Handles exit
+	@Override
+	public void onBackPressed() {
+		if (fm.getBackStackEntryCount() == 0) {
+			
+			// No fragment in back stack
+			
+			if (doubleBackToExitPressedOnce) {
+				super.onBackPressed();
+				return;
+			}
+			this.doubleBackToExitPressedOnce = true;
+			Toast.makeText(this, "Please click BACK again to exit",
+					Toast.LENGTH_SHORT).show();
+			
+			// reset doubleBackToExitPressedOnce to false after 2 seconds
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					doubleBackToExitPressedOnce = false;
+
+				}
+			}, 2000);
+		} else {
+			
+			// Fragment back stack is empty 
+			
+			super.onBackPressed();
+		}
 	}
 
 }

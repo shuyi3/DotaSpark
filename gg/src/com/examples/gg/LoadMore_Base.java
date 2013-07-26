@@ -97,7 +97,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		mInflater = inflater;
 
 		// For check internet connection
-		 ic = new InternetConnection();
+		ic = new InternetConnection();
 
 		// set the layout
 		view = inflater.inflate(R.layout.loadmore_list, null);
@@ -235,37 +235,39 @@ public class LoadMore_Base extends SherlockListFragment {
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
 
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		// do nothing if no network
+		if (ic.checkConnection(sfa)) {
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-		switch (item.getItemId()) {
+			switch (item.getItemId()) {
 
-		case 0:
-			// Menu option 1
-			Toast.makeText(sfa, "Got click: " + item.getItemId(),
-					Toast.LENGTH_SHORT).show();
-			refreshFragment();
-			ft.replace(R.id.content_frame, currentFragment);
-			break;
+			case 0:
 
-		case 11:
-			// Menu option 1
-			ft.replace(R.id.content_frame, FragmentAll);
-			break;
+				// Menu option 1
+				Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
+				refreshFragment();
+				ft.replace(R.id.content_frame, currentFragment);
+				break;
 
-		case 12:
-			// Menu option 2
-			ft.replace(R.id.content_frame, FragmentUploader);
-			break;
+			case 11:
+				// Menu option 1
+				ft.replace(R.id.content_frame, FragmentAll);
+				break;
 
-		case 13:
-			// Menu option 3
-			ft.replace(R.id.content_frame, FragmentPlaylist);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
+			case 12:
+				// Menu option 2
+				ft.replace(R.id.content_frame, FragmentUploader);
+				break;
+
+			case 13:
+				// Menu option 3
+				ft.replace(R.id.content_frame, FragmentPlaylist);
+				break;
+			default:
+				return super.onOptionsItemSelected(item);
+			}
+			ft.commit();
 		}
-		ft.commit();
-
 		return true;
 	}
 
@@ -292,66 +294,70 @@ public class LoadMore_Base extends SherlockListFragment {
 		@Override
 		protected String doInBackground(String... uri) {
 
-//			HttpParams httpParameters = new BasicHttpParams();
-//			int timeoutConnection = 300;
-//			int timeoutSocket = 500;
-//			HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-//			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-//			Log.d("UriGot",uri[0]);
+			// HttpParams httpParameters = new BasicHttpParams();
+			// int timeoutConnection = 300;
+			// int timeoutSocket = 500;
+			// HttpConnectionParams.setConnectionTimeout(httpParameters,
+			// timeoutConnection);
+			// HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+			// Log.d("UriGot",uri[0]);
 			HttpClient httpclient = new DefaultHttpClient();
-			httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+			httpclient
+					.getParams()
+					.setParameter(
+							CoreProtocolPNames.USER_AGENT,
+							"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 			HttpResponse response;
 
-			if (!ic.isOnline(sfa)){
+			if (!ic.isOnline(sfa)) {
 				Log.d("AsyncDebug", "Ic not online!");
-				
+
 				cancel(true);
 				taskCancel = true;
-			}else
-			try {
-				HttpGet myGet = new HttpGet(uri[0]);
-//				myGet.setParams(httpParameters);
-				response = httpclient.execute(myGet);				
-				StatusLine statusLine = response.getStatusLine();
-				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-					
-					Log.d("AsyncDebug", "200 OK!");
-					
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					response.getEntity().writeTo(out);
-					out.close();
-					responseString = out.toString();
-				} else {
-					
-					Log.d("AsyncDebug", "Not 200 OK!");
+			} else
+				try {
+					HttpGet myGet = new HttpGet(uri[0]);
+					// myGet.setParams(httpParameters);
+					response = httpclient.execute(myGet);
+					StatusLine statusLine = response.getStatusLine();
+					if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
 
-					// Closes the connection.
-					response.getEntity().getContent().close();
-//					throw new IOException(statusLine.getReasonPhrase());
-										
+						Log.d("AsyncDebug", "200 OK!");
+
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						response.getEntity().writeTo(out);
+						out.close();
+						responseString = out.toString();
+					} else {
+
+						Log.d("AsyncDebug", "Not 200 OK!");
+
+						// Closes the connection.
+						response.getEntity().getContent().close();
+						// throw new IOException(statusLine.getReasonPhrase());
+
+						cancel(true);
+						taskCancel = true;
+
+						throw new IOException(statusLine.getReasonPhrase());
+
+					}
+				} catch (Exception e) {
+					// throw new IOException(statusLine.getReasonPhrase());
+
+					Log.d("AsyncDebug", e.toString());
+
 					cancel(true);
 					taskCancel = true;
-															
-					throw new IOException(statusLine.getReasonPhrase());
+
+				} finally {
+
+					Log.d("AsyncDebug", "shutdown");
+
+					httpclient.getConnectionManager().shutdown();
+					Log.d("AsyncDebug", "Do in background finished!");
 
 				}
-			} catch (Exception e) {
-//				throw new IOException(statusLine.getReasonPhrase());
-			
-				Log.d("AsyncDebug", e.toString());
-												
-				cancel(true);
-				taskCancel = true;
-				
-
-			} finally{
-				
-				Log.d("AsyncDebug", "shutdown");
-				
-				httpclient.getConnectionManager().shutdown();  
-				Log.d("AsyncDebug", "Do in background finished!");
-
-			}
 			return responseString;
 		}
 
@@ -361,7 +367,7 @@ public class LoadMore_Base extends SherlockListFragment {
 			// System.out.println(result);
 
 			Log.d("AsyncDebug", "Into onPostExecute!");
-			
+
 			if (!taskCancel && result != null) {
 				// Do anything with response..
 
@@ -407,8 +413,8 @@ public class LoadMore_Base extends SherlockListFragment {
 
 					myLoadMoreListView.setOnLoadMoreListener(null);
 				}
-				
-			}else {
+
+			} else {
 				cancelSingleTask(this);
 			}
 
@@ -420,7 +426,7 @@ public class LoadMore_Base extends SherlockListFragment {
 			Log.d("AsyncDebug", "Into OnCancelled!");
 			cancelSingleTask(this);
 		}
-		
+
 	}
 
 	// sending the http request
@@ -429,12 +435,11 @@ public class LoadMore_Base extends SherlockListFragment {
 		for (String s : API) {
 			LoadMoreTask newTask = new LoadMoreTask();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-						s);
+				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
 				newTask.execute(s);
 			}
-			
+
 			mLoadMoreTasks.add(newTask);
 		}
 	}
@@ -442,12 +447,11 @@ public class LoadMore_Base extends SherlockListFragment {
 	public void Initializing() {
 
 	}
-	
-	public void cancelSingleTask(LoadMoreTask mTask){
-		
-		
+
+	public void cancelSingleTask(LoadMoreTask mTask) {
+
 		((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-				
+
 		if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
 			// Internet lost during fullscree loading
 			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
@@ -455,9 +459,11 @@ public class LoadMore_Base extends SherlockListFragment {
 			// Internet lost during loading more
 			ic.setNetworkError(InternetConnection.loadingMoreError);
 		}
-		
-		if (mRetryView != null) mRetryView.setVisibility(View.VISIBLE);
-		if (fullscreenLoadingView != null) fullscreenLoadingView.setVisibility(View.GONE);
+
+		if (mRetryView != null)
+			mRetryView.setVisibility(View.VISIBLE);
+		if (fullscreenLoadingView != null)
+			fullscreenLoadingView.setVisibility(View.GONE);
 
 	}
 
@@ -472,21 +478,20 @@ public class LoadMore_Base extends SherlockListFragment {
 		}
 		// check the state of the task
 		cancelAllTask();
-		
+
 		fullscreenLoadingView.setVisibility(View.GONE);
 
 	}
-	
-	public void cancelAllTask(){
-		
-		for (LoadMoreTask mTask : mLoadMoreTasks)
-		if (mTask != null
-				&& mTask.getStatus() == Status.RUNNING){
-			mTask.cancel(true);
 
-		Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
-		}
-		else Log.d("AsyncDebug", "Task cancellation failed!!!!");
+	public void cancelAllTask() {
+
+		for (LoadMoreTask mTask : mLoadMoreTasks)
+			if (mTask != null && mTask.getStatus() == Status.RUNNING) {
+				mTask.cancel(true);
+
+				Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
+			} else
+				Log.d("AsyncDebug", "Task cancellation failed!!!!");
 
 	}
 
@@ -542,6 +547,8 @@ public class LoadMore_Base extends SherlockListFragment {
 				break;
 
 			}
+			// Clear the network error
+			ic.setNetworkError(0);
 			mRetryView.setVisibility(View.GONE);
 		}
 	}
