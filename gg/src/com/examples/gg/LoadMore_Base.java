@@ -110,7 +110,6 @@ public class LoadMore_Base extends SherlockListFragment {
 
 		// Get Retry view
 		mRetryView = sfa.findViewById(R.id.mRetry);
-		mRetryView.setVisibility(View.GONE);
 
 		// get action bar
 		ab = sfa.getSupportActionBar();
@@ -193,7 +192,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		// sending Initial Get Request to Youtube
 		if (!API.isEmpty()) {
 			// show loading screen
-			fullscreenLoadingView.setVisibility(View.VISIBLE);
+			callLoadingIndicator();
 			doRequest();
 		}
 
@@ -236,13 +235,11 @@ public class LoadMore_Base extends SherlockListFragment {
 			com.actionbarsherlock.view.MenuItem item) {
 
 		// do nothing if no network
-		if (ic.checkConnection(sfa)) {
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 
 			switch (item.getItemId()) {
 
 			case 0:
-
 				// Menu option 1
 				Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
 				refreshFragment();
@@ -267,7 +264,7 @@ public class LoadMore_Base extends SherlockListFragment {
 				return super.onOptionsItemSelected(item);
 			}
 			ft.commit();
-		}
+
 		return true;
 	}
 
@@ -294,27 +291,15 @@ public class LoadMore_Base extends SherlockListFragment {
 		@Override
 		protected String doInBackground(String... uri) {
 
-			// HttpParams httpParameters = new BasicHttpParams();
-			// int timeoutConnection = 300;
-			// int timeoutSocket = 500;
-			// HttpConnectionParams.setConnectionTimeout(httpParameters,
-			// timeoutConnection);
-			// HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-			// Log.d("UriGot",uri[0]);
 			HttpClient httpclient = new DefaultHttpClient();
-			httpclient
-					.getParams()
-					.setParameter(
-							CoreProtocolPNames.USER_AGENT,
-							"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 			HttpResponse response;
 
-			if (!ic.isOnline(sfa)) {
-				Log.d("AsyncDebug", "Ic not online!");
-
-				cancel(true);
-				taskCancel = true;
-			} else
+//			if (!ic.isOnline(sfa)) {
+//				Log.d("AsyncDebug", "Ic not online!");
+//
+//				cancel(true);
+//				taskCancel = true;
+//			} else
 				try {
 					HttpGet myGet = new HttpGet(uri[0]);
 					// myGet.setParams(httpParameters);
@@ -406,8 +391,7 @@ public class LoadMore_Base extends SherlockListFragment {
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 
 				// loading done
-				fullscreenLoadingView.setVisibility(View.GONE);
-
+				callListView();
 				if (!isMoreVideos) {
 					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
 
@@ -460,10 +444,7 @@ public class LoadMore_Base extends SherlockListFragment {
 			ic.setNetworkError(InternetConnection.loadingMoreError);
 		}
 
-		if (mRetryView != null)
-			mRetryView.setVisibility(View.VISIBLE);
-		if (fullscreenLoadingView != null)
-			fullscreenLoadingView.setVisibility(View.GONE);
+		callRetryView();
 
 	}
 
@@ -478,9 +459,8 @@ public class LoadMore_Base extends SherlockListFragment {
 		}
 		// check the state of the task
 		cancelAllTask();
-
-		fullscreenLoadingView.setVisibility(View.GONE);
-
+		hideAllViews();
+		
 	}
 
 	public void cancelAllTask() {
@@ -502,7 +482,7 @@ public class LoadMore_Base extends SherlockListFragment {
 
 	public void networkHandler(Fragment mFragment) {
 
-		if (ic.isOnline(sfa)) {
+//		if (ic.isOnline(sfa)) {
 			// fullscreenLoadingView.setVisibility(View.GONE);
 			switch (ic.getNetworkError()) {
 			case 1:
@@ -532,14 +512,14 @@ public class LoadMore_Base extends SherlockListFragment {
 				}
 				break;
 
-			case 3:
-				// Internet lost during transition to video player
-				// Hide the retry view if it is online
-				Toast.makeText(sfa,
-						"Internet lost during transition to video player",
-						Toast.LENGTH_SHORT).show();
-
-				break;
+//			case 3:
+//				// Internet lost during transition to video player
+//				// Hide the retry view if it is online
+//				Toast.makeText(sfa,
+//						"Internet lost during transition to video player",
+//						Toast.LENGTH_SHORT).show();
+//
+//				break;
 
 			default:
 				Toast.makeText(sfa, "Other unknown internet error!",
@@ -549,8 +529,8 @@ public class LoadMore_Base extends SherlockListFragment {
 			}
 			// Clear the network error
 			ic.setNetworkError(0);
-			mRetryView.setVisibility(View.GONE);
-		}
+			callLoadingIndicator();
+//		}
 	}
 
 	// set a listener for "Retry" button
@@ -573,4 +553,39 @@ public class LoadMore_Base extends SherlockListFragment {
 		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
 
+	public void callRetryView(){
+		if (mRetryView != null)
+			mRetryView.setVisibility(View.VISIBLE);
+		if (myLoadMoreListView != null)
+			myLoadMoreListView.setVisibility(View.GONE);
+		if (fullscreenLoadingView != null)
+			fullscreenLoadingView.setVisibility(View.GONE);
+	}
+	
+	public void callListView(){
+		if (myLoadMoreListView != null)
+			myLoadMoreListView.setVisibility(View.VISIBLE);
+		if (mRetryView != null)
+			mRetryView.setVisibility(View.GONE);
+		if (fullscreenLoadingView != null)
+			fullscreenLoadingView.setVisibility(View.GONE);
+	}
+	
+	public void callLoadingIndicator(){
+		if (fullscreenLoadingView != null)
+			fullscreenLoadingView.setVisibility(View.VISIBLE);
+		if (myLoadMoreListView != null)
+			myLoadMoreListView.setVisibility(View.GONE);
+		if (mRetryView != null)
+			mRetryView.setVisibility(View.GONE);
+	}
+	
+	public void hideAllViews(){
+		if (fullscreenLoadingView != null)
+			fullscreenLoadingView.setVisibility(View.GONE);
+		if (myLoadMoreListView != null)
+			myLoadMoreListView.setVisibility(View.GONE);
+		if (mRetryView != null)
+			mRetryView.setVisibility(View.GONE);
+	}
 }

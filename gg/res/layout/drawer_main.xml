@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible" />
-    
+        
     <include
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -22,10 +22,8 @@
         layout="@layout/retry"
         android:visibility="gone" >
     </include>
-
-
-
-    <ListView
+    
+        <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"

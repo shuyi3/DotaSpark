@@ -1,10 +1,18 @@
 package com.examples.gg;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -374,7 +382,7 @@ public class LoadMore_News extends LoadMore_Base {
 
 		isPagerSet = true;
 
-		fullscreenLoadingView.setVisibility(View.GONE);
+		callListView();
 	}
 
 	private void whatOption() {
@@ -477,31 +485,6 @@ public class LoadMore_News extends LoadMore_Base {
 	}
 
 	private class getMatchInfo extends LoadMoreTask {
-
-		// @Override
-		// protected Elements doInBackground(Void... params) {
-		//
-		// String url = "http://www.gosugamers.net/dota2/gosubet";
-		// Document doc;
-		// try {
-		// doc = Jsoup
-		// .connect(url)
-		// .header("User-Agent",
-		// "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
-		// .get();
-		//
-		// links = doc.select("tr:has(td.opp)");
-		//
-		// // for (String match: matches){
-		// // System.out.println(match);
-		// // }
-		//
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// return links;
-		// }
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -640,14 +623,17 @@ public class LoadMore_News extends LoadMore_Base {
 			} else {
 				newTask.execute(s);
 			}
+			
+			mLoadMoreTasks.add(newTask);
+
 		}
 
 		mMatchInfo = new getMatchInfo();
+		String url = "http://www.gosugamers.net/dota2/gosubet";
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
 		} else {
-			String url = "http://www.gosugamers.net/dota2/gosubet";
 			mMatchInfo.execute(url);
 		}
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +28,8 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class MatchArrayAdapter extends ArrayAdapter<Match> {
 	private final Context context;
-
 	private LayoutInflater inflater;
-
+	private boolean isResult;
 	DisplayImageOptions options;
 	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 	private ImageLoader imageLoader;
@@ -37,12 +37,12 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 	private ArrayList<Match> matches;
 
 	public MatchArrayAdapter(Context context, ArrayList<Match> matches,
-			ImageLoader imageLoader) {
+			ImageLoader imageLoader, boolean isResult ) {
 
 		super(context, R.layout.matchtable, matches);
 
 		this.context = context;
-
+		this.isResult = isResult;
 		this.imageLoader = imageLoader;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -71,8 +71,11 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 
 			holder = new ViewHolder();
 
-			holder.time = (TextView) convertView.findViewById(R.id.matchTime);
-			
+			if (!isResult) holder.time = (TextView) convertView.findViewById(R.id.matchTime);
+			else {
+				convertView.findViewById(R.id.myTimeLayout).setVisibility(View.GONE);
+				holder.score = (TextView) convertView.findViewById(R.id.versus);
+			}
 			holder.teamName1 = (TextView) convertView.findViewById(R.id.teamName1);
 			holder.teamName2 = (TextView) convertView.findViewById(R.id.teamName2);
 			
@@ -85,7 +88,12 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.time.setText(matches.get(position).getTime());
+		if (!isResult){
+			if (matches.get(position).getMatchStatus() == Match.LIVE)
+				holder.time.setTextColor(Color.RED);
+				holder.time.setText(matches.get(position).getTime());
+		}
+		else holder.score.setText(matches.get(position).getScore());
 		
 		holder.teamName1.setText(matches.get(position).getTeamName1());
 		holder.teamName2.setText(matches.get(position).getTeamName2());
@@ -100,13 +108,13 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 	}
 
 	static class ViewHolder {
-		TextView time;
 		
+		TextView time;
+		TextView score;
 		TextView teamName1;
 		TextView teamName2;
 		ImageView teamIcon1;
 		ImageView teamIcon2;
-
 
 	}
 

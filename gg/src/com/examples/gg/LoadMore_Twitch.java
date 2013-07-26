@@ -50,22 +50,12 @@ public class LoadMore_Twitch extends LoadMore_Base {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		// check network first
-		if (ic.checkConnection(this.getSherlockActivity())) {
-			// get selected items
-
-			// String selectedValue = (String)
-			// getListAdapter().getItem(position);
-
 			Toast.makeText(this.getSherlockActivity(), videos.get(position),
 					Toast.LENGTH_SHORT).show();
 
 			Intent i = new Intent(this.getSherlockActivity(), TwitchPlayer.class);
 			i.putExtra("video", videolist.get(position).getVideoId());
 			startActivity(i);
-		} else {
-			ic.setNetworkError(InternetConnection.transitionToVideoPlayerError);
-		}
 
 	}
 

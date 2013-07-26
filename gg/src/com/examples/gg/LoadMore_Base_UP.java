@@ -13,7 +13,7 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		// check network first
-		if (ic.checkConnection(sfa)) {
+//		if (ic.isOnline(sfa)) {
 			
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			
@@ -27,10 +27,10 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 			ft.hide(this);
 			ft.add(R.id.content_frame, mLoadMore);
 			ft.commit();
-		} else {
-			//ic.networkToast(sfa);
-			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-		}
+//		} else {
+//			//ic.networkToast(sfa);
+//			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+//		}
 
 	}
 

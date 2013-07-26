@@ -151,7 +151,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 		// set a listener for retry button
 		retryButton = (Button) findViewById(R.id.mRetryButton);
-		setRetryListener();
+//		setRetryListener();
 
 		if (savedInstanceState == null) {
 			selectItem(1);
@@ -210,7 +210,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	private void selectItem(int position) {
 		// check network
 
-		if (ic.checkConnection(this)) {
+//		if (ic.isOnline(this)) {
 			for (Item i : items)
 				i.setUnchecked();
 			items.get(position).setChecked();
@@ -259,23 +259,28 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				break;
 
 			case 8:
-				// Twitch section
+				// upcoming section
 				ft.replace(R.id.content_frame, new LoadMore_UpcomingMatch());
+				break;
+				
+			case 9:
+				// result section
+				ft.replace(R.id.content_frame, new LoadMore_Result());
 				break;
 			}
 
 			ft.commit();
 
-		} else {
-			// All errors should be full screen loading error
-			// Reset listener since listener may be changed by other fragments
-			setRetryListener();
-			currentDrawerFragmentId = position;
-
-			// Close drawer
-			mDrawerLayout.closeDrawer(mDrawerList);
-
-		}
+//		} else {
+//			// All errors should be full screen loading error
+//			// Reset listener since listener may be changed by other fragments
+//			setRetryListener();
+//			currentDrawerFragmentId = position;
+//
+//			// Close drawer
+//			mDrawerLayout.closeDrawer(mDrawerList);
+//
+//		}
 	}
 
 	@Override
@@ -292,24 +297,19 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	public void retry(View v) {
-		this.findViewById(R.id.mRetry).setVisibility(View.GONE);
-
-	}
-
-	public void setRetryListener() {
-		retryButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				if (ic.isOnline(sfa)) {
-					// fullscreenLoadingView.setVisibility(View.GONE);
-					// Perform action on click
-					mRetryView.setVisibility(View.GONE);
-					// Going to News section by default
-					selectItem(currentDrawerFragmentId);
-				}
-			}
-		});
-	}
+//	public void setRetryListener() {
+//		retryButton.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View v) {
+//				if (ic.isOnline(sfa)) {
+//					// fullscreenLoadingView.setVisibility(View.GONE);
+//					// Perform action on click
+//					mRetryView.setVisibility(View.GONE);
+//					// Going to News section by default
+//					selectItem(currentDrawerFragmentId);
+//				}
+//			}
+//		});
+//	}
 
 	// Clear fragment back stack
 	public void clearFragmentStack() {

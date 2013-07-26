@@ -31,7 +31,7 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class LoadMore_UpcomingMatch extends LoadMore_Base {
+public class LoadMore_Result extends LoadMore_Base {
 
 	private Elements links;
 	private ArrayList<Match> matchArray = new ArrayList<Match>();
@@ -42,7 +42,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 	@Override
 	public void refreshFragment() {
-		currentFragment = new LoadMore_UpcomingMatch();
+		currentFragment = new LoadMore_Result();
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		setRetryButtonListener(new LoadMore_UpcomingMatch());
+		setRetryButtonListener(new LoadMore_Result());
 
 	}
 
@@ -71,7 +71,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
-		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader, false);
+		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader, true);
 		setListAdapter(mArrayAdatper);
 
 			if (isMoreVideos) {
@@ -153,17 +153,11 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 				Document doc = Jsoup.parse(result);
 				
-				Element box_1 = doc.select("div.box").first();
-				
-				Element box_2 = doc.select("div.box").get(1);
+				Element box = doc.select("div.box").get(2);
 
-				links = box_1.select("tr:has(td.opp)");
-				
-				Elements upcoming_links = box_2.select("tr:has(td.opp)");
-				
-				links.addAll(upcoming_links);
-				
-				Element paginator = box_2.select("div.paginator").first();
+				links = box.select("tr:has(td.opp)");
+
+				Element paginator = box.select("div.paginator").first();
 				
 				if (paginator == null) {
 					isMoreVideos = false;
@@ -174,7 +168,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						isMoreVideos = true;
 						pageNum++;
 						API.set(0,
-								"http://www.gosugamers.net/dota2/gosubet?u-page="
+								"http://www.gosugamers.net/dota2/gosubet?r-page="
 										+ pageNum);
 					}
 				}
@@ -199,7 +193,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 						// if
 						// (link.getElementsByClass("results").isEmpty()){
-						newMatch.setTime(link.select("td").get(3).text().trim());
+						newMatch.setScore(link.select("span.hidden").first().text().trim());
 						// }else{
 						// newMatch.setTime(link.select("span.hidden").first().text().trim());
 						//
@@ -208,9 +202,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						newMatch.setGosuLink(baseUrl
 								+ opp_1.select("a[href]").attr("href"));
 						
-						if (newMatch.getTime().endsWith("Live"))
-							newMatch.setMatchStatus(Match.LIVE);
-						else newMatch.setMatchStatus(Match.NOTSTARTED);
+						newMatch.setMatchStatus(newMatch.ENDED);
 
 						matchArray.add(newMatch);
 
@@ -219,12 +211,11 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						// link.select("span.hidden").first().text().trim();
 						// results.add(match);
 						// }
-
+					
 				}
 
 				for (Match m : matchArray) {
-					System.out.println(m.getMatchStatus());
-					System.out.println(m.getTime());
+					System.out.println(m.getTeamName1());
 				}
 
 				mArrayAdatper.notifyDataSetChanged();

@@ -14,15 +14,6 @@ public class Video implements Parcelable {
 	public String uploaderThumUrl;
 	public String viewCount;
 	public String duration;
-	public Bitmap thumbnail;
-
-	public Bitmap getThumbnail() {
-		return thumbnail;
-	}
-
-	public void setThumbnail(Bitmap thumbnail) {
-		this.thumbnail = thumbnail;
-	}
 
 	public String getDuration() {
 		return duration;
@@ -84,6 +75,11 @@ public class Video implements Parcelable {
 		videoId = in.readString();
 		videoDesc = in.readString();
 		thumbnailUrl = in.readString();
+		author = in.readString();
+		uploaderThumUrl = in.readString();
+		viewCount = in.readString();
+		duration = in.readString();
+		
 	}
 
 	public String getTitle() {
@@ -145,5 +141,10 @@ public class Video implements Parcelable {
 		dest.writeString(videoId);
 		dest.writeString(videoDesc);
 		dest.writeString(thumbnailUrl);
+		dest.writeString(author);
+		dest.writeString(uploaderThumUrl);
+		dest.writeString(viewCount);
+		dest.writeString(duration);
+
 	}
 }
