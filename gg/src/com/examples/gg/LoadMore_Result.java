@@ -85,7 +85,7 @@ public class LoadMore_Result extends LoadMore_Base {
 									// network ok
 									if (isMoreVideos) {
 
-										mgetMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
+										mgetMatchInfo = new getMatchInfo(getMatchInfo.LOADMORETASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
 										mgetMatchInfo.execute(API.get(0));
 									}
 									else {

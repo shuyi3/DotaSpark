@@ -45,7 +45,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
-import com.examples.gg.LoadMore_News.LoadMoreTask_News;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class LoadMore_Base extends SherlockListFragment {
@@ -284,33 +283,13 @@ public class LoadMore_Base extends SherlockListFragment {
 
 	}
 
-	class LoadMoreTask extends AsyncTask<String, String, String> {
-		protected String responseString = null;
-		protected boolean taskCancel = false;
-		public int type;
-		public static final int INITTASK = 1;
-		public static final int LOADMORETASK = 2;
-		public boolean isException = false;
-		protected View contentView;
-		protected View loadingView;
-		protected View retryView;
+	class LoadMoreTask extends MyAsyncTask {
 		
 		public LoadMoreTask(int type, View contentView, View loadingView, View retryView){
-			this.type = type;
-			this.contentView = contentView;
-			this.loadingView = loadingView;
-			this.retryView = retryView;
+			super(type, contentView, loadingView, retryView);
 		}
 		
-		public void DisplayView(View viewToShow, View view_1ToHide, View view_2ToHide){
-			if (viewToShow != null)
-				viewToShow.setVisibility(View.VISIBLE);
-			if (view_1ToHide != null)
-				view_1ToHide.setVisibility(View.GONE);
-			if (view_2ToHide != null)
-				view_2ToHide.setVisibility(View.GONE);
-		} 
-		
+		@Override
 		public void handleCancelView(){
 			((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 			
@@ -319,73 +298,6 @@ public class LoadMore_Base extends SherlockListFragment {
 					DisplayView(retryView, contentView, loadingView) ;
 			}
 
-		}
-
-		
-	    @Override
-	    protected void onPreExecute() {
-	        super.onPreExecute();
-			if (type == INITTASK) DisplayView(loadingView, contentView, retryView) ;
-	    }
-
-		@Override
-		protected String doInBackground(String... uri) {
-
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response;
-
-//			if (!ic.isOnline(sfa)) {
-//				Log.d("AsyncDebug", "Ic not online!");
-//
-//				cancel(true);
-//				taskCancel = true;
-//			} else
-				try {
-					HttpGet myGet = new HttpGet(uri[0]);
-					// myGet.setParams(httpParameters);
-					response = httpclient.execute(myGet);
-					StatusLine statusLine = response.getStatusLine();
-					if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-
-						Log.d("AsyncDebug", "200 OK!");
-
-						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						response.getEntity().writeTo(out);
-						out.close();
-						responseString = out.toString();
-					} else {
-
-						Log.d("AsyncDebug", "Not 200 OK!");
-
-						// Closes the connection.
-						response.getEntity().getContent().close();
-						// throw new IOException(statusLine.getReasonPhrase());
-
-						isException = true;
-						cancel(true);
-						taskCancel = true;
-
-						throw new IOException(statusLine.getReasonPhrase());
-
-					}
-				} catch (Exception e) {
-					// throw new IOException(statusLine.getReasonPhrase());
-
-					Log.d("AsyncDebug", e.toString());
-
-					isException = true;
-					cancel(true);
-					taskCancel = true;
-
-				} finally {
-
-					Log.d("AsyncDebug", "shutdown");
-
-					httpclient.getConnectionManager().shutdown();
-					Log.d("AsyncDebug", "Do in background finished!");
-
-				}
-			return responseString;
 		}
 
 		@Override
@@ -444,13 +356,6 @@ public class LoadMore_Base extends SherlockListFragment {
 				handleCancelView();
 			}
 
-		}
-
-		@Override
-		protected void onCancelled() {
-			// Notify the loading more operation has finished
-			Log.d("AsyncDebug", "Into OnCancelled!");
-			handleCancelView();
 		}
 
 	}

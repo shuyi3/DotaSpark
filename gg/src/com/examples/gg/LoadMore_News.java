@@ -470,8 +470,7 @@ public class LoadMore_News extends LoadMore_Base {
 
 	}
 
-	private class getMatchInfo extends LoadMoreTask {
-
+	private class getMatchInfo extends MyAsyncTask {
 
 
 		public getMatchInfo(int type, View contentView, View loadingView,

@@ -25,7 +25,9 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 	private YouTubePlayer ytp;
 	private EditText et;
 	private Video video;
+	private String videoId;
 	private boolean isfullscreen;
+	private boolean isFullscreenMode;
 
 	private static final int LANDSCAPE_ORIENTATION = Build.VERSION.SDK_INT < 9 ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 			: ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
@@ -35,19 +37,28 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		super.onCreate(savedInstanceState);
 
 		System.out.println("Inside VideoPlayer");
-
-		setContentView(R.layout.videoplayer);
-
+		
 		Intent intent = getIntent();
+		if (isFullscreenMode = intent.getBooleanExtra("isfullscreen", false)){
+			videoId = intent.getStringExtra("videoId");
+			
+			setContentView(R.layout.fullscreenyoutube);
+
+		}
+		else{
 		video = intent.getParcelableExtra("video");
 
-		TextView title = (TextView) findViewById(R.id.videotitle);
-		title.setText(video.getTitle());
-		System.out.println("VideoTitle: " + video.getTitle());
-
-		TextView desc = (TextView) findViewById(R.id.videodesc);
-		desc.setText(video.getVideoDesc());
-		System.out.println("Desc: " + video.getVideoDesc());
+			setContentView(R.layout.videoplayer);
+	
+			TextView title = (TextView) findViewById(R.id.videotitle);
+			title.setText(video.getTitle());
+			System.out.println("VideoTitle: " + video.getTitle());
+	
+			TextView desc = (TextView) findViewById(R.id.videodesc);
+			desc.setText(video.getVideoDesc());
+			System.out.println("Desc: " + video.getVideoDesc());
+		
+		}
 
 		ytpv = (YouTubePlayerView) findViewById(R.id.youtubeplayer);
 		ytpv.initialize("AIzaSyAuEa3bIKbSYiXVWbHU_zueVzEBv9p2r_Y", this);
@@ -63,7 +74,12 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		ytp.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
 		ytp.setOnFullscreenListener(this);
 		if (!wasRestored) {
-			player.cueVideo(video.getVideoId());
+			if (isFullscreenMode){
+				ytp.setFullscreen(true);
+				player.cueVideo(videoId);
+			}
+			else
+				player.cueVideo(video.getVideoId());
 		}
 	}
 
@@ -73,9 +89,11 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		isfullscreen = isFullscreen;
 		if (isfullscreen)
 			setRequestedOrientation(LANDSCAPE_ORIENTATION);
-		else
+		else{
+			if (isFullscreenMode) finish();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		doLayout();
+			doLayout();
+		}
 	}
 
 	// Check screen orientation or screen rotate event here
@@ -102,12 +120,12 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 	}
 
 	private void doLayout() {
-		TextView title = (TextView) findViewById(R.id.videotitle);
-		if (isfullscreen) {
-			title.setVisibility(TextView.GONE);
-		} else {
-			title.setVisibility(TextView.VISIBLE);
-		}
+//		TextView title = (TextView) findViewById(R.id.videotitle);
+//		if (isfullscreen) {
+//			title.setVisibility(TextView.GONE);
+//		} else {
+//			title.setVisibility(TextView.VISIBLE);
+//		}
 	}
 
 }

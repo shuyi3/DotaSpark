@@ -66,6 +66,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 	DisplayImageOptions options;
 	private ArrayList<String> lives = new ArrayList<String>();
+	private ArrayList<String> videoIds = new ArrayList<String>();
 	private Button mRetryButton;
 	private View mRetryView;
 	private TextView myTimer;
@@ -90,7 +91,6 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		fullscreenLoadingView = findViewById(R.id.fullscreen_loading_indicator);
 
-		callLoadingIndicator();
 		// imageLoader.init(ImageLoaderConfiguration.createDefault(activityContext));
 		//
 		options = new DisplayImageOptions.Builder()
@@ -113,7 +113,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		// Set a listener for the button Retry
 		setRetryButtonListener();
 
-		mMatchDetails = new getMatchDetails();
+		mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK, contentLayout, fullscreenLoadingView ,mRetryView );
 
 		mMatchDetails.execute(match.getGosuLink());
 		
@@ -152,11 +152,19 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		super.onListItemClick(l, v, position, id);
 
-//		if (ic.isOnline(mActivity)) {
+		if (match.getMatchStatus() == Match.ENDED){
+			Intent i = new Intent(this, VideoPlayer.class);
+			Toast.makeText(this, videoIds.get(position),
+					Toast.LENGTH_SHORT).show();
+
+			i.putExtra("isfullscreen", true);
+			i.putExtra("videoId", videoIds.get(position));
+			startActivity(i);
+		}else{
 			Intent i = new Intent(this, TwitchPlayer.class);
 			i.putExtra("video", lives.get(position));
 			startActivity(i);
-//		}
+		}
 
 	}
 
@@ -165,114 +173,16 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 	}
 
-	private class getMatchDetails extends AsyncTask<String, Void, String> {
+	private class getMatchDetails extends MyAsyncTask {
 		
-		protected String responseString = null;
-		protected boolean taskCancel = false;
-
-//		@Override
-//		protected Elements doInBackground(String... params) {
-//
-//			String url = params[0];
-//			Document doc;
-//			try {
-//				doc = Jsoup
-//						.connect(url)
-//						.header("User-Agent",
-//								"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
-//						.get();
-//
-//				Element opp_1 = doc.select("div.opponent").first();
-//
-//				Element opp_2 = doc.select("div.opponent").get(1);
-//				
-//				Element scoreDiv_1 = doc.select("div.score draw").first();
-//				
-//				Element scoreDiv_2 = doc.select("div.score draw").get(1);
-//
-//				Element details = doc.select("table#match-details").first();
-//
-//				contents.add(opp_1);
-//				contents.add(opp_2);
-//				contents.add(details);
-//
-//				Elements flash = doc.select("object");
-//				if (!flash.isEmpty())
-//					for (Element f : flash) {
-//						if (!flash.isEmpty()) {
-//							String data = f.attr("data");
-//							String mData = data.substring(
-//									data.indexOf("=") + 1, data.length());
-//							// String pattern = "(.*?)=(.*?)";
-//							// data.replace(pattern, "$2");
-//							lives.add(mData);
-//						}
-//					}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//
-//			return contents;
-//		}
-		
-		@Override
-		protected String doInBackground(String... uri) {
-
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response;
-
-//			if (!ic.isOnline(mActivity)) {
-//				Log.d("AsyncDebug", "Ic not online!");
-//
-//				cancel(true);
-//				taskCancel = true;
-//			} else
-				try {
-					HttpGet myGet = new HttpGet(uri[0]);
-					// myGet.setParams(httpParameters);
-					response = httpclient.execute(myGet);
-					StatusLine statusLine = response.getStatusLine();
-					if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-
-						Log.d("AsyncDebug", "200 OK!");
-
-						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						response.getEntity().writeTo(out);
-						out.close();
-						responseString = out.toString();
-					} else {
-
-						Log.d("AsyncDebug", "Not 200 OK!");
-
-						// Closes the connection.
-						response.getEntity().getContent().close();
-						// throw new IOException(statusLine.getReasonPhrase());
-
-						cancel(true);
-						taskCancel = true;
-
-						throw new IOException(statusLine.getReasonPhrase());
-
-					}
-				} catch (Exception e) {
-					// throw new IOException(statusLine.getReasonPhrase());
-
-					Log.d("AsyncDebug", e.toString());
-
-					cancel(true);
-					taskCancel = true;
-
-				} finally {
-
-					Log.d("AsyncDebug", "shutdown");
-
-					httpclient.getConnectionManager().shutdown();
-					Log.d("AsyncDebug", "Do in background finished!");
-
-				}
-			return responseString;
+		public getMatchDetails(int type, View contentView, View loadingView,
+				View retryView) {
+			super(type, contentView, loadingView, retryView);
+			// TODO Auto-generated constructor stub
 		}
 
+		protected String responseString = null;
+		protected boolean taskCancel = false;
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -294,17 +204,36 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				Element details = doc.select("table#match-details").first();
 				
 				Elements flash = doc.select("object");
-				if (!flash.isEmpty())
-					for (Element f : flash) {
-						if (!flash.isEmpty()) {
-							String data = f.attr("data");
-							String mData = data.substring(
-									data.indexOf("=") + 1, data.length());
-							// String pattern = "(.*?)=(.*?)";
-							// data.replace(pattern, "$2");
-							lives.add(mData);
+				
+				Elements videos = doc.select("div[class^=video]");
+				
+				if (match.getMatchStatus() != Match.ENDED){
+					if (!flash.isEmpty())
+						for (Element f : flash) {
+							if (!flash.isEmpty()) {
+								String data = f.attr("data");
+								String mData = data.substring(
+										data.indexOf("=") + 1, data.length());
+								// String pattern = "(.*?)=(.*?)";
+								// data.replace(pattern, "$2");
+								lives.add(mData);
+							}
+						}
+				}
+				else {
+					if (!videos.isEmpty()){
+						for (Element v : videos) {
+							String imgurl = v.select("img").first().attr("src");
+							String title = v.select("a").first().attr("data-dialog-title");
+							String mImgurl = imgurl.replaceAll("https://i1.ytimg.com/vi/(.*?)/(.*)","$1");
+							System.out.println("url: "+ mImgurl);
+							lives.add(title);
+							videoIds.add(mImgurl);
 						}
 					}
+					
+					
+				}
 
 				myTimer = (TextView) findViewById(R.id.myTimer);
 
@@ -373,6 +302,12 @@ public class MatchDetailsActivity extends SherlockListActivity {
 					myTimer.setText(match.getTime());
 					myTimer.setVisibility(View.VISIBLE);
 				}
+				
+				if (match.getMatchStatus() == Match.ENDED){
+					noLive.setText("No Videos Released Yet.");
+					liveLabel.setText("VODs");
+				}
+
 
 				if (lives.isEmpty()) {
 					liveLabel.setVisibility(View.GONE);
@@ -385,11 +320,11 @@ public class MatchDetailsActivity extends SherlockListActivity {
 					setListAdapter(adapter);
 				}		
 
-				callLayout();
+				DisplayView(contentView, retryView, loadingView) ;
 					
 			}else{
 				
-				cancelSingleTask(this);
+				handleCancelView();
 
 			}
 		}
@@ -398,7 +333,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
 			Log.d("AsyncDebug", "Into OnCancelled!");
-			cancelSingleTask(this);
+			handleCancelView();		
 		}
 
 	}
@@ -437,14 +372,6 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		startActivity(i);
 
 	}
-	
-	public void cancelSingleTask(getMatchDetails mTask) {
-
-			ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-			callRetryView();
-
-	}
-
 
 	// set a listener for "Retry" button
 	public void setRetryButtonListener() {
@@ -453,41 +380,15 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 			@Override
 			public void onClick(View v) {
-//				if (ic.isOnline(mActivity)) {
-					refreshActivity();
-//				}
+				
+				mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK, contentLayout, fullscreenLoadingView ,mRetryView );
+
+				mMatchDetails.execute(match.getGosuLink());
 
 			}
 		});
 	}
-	
-	public void callRetryView(){
-		if (mRetryView != null)
-			mRetryView.setVisibility(View.VISIBLE);
-		if (contentLayout != null)
-			contentLayout.setVisibility(View.GONE);
-		if (fullscreenLoadingView != null)
-			fullscreenLoadingView.setVisibility(View.GONE);
-	}
-	
-	public void callLayout(){
-		if (contentLayout != null)
-			contentLayout.setVisibility(View.VISIBLE);
-		if (mRetryView != null)
-			mRetryView.setVisibility(View.GONE);
-		if (fullscreenLoadingView != null)
-			fullscreenLoadingView.setVisibility(View.GONE);
-	}
-	
-	public void callLoadingIndicator(){
-		if (fullscreenLoadingView != null)
-			fullscreenLoadingView.setVisibility(View.VISIBLE);
-		if (contentLayout != null)
-			contentLayout.setVisibility(View.GONE);
-		if (mRetryView != null)
-			mRetryView.setVisibility(View.GONE);
-	}
-	
+		
 	public void hideAllViews(){
 		if (fullscreenLoadingView != null)
 			fullscreenLoadingView.setVisibility(View.GONE);
