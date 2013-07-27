@@ -267,7 +267,7 @@ public class TwitchPlayer extends Activity {
 					loadingIndicator.setVisibility(View.GONE);
 				}
 			}, 2000);
-			// loadingIndicator.setVisibility(View.GONE);
+			loadingIndicator.setVisibility(View.GONE);
 		}
 
 	}

@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +52,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.examples.gg.LoadMore_Base.LoadMoreTask;
 import com.examples.gg.R.color;
 
 @SuppressLint("HandlerLeak")
@@ -66,14 +68,21 @@ public class LoadMore_News extends LoadMore_Base {
 	private ArrayList<String> results = new ArrayList();
 	private Elements links;
 	boolean isPagerSet = false;
-	boolean matchRequestDone = false;
-	boolean loadMoreRequestDone = false;
 	private getMatchInfo mMatchInfo;
+	
+	private View pagerContent;
+	private View pagerLoading;
+	private View pagerRetry;
+	private View listLoading;
+	private View listRetry;
+	private String url = "http://www.gosugamers.net/dota2/gosubet";
+
 
 	@Override
 	public void Initializing() {
 		// Inflating view
 		view = mInflater.inflate(R.layout.whatsnew, null);
+		
 
 		// Give a title for the action bar
 		abTitle = "News";
@@ -93,7 +102,10 @@ public class LoadMore_News extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		setRetryButtonListener(new LoadMore_News());
+//		setRetryButtonListener(new LoadMore_News());
+		
+
+
 
 	}
 
@@ -165,6 +177,48 @@ public class LoadMore_News extends LoadMore_Base {
 	public void refreshFragment() {
 		currentFragment = new LoadMore_News();
 	}
+	
+	@Override
+	public void setListView() {
+		
+		pagerContent = sfa.findViewById(R.id.pageContent);
+		pagerLoading = sfa.findViewById(R.id.pagerLoadingIndicator);
+		pagerRetry = sfa.findViewById(R.id.pagerRetryView);
+		listLoading = sfa.findViewById(R.id.listViewLoadingIndicator);
+		listRetry = sfa.findViewById(R.id.ListViewRetryView);
+
+		
+		Button pagerRetryButton = (Button) pagerRetry.findViewById(R.id.mRetryButton);
+		Button listRetryButton = (Button) listRetry.findViewById(R.id.mRetryButton);
+		
+		pagerRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+
+				mMatchInfo = (getMatchInfo) new getMatchInfo(getMatchInfo.LOADMORETASK, pagerContent, pagerLoading, pagerRetry);
+				mMatchInfo.execute(url);
+
+			}
+		});
+		
+		listRetryButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(LoadMoreTask.LOADMORETASK, myLoadMoreListView, listLoading, listRetry);
+				newTask.execute(API.get(0));
+				mLoadMoreTasks.add(newTask);
+
+			}
+		});
+
+		
+		super.setListView();
+		
+	}
 
 	@SuppressWarnings("deprecation")
 	private void initViewPager() {
@@ -188,75 +242,9 @@ public class LoadMore_News extends LoadMore_Base {
 		group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
 
 		List<View> advPics = new ArrayList<View>();
-		// FrameLayout flayout = new FrameLayout(sfa);
-		// LinearLayout lLayout = new LinearLayout(sfa);
-		// lLayout.setOrientation(LinearLayout.VERTICAL);
-		// TextView title = new TextView(sfa);
-		// title.setTextColor(Color.WHITE);
-		// title.setTextSize(24);
-		// title.setText("Today's matches");
-		// LinearLayout.LayoutParams titleLayout = new
-		// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-		// LinearLayout.LayoutParams.WRAP_CONTENT);
-		// titleLayout.setMargins(20, 10, 0, 0);
-		// LinearLayout.LayoutParams matchLayout = new
-		// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-		// LinearLayout.LayoutParams.WRAP_CONTENT);
-		// matchLayout.setMargins(20, 20, 0, 0);
-		//
-		// TextView matchtable = new TextView(sfa);
-		// matchtable.setSingleLine(false);
-		//
-		// String Matchtext = "";
+
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
-
-		// for (String s : matcharray){
-		// System.out.println(s);
-		// }
-		//
-		// for (String s : resultarray){
-		// System.out.println(s);
-		// }
-
-		// matchtable.setTextColor(Color.WHITE);
-		//
-		// for (int i = 0; i < 3; i++) {
-		// // if (matcharray[i].endsWith("m"))
-		// // {
-		// // final LinearLayout liveline = (LinearLayout)
-		// sfa.findViewById(R.id.liveview);
-		// // lLayout.addView(liveline,0);
-		// // }
-		// Matchtext = Matchtext + matcharray[i] + "\n";
-		// }
-		// matchtable.setText(Matchtext);
-		// matchtable.setTextSize(18);
-		// ImageView img1 = new ImageView(sfa);
-		// img1.setBackgroundResource(R.drawable.bountyhunter);
-		//
-		// flayout.addView(img1, new FrameLayout.LayoutParams(
-		// LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT,
-		// Gravity.CENTER));
-		//
-		// lLayout.addView(title, titleLayout);
-		// lLayout.addView(matchtable, matchLayout);
-		// flayout.addView(lLayout, new FrameLayout.LayoutParams(
-		// LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		//
-		// advPics.add(flayout);
-		//
-		// ImageView img2 = new ImageView(sfa);
-		// img2.setBackgroundResource(R.drawable.centaurwarlord);
-		// advPics.add(img2);
-		//
-		// ImageView img3 = new ImageView(sfa);
-		// img3.setBackgroundResource(R.drawable.razor);
-		// advPics.add(img3);
-		//
-		// ImageView img4 = new ImageView(sfa);
-		// img4.setBackgroundResource(R.drawable.snk);
-		// advPics.add(img4);
 
 		View v1 = new View(sfa);
 		View v2 = new View(sfa);
@@ -381,8 +369,6 @@ public class LoadMore_News extends LoadMore_Base {
 		}).start();
 
 		isPagerSet = true;
-
-		callListView();
 	}
 
 	private void whatOption() {
@@ -486,37 +472,16 @@ public class LoadMore_News extends LoadMore_Base {
 
 	private class getMatchInfo extends LoadMoreTask {
 
+
+
+		public getMatchInfo(int type, View contentView, View loadingView,
+				View retryView) {
+			super(type, contentView, loadingView, retryView);
+			// TODO Auto-generated constructor stub
+		}
+
 		@Override
 		protected void onPostExecute(String result) {
-
-			// if (ic.checkConnection(sfa)) {
-			//
-			// matchRequestDone = true;
-			//
-			// if (loadMoreRequestDone && !isPagerSet) {
-			// initViewPager();
-			// Log.d("initViewpager", "pagerInitialized!");
-			// } else {
-			// Log.d("initViewpager",
-			// "in getMatchInfo loadMoreRequestDone = "
-			// + loadMoreRequestDone
-			// + "and matchRequestDone = "
-			// + matchRequestDone);
-			// }
-			//
-			// } else {
-			//
-			// // No internet
-			//
-			// if (fullscreenLoadingView.getVisibility() == View.VISIBLE) {
-			// // Internet lost during fullscree loading
-			//
-			// ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-			// } else {
-			// // Internet lost during loading more
-			// ic.setNetworkError(InternetConnection.loadingMoreError);
-			// }
-			// }
 
 			Log.d("AsyncDebug", "Into onPostExecute!");
 
@@ -525,28 +490,28 @@ public class LoadMore_News extends LoadMore_Base {
 				Document doc = Jsoup.parse(result);
 				links = doc.select("tr:has(td.opp)");
 
-				matchRequestDone = true;
+				initViewPager();
+				
+				DisplayView(contentView, retryView, loadingView) ;
 
-				if (loadMoreRequestDone && !isPagerSet) {
-					initViewPager();
-					Log.d("initViewpager", "pagerInitialized!");
-				} else {
-					Log.d("initViewpager",
-							"in getMatchInfo loadMoreRequestDone = "
-									+ loadMoreRequestDone
-									+ "and matchRequestDone = "
-									+ matchRequestDone);
-				}
 
 			} else {
-				cancelSingleTask(this);
+				handleCancelView();
 			}
 
 		}
+		
+
 
 	}
 
 	class LoadMoreTask_News extends LoadMoreTask {
+
+		public LoadMoreTask_News(int type, View contentView, View loadingView,
+				View retryView) {
+			super(type, contentView, loadingView, retryView);
+			// TODO Auto-generated constructor stub
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -587,6 +552,8 @@ public class LoadMore_News extends LoadMore_Base {
 				vaa.notifyDataSetChanged();
 
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+				
+				DisplayView(contentView, retryView, loadingView) ;
 
 				if (!isMoreVideos) {
 					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
@@ -594,20 +561,8 @@ public class LoadMore_News extends LoadMore_Base {
 					myLoadMoreListView.setOnLoadMoreListener(null);
 				}
 
-				loadMoreRequestDone = true;
-
-				if (matchRequestDone && !isPagerSet) {
-					initViewPager();
-					Log.d("initViewpager", "pagerInitialized!");
-				} else {
-					Log.d("initViewpager", "in LoadMore loadMoreRequestDone = "
-							+ loadMoreRequestDone + "and matchRequestDone = "
-							+ matchRequestDone);
-
-				}
-
 			} else {
-				cancelSingleTask(this);
+				handleCancelView();
 			}
 		}
 
@@ -617,7 +572,7 @@ public class LoadMore_News extends LoadMore_Base {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			LoadMoreTask newTask = new LoadMoreTask_News();
+			LoadMoreTask newTask = new LoadMoreTask_News(LoadMoreTask.INITTASK, myLoadMoreListView, listLoading, listRetry);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
@@ -628,8 +583,7 @@ public class LoadMore_News extends LoadMore_Base {
 
 		}
 
-		mMatchInfo = new getMatchInfo();
-		String url = "http://www.gosugamers.net/dota2/gosubet";
+		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent, pagerLoading, pagerRetry);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
@@ -637,6 +591,23 @@ public class LoadMore_News extends LoadMore_Base {
 			mMatchInfo.execute(url);
 		}
 	}
+	
+//	public void handleCancelView(LoadMoreTask mTask,boolean isException) {
+//		
+//		((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+//		
+//		if (isException){
+//			
+//				if (mTask.type == LoadMoreTask.INITTASK)		
+//					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
+//		
+//				if (mTask.type == LoadMoreTask.LOADMORETASK)		
+//					ic.setNetworkError(InternetConnection.loadingMoreError);
+//				
+//				callRetryView();
+//		}
+//	}
+
 
 	@Override
 	public void onDestroy() {

@@ -85,7 +85,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 									// network ok
 									if (isMoreVideos) {
 
-										mgetMatchInfo = (getMatchInfo) new getMatchInfo();
+										mgetMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
 										mgetMatchInfo.execute(API.get(0));
 									}
 									else {
@@ -106,7 +106,6 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			// sending Initial Get Request to Youtube
 			if (!API.isEmpty()) {
 				// show loading screen
-				fullscreenLoadingView.setVisibility(View.VISIBLE);
 				doRequest();
 			}
 
@@ -132,7 +131,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 		System.out.println("DO!!!!!");
 		for (String s : API) {
-			mgetMatchInfo = new getMatchInfo();
+			mgetMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				mgetMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 						s);
@@ -143,6 +142,12 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	}
 
 	private class getMatchInfo extends LoadMoreTask {
+
+		public getMatchInfo(int type, View contentView, View loadingView,
+				View retryView) {
+			super(type, contentView, loadingView, retryView);
+			// TODO Auto-generated constructor stub
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -234,7 +239,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 
 				// loading done
-				fullscreenLoadingView.setVisibility(View.GONE);
+				DisplayView(contentView, retryView, loadingView) ;
 
 				if (!isMoreVideos) {
 					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
@@ -244,7 +249,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 			} else {
 
-				cancelSingleTask(this);
+				handleCancelView();
 			}
 
 		}

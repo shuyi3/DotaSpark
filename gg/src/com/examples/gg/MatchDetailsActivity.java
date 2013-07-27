@@ -292,6 +292,19 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				Element scoreDiv_2 = doc.select("div[class=center-column]").first().select("div").get(2);
 
 				Element details = doc.select("table#match-details").first();
+				
+				Elements flash = doc.select("object");
+				if (!flash.isEmpty())
+					for (Element f : flash) {
+						if (!flash.isEmpty()) {
+							String data = f.attr("data");
+							String mData = data.substring(
+									data.indexOf("=") + 1, data.length());
+							// String pattern = "(.*?)=(.*?)";
+							// data.replace(pattern, "$2");
+							lives.add(mData);
+						}
+					}
 
 				myTimer = (TextView) findViewById(R.id.myTimer);
 
