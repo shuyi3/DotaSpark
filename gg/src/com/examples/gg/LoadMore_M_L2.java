@@ -28,7 +28,6 @@ public class LoadMore_M_L2 extends LoadMore_Base {
 		setHasOptionsMenu(false);
 		
 		// Set retry button listener
-		setRetryButtonListener(new LoadMore_M_L2(mAPI));
 
 	}
 	

@@ -28,9 +28,7 @@ public class LoadMore_Twitch extends LoadMore_Base {
 		setOptionMenu(true, false);
 
 		// Set retry button listener
-		setRetryButtonListener(new LoadMore_Twitch());
 		
-
 	}
 	
 	@Override

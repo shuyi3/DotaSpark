@@ -43,7 +43,6 @@ public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 		needFilter = true;
 
 		// Set retry button listener
-		setRetryButtonListener(new LoadMore_H_Playlist());
 
 	}
 

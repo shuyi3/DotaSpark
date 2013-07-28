@@ -61,8 +61,6 @@ public class LoadMore_Result extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		setRetryButtonListener(new LoadMore_Result());
-
 	}
 
 	@Override
@@ -147,6 +145,23 @@ public class LoadMore_Result extends LoadMore_Base {
 				View retryView) {
 			super(type, contentView, loadingView, retryView);
 			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public void setRetryListener(final int type){
+			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
+			
+			mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type, contentView, loadingView, retryView);
+					mgetMatchInfo.execute(API.get(0));
+
+				}
+			});
+			
 		}
 
 		@Override

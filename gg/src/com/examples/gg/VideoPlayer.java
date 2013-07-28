@@ -6,8 +6,12 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -26,6 +30,9 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 	private EditText et;
 	private Video video;
 	private String videoId;
+	private TextView title;
+	private TextView desc;
+	private View myContent;
 	private boolean isfullscreen;
 	private boolean isFullscreenMode;
 
@@ -49,14 +56,14 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		video = intent.getParcelableExtra("video");
 
 			setContentView(R.layout.videoplayer);
+			
+			myContent = (View) findViewById(R.id.videoContent);
 	
-			TextView title = (TextView) findViewById(R.id.videotitle);
+			title = (TextView) findViewById(R.id.videotitle);
 			title.setText(video.getTitle());
-			System.out.println("VideoTitle: " + video.getTitle());
 	
-			TextView desc = (TextView) findViewById(R.id.videodesc);
+			desc = (TextView) findViewById(R.id.videodesc);
 			desc.setText(video.getVideoDesc());
-			System.out.println("Desc: " + video.getVideoDesc());
 		
 		}
 
@@ -109,7 +116,7 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		} else
 			System.out.println("NOT FULL!!!!!!!!!!!!!!!!!!!!!!!!");
 
-		doLayout();
+		if (!isFullscreenMode) doLayout();
 	}
 
 	@Override
@@ -119,13 +126,19 @@ public class VideoPlayer extends YouTubeFailureRecoveryActivity implements
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void doLayout() {
-//		TextView title = (TextView) findViewById(R.id.videotitle);
-//		if (isfullscreen) {
-//			title.setVisibility(TextView.GONE);
-//		} else {
-//			title.setVisibility(TextView.VISIBLE);
-//		}
+		if (isfullscreen) {
+			if (title != null) title.setVisibility(TextView.GONE);
+			if (myContent != null) myContent.setVisibility(View.GONE);
+			if (desc != null) desc.setVisibility(View.GONE);
+			ytpv.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		} else {
+			if (title != null) title.setVisibility(TextView.VISIBLE);
+			if (myContent != null) myContent.setVisibility(View.VISIBLE);
+			if (desc != null) desc.setVisibility(View.VISIBLE);
+			ytpv.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+		}
 	}
 
 }

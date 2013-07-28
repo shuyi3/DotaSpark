@@ -33,7 +33,6 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 		setOptionMenu(true, true);
 		
 		// Set retry button listener
-		setRetryButtonListener(new LoadMore_M_Uploader());
 
 	}
 	

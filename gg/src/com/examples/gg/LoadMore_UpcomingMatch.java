@@ -61,8 +61,6 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		setRetryButtonListener(new LoadMore_UpcomingMatch());
-
 	}
 
 	@Override
@@ -148,6 +146,25 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			super(type, contentView, loadingView, retryView);
 			// TODO Auto-generated constructor stub
 		}
+		
+		@Override
+		public void setRetryListener(final int type){
+			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
+			
+			mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type, contentView, loadingView, retryView);
+					mgetMatchInfo.execute(API.get(0));
+
+				}
+			});
+			
+		}
+
+		
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -213,8 +230,9 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						newMatch.setGosuLink(baseUrl
 								+ opp_1.select("a[href]").attr("href"));
 						
-						if (newMatch.getTime().endsWith("Live"))
+						if (newMatch.getTime().toLowerCase().matches("live")){
 							newMatch.setMatchStatus(Match.LIVE);
+						}
 						else newMatch.setMatchStatus(Match.NOTSTARTED);
 
 						matchArray.add(newMatch);

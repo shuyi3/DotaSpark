@@ -1,18 +1,9 @@
 package com.examples.gg;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,39 +12,33 @@ import org.jsoup.select.Elements;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.os.AsyncTask.Status;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 import com.costum.android.widget.LoadMoreListView;
-import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
-import com.examples.gg.R.color;
 
 @SuppressLint("HandlerLeak")
 public class LoadMore_News extends LoadMore_Base {
@@ -102,65 +87,8 @@ public class LoadMore_News extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-//		setRetryButtonListener(new LoadMore_News());
-		
-
-
 
 	}
-
-	// @Override
-	// public void onActivityCreated(Bundle savedInstanceState) {
-	// // TODO Auto-generated method stub
-	// super.onActivityCreated(savedInstanceState);
-	//
-	// myLoadMoreListView = (LoadMoreListView) this.getListView();
-	// myLoadMoreListView.setDivider(null);
-	//
-	// if (ic.isOnline(sfa)) {
-	// if (isMoreVideos) {
-	// // there are more videos in the list
-	// // set the listener for loading need
-	// myLoadMoreListView
-	// .setOnLoadMoreListener(new OnLoadMoreListener() {
-	// public void onLoadMore() {
-	// // Do the work to load more items at the end of
-	// // list
-	// // hereru
-	//
-	// // checking network
-	// if (ic.checkConnection(sfa)) {
-	//
-	// // network ok
-	// if (isMoreVideos == true) {
-	// new LoadMoreTask_News().execute(API
-	// .get(0));
-	// }
-	// } else {
-	// ic.networkToast(sfa);
-	// ((LoadMoreListView) myLoadMoreListView)
-	// .onLoadMoreComplete();
-	// }
-	//
-	// }
-	// });
-	//
-	// } else
-	// myLoadMoreListView.setOnLoadMoreListener(null);
-	//
-	// } else {
-	// ic.networkToast(sfa);
-	// }
-	//
-	// // show loading screen
-	// // sending Initial Get Request to Youtube
-	// sfa.findViewById(R.id.fullscreen_loading_indicator).setVisibility(
-	// View.VISIBLE);
-	//
-	// if (!API.isEmpty())
-	// doRequest();
-	//
-	// }
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -187,35 +115,6 @@ public class LoadMore_News extends LoadMore_Base {
 		listLoading = sfa.findViewById(R.id.listViewLoadingIndicator);
 		listRetry = sfa.findViewById(R.id.ListViewRetryView);
 
-		
-		Button pagerRetryButton = (Button) pagerRetry.findViewById(R.id.mRetryButton);
-		Button listRetryButton = (Button) listRetry.findViewById(R.id.mRetryButton);
-		
-		pagerRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-
-				mMatchInfo = (getMatchInfo) new getMatchInfo(getMatchInfo.LOADMORETASK, pagerContent, pagerLoading, pagerRetry);
-				mMatchInfo.execute(url);
-
-			}
-		});
-		
-		listRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(LoadMoreTask.LOADMORETASK, myLoadMoreListView, listLoading, listRetry);
-				newTask.execute(API.get(0));
-				mLoadMoreTasks.add(newTask);
-
-			}
-		});
-
-		
 		super.setListView();
 		
 	}
@@ -289,6 +188,18 @@ public class LoadMore_News extends LoadMore_Base {
 			live3.setVisibility(View.GONE);
 		}
 		System.out.println(matcharray[2]);
+		
+		v1.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.content_frame, new LoadMore_UpcomingMatch());
+				ft.commit();
+            }
+        });
 
 		advPics.add(v1);
 
@@ -316,6 +227,18 @@ public class LoadMore_News extends LoadMore_Base {
 		liveMatch3.setText(resultarray[2]);
 
 		live3.setVisibility(View.GONE);
+		
+		v2.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+				FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.content_frame, new LoadMore_Result());
+				ft.commit();
+            }
+        });
 
 		advPics.add(v2);
 
@@ -478,6 +401,23 @@ public class LoadMore_News extends LoadMore_Base {
 			super(type, contentView, loadingView, retryView);
 			// TODO Auto-generated constructor stub
 		}
+		
+		@Override
+		public void setRetryListener(final int type){
+			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
+			
+			mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					mMatchInfo = (getMatchInfo) new getMatchInfo(type, contentView, loadingView, retryView);
+					mMatchInfo.execute(url);
+				}
+			});
+			
+		}
+
 
 		@Override
 		protected void onPostExecute(String result) {

@@ -13,6 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 public class MyAsyncTask extends AsyncTask<String, String, String> {
 	protected String responseString = null;
@@ -24,12 +25,15 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 	protected View contentView;
 	protected View loadingView;
 	protected View retryView;
+	protected Button mRetryButton;
 	
 	public MyAsyncTask(int type, View contentView, View loadingView, View retryView){
 		this.type = type;
 		this.contentView = contentView;
 		this.loadingView = loadingView;
 		this.retryView = retryView;
+		
+		setRetryListener(this.type);
 	}
 	
 	public void DisplayView(View viewToShow, View view_1ToHide, View view_2ToHide){
@@ -40,6 +44,11 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 		if (view_2ToHide != null)
 			view_2ToHide.setVisibility(View.GONE);
 	} 
+	
+	public void setRetryListener(final int type){
+		
+	}
+	
 	
 	public void handleCancelView(){
 		

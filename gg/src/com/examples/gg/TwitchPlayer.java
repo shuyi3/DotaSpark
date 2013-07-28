@@ -47,7 +47,7 @@ public class TwitchPlayer extends Activity {
 		setContentView(R.layout.twitchplayer);
 
 		loadingIndicator = findViewById(R.id.fullscreen_loading_indicator);
-//		loadingIndicator.setVisibility(View.VISIBLE);
+		loadingIndicator.setVisibility(View.VISIBLE);
 
 		Intent intent = getIntent();
 		video = intent.getStringExtra("video");
@@ -267,7 +267,7 @@ public class TwitchPlayer extends Activity {
 					loadingIndicator.setVisibility(View.GONE);
 				}
 			}, 2000);
-			loadingIndicator.setVisibility(View.GONE);
+//			loadingIndicator.setVisibility(View.GONE);
 		}
 
 	}

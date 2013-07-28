@@ -2,37 +2,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayer" >
-    <TextView
+    tools:context=".YoutubeActionBarActivity" >
+
+     <RelativeLayout
+        android:id="@+id/youtubeplayer"        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+     </RelativeLayout>
+
+    <TextView
         android:id="@+id/videotitle"
+        android:layout_below="@+id/youtubeplayer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <com.google.android.youtube.player.YouTubePlayerView
-        android:id="@+id/youtubeplayer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/videotitle" >
+    <View
+        android:id="@+id/d1"
+        android:layout_width="fill_parent"
+        android:layout_height="10dip"
+        android:layout_below="@+id/videotitle"
+        android:background="@drawable/black_white_gradient" />
 
-    </com.google.android.youtube.player.YouTubePlayerView>
-    
-      <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/youtubeplayer"
-      android:scrollbars="vertical">
-    
-        <TextView
-        android:id="@+id/videodesc"
-        android:textIsSelectable="true"
+    <ScrollView
+        android:id="@+id/videoContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-		/> 
-   
-      </ScrollView>
-    
+        android:layout_below="@+id/d1"
+        android:scrollbars="vertical" >
+
+        <TextView
+            android:id="@+id/videodesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textIsSelectable="true" />
+    </ScrollView>
+
 </RelativeLayout>

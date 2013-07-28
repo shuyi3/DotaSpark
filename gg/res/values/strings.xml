@@ -25,5 +25,8 @@
  	<string name="iconDesc">ICON</string>
  	<string name="versus">vs</string>
  	<string name="matchTime">2h+</string>
+ 	
+ 	<string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+ 	
 
 </resources>

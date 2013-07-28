@@ -277,7 +277,7 @@ public class LoadMore_Base extends SherlockListFragment {
 		Toast.makeText(this.getSherlockActivity(), videos.get(position),
 				Toast.LENGTH_SHORT).show();
 
-		Intent i = new Intent(this.getSherlockActivity(), VideoPlayer.class);
+		Intent i = new Intent(this.getSherlockActivity(), YoutubeActionBarActivity.class);
 		i.putExtra("video", videolist.get(position));
 		startActivity(i);
 
@@ -299,6 +299,25 @@ public class LoadMore_Base extends SherlockListFragment {
 			}
 
 		}
+		
+		@Override
+		public void setRetryListener(final int type){
+			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
+			
+			mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(type, contentView, loadingView, retryView);
+					newTask.execute(API.get(0));
+					mLoadMoreTasks.add(newTask);
+
+				}
+			});
+			
+		}
+
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -364,14 +383,13 @@ public class LoadMore_Base extends SherlockListFragment {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			LoadMoreTask newTask = new LoadMoreTask(LoadMoreTask.INITTASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);;
+			LoadMoreTask newTask = new LoadMoreTask(LoadMoreTask.INITTASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
+			mLoadMoreTasks.add(newTask);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
 				newTask.execute(s);
 			}
-
-			mLoadMoreTasks.add(newTask);
 		}
 	}
 
@@ -406,13 +424,14 @@ public class LoadMore_Base extends SherlockListFragment {
 
 	public void cancelAllTask() {
 
-		for (LoadMoreTask mTask : mLoadMoreTasks)
+		for (LoadMoreTask mTask : mLoadMoreTasks){
 			if (mTask != null && mTask.getStatus() == Status.RUNNING) {
 				mTask.cancel(true);
 
 				Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
 			} else
 				Log.d("AsyncDebug", "Task cancellation failed!!!!");
+		}
 
 	}
 
@@ -474,58 +493,11 @@ public class LoadMore_Base extends SherlockListFragment {
 //		}
 	}
 
-	// set a listener for "Retry" button
-	public void setRetryButtonListener(final Fragment mFragment) {
-
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				// Continue to check network status
-//				networkHandler(mFragment);
-				LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(LoadMoreTask.LOADMORETASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
-				newTask.execute(API.get(0));
-				mLoadMoreTasks.add(newTask);
-//				DisplayView(fullscreenLoadingView, myLoadMoreListView, mRetryView) ;
-
-
-			}
-		});
-	}
-
 	// Clear fragment back stack
 	public void clearFragmentStack() {
 		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
-	
-//	public void DisplayView(mRetryView, myLoadMoreListView, fullscreenLoadingView) {
-//		if (mRetryView != null)
-//			mRetryView.setVisibility(View.VISIBLE);
-//		if (myLoadMoreListView != null)
-//			myLoadMoreListView.setVisibility(View.GONE);
-//		if (fullscreenLoadingView != null)
-//			fullscreenLoadingView.setVisibility(View.GONE);
-//	}
-//	
-//	public void DisplayView(myLoadMoreListView, , mRetryView, fullscreenLoadingView) {
-//		if (myLoadMoreListView != null)
-//			myLoadMoreListView.setVisibility(View.VISIBLE);
-//		if (mRetryView != null)
-//			mRetryView.setVisibility(View.GONE);
-//		if (fullscreenLoadingView != null)
-//			fullscreenLoadingView.setVisibility(View.GONE);
-//	}
-//	
-//	public void DisplayView(fullscreenLoadingView, myLoadMoreListView, mRetryView) {
-//		if (fullscreenLoadingView != null)
-//			fullscreenLoadingView.setVisibility(View.VISIBLE);
-//		if (myLoadMoreListView != null)
-//			myLoadMoreListView.setVisibility(View.GONE);
-//		if (mRetryView != null)
-//			mRetryView.setVisibility(View.GONE);
-//	}
-	
+		
 	public void hideAllViews(){
 		if (fullscreenLoadingView != null)
 			fullscreenLoadingView.setVisibility(View.GONE);

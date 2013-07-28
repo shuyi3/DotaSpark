@@ -4,13 +4,13 @@
     android:layout_height="match_parent" >
     
     
-    <com.google.android.youtube.player.YouTubePlayerView
+    <RelativeLayout
         android:id="@+id/youtubeplayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/videotitle" >
+     >
 
-    </com.google.android.youtube.player.YouTubePlayerView>
+    </RelativeLayout>
     
 
 </FrameLayout>

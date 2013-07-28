@@ -111,8 +111,6 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		mRetryView = mActivity.findViewById(R.id.mRetry);
 
 		// Set a listener for the button Retry
-		setRetryButtonListener();
-
 		mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK, contentLayout, fullscreenLoadingView ,mRetryView );
 
 		mMatchDetails.execute(match.getGosuLink());
@@ -181,8 +179,26 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			// TODO Auto-generated constructor stub
 		}
 
-		protected String responseString = null;
-		protected boolean taskCancel = false;
+		@Override
+		public void setRetryListener(final int type){
+			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
+			
+			mRetryButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					mMatchDetails = new getMatchDetails(type, contentView, loadingView, retryView);
+
+					mMatchDetails.execute(match.getGosuLink());
+
+
+				}
+			});
+			
+		}
+
+		
 
 		@Override
 		protected void onPostExecute(String result) {
@@ -374,20 +390,6 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	}
 
 	// set a listener for "Retry" button
-	public void setRetryButtonListener() {
-
-		mRetryButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK, contentLayout, fullscreenLoadingView ,mRetryView );
-
-				mMatchDetails.execute(match.getGosuLink());
-
-			}
-		});
-	}
 		
 	public void hideAllViews(){
 		if (fullscreenLoadingView != null)
