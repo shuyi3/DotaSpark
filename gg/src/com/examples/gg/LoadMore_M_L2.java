@@ -4,8 +4,9 @@ package com.examples.gg;
 public class LoadMore_M_L2 extends LoadMore_Base {
 	private String mAPI;
 
-	public LoadMore_M_L2(String url) {
+	public LoadMore_M_L2(String url, int currentPosition) {
 		this.mAPI = url;
+		this.currentPosition = currentPosition;
 	}
 
 	@Override
@@ -33,6 +34,6 @@ public class LoadMore_M_L2 extends LoadMore_Base {
 	
 	@Override
 	public void refreshFragment(){
-		currentFragment = new LoadMore_M_L2(mAPI);
+		currentFragment = new LoadMore_M_L2(mAPI, currentPosition);
 	}
 }

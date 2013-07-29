@@ -33,31 +33,10 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 		setOptionMenu(true, true);
 		
 		// Set retry button listener
-
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		currentPosition = 1;
 		
-		if (hasRefresh)
-	        menu.add(0, 0, 0, "Refresh")
-	        .setIcon(R.drawable.ic_refresh)
-	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-			if (hasDropDown){
-				SubMenu subMenu1 = menu.addSubMenu(0, 1, 0, "Action Item");
-				subMenu1.add(0, 11, 0, "All(Default)");
-				subMenu1.add(0, 12, 0, "Uploaders");
-				subMenu1.add(0, 13, 0, "Playlists");
-		
-				MenuItem subMenu1Item = subMenu1.getItem();
-				subMenu1Item.setTitle("Uploaders");
-				subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
-						| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-			}
-
 	}
-	
+		
 	@Override
 	public void refreshFragment(){
 		currentFragment = new LoadMore_M_Uploader();
@@ -68,7 +47,7 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 	@Override
 	public void InitializingNextFragment() {
 
-		mLoadMore = new LoadMore_M_L2(nextFragmentAPI);
+		mLoadMore = new LoadMore_M_L2(nextFragmentAPI, currentPosition);
 
 	}
 }

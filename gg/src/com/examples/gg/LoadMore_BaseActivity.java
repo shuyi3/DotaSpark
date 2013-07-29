@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -33,7 +34,7 @@ import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnNavigationListener {
+public class LoadMore_BaseActivity extends SherlockListActivity{
 	protected LoadMoreListView myLoadMoreListView;
 	protected ArrayList<String> titles;
 	protected ArrayList<String> videos;
@@ -41,7 +42,6 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 
 	protected boolean isMoreVideos;
 	protected InternetConnection ic;
-	protected SherlockFragmentActivity sfa;
 	protected ActionBar ab;
 	protected String abTitle;
 	protected FeedManager_Base feedManager;
@@ -64,43 +64,35 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 	protected Fragment currentFragment;
 	public boolean isBusy = false;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
-	protected ActionBar mActionBar;
 	protected boolean firstTime = true;
 	protected int currentPosition = 0;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		// Get the current activity
-		sfa = this.getSherlockActivity();
+		setContentView(R.layout.loadmore_list);
 
 		// Get loading view
-		fullscreenLoadingView = sfa
-				.findViewById(R.id.fullscreen_loading_indicator);
+		fullscreenLoadingView = findViewById(R.id.fullscreen_loading_indicator);
 
 		// default no filter for videos
-		needFilter = false;
-
-		mInflater = inflater;
+		
+		Intent intent = getIntent();
+		String mAPI = intent.getStringExtra("API");
+		String title = intent.getStringExtra("title");
 
 		// For check internet connection
 		ic = new InternetConnection();
 
 		// set the layout
-		view = inflater.inflate(R.layout.loadmore_list, null);
-
 		// Initial fragment manager
-		fm = sfa.getSupportFragmentManager();
-
 		// Get the button view in retry.xml
-		mRetryButton = (Button) sfa.findViewById(R.id.mRetryButton);
-
 		// Get Retry view
-		mRetryView = sfa.findViewById(R.id.mRetry);
+		mRetryView = findViewById(R.id.mRetry);
 
 		// get action bar
-		ab = sfa.getSupportActionBar();
+		ab = getSupportActionBar();
 
 		// Initilizing the empty arrays
 		titles = new ArrayList<String>();
@@ -115,10 +107,10 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 		API = new ArrayList<String>();
 
 		// Initializing important variables
-		Initializing();
-
+		API.add(mAPI);
 		// Set action bar title
-		ab.setTitle(abTitle);
+		System.out.println("My title: "+title);
+		ab.setTitle(title);
 
 		// check whether there are more videos in the playlist
 		if (API.isEmpty())
@@ -128,31 +120,13 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 
 		// set the adapter
 		// setListAdapter(vaa);
+				
+		ab.setHomeButtonEnabled(true);
+		ab.setDisplayHomeAsUpEnabled(true);
 		
-		mActionBar = sfa.getSupportActionBar();
+		feedManager = new FeedManager_Base();
 
-		if (hasDropDown) {
-
-			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-						
-			final String[] catagory = {"General","Uploaders","Playlists"}; 
-			
-		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActionBar.getThemedContext(),
-		            android.R.layout.simple_spinner_item, android.R.id.text1,
-		            catagory);
-		    
-		    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-		    mActionBar.setListNavigationCallbacks(adapter, this);
-		    
-		    mActionBar.setSelectedNavigationItem(currentPosition);
-
-		}else{
-			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-			
-		}
-
-		return view;
+		setListView();
 
 	}
 
@@ -161,15 +135,11 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 		this.hasDropDown = hasDropDown;
 	}
 
-	public void refreshFragment() {
-		currentFragment = new LoadMore_Base();
-	}
-
 	public void setListView() {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
-		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
+		vaa = new VideoArrayAdapter(this, titles, videolist, imageLoader);
 		setListAdapter(vaa);
 
 		// Why check internet here?
@@ -208,66 +178,33 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 		}
 
 	}
-
+	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
+	public boolean onCreateOptionsMenu(Menu menu) {
 
-		setListView();
-
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-		if (hasRefresh)
-			menu.add(0, 0, 0, "Refresh")
-					.setIcon(R.drawable.ic_refresh)
-					.setShowAsAction(
-							MenuItem.SHOW_AS_ACTION_IF_ROOM
-									| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
-
-		// do nothing if no network
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-			switch (item.getItemId()) {
-
-			case 0:
-				// Menu option 1
-				Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
-				refreshFragment();
-				ft.replace(R.id.content_frame, currentFragment);
-				break;
-
-			case 11:
-				// Menu option 1
-				ft.replace(R.id.content_frame, FragmentAll);
-				break;
-
-			case 12:
-				// Menu option 2
-				ft.replace(R.id.content_frame, FragmentUploader);
-				break;
-
-			case 13:
-				// Menu option 3
-				ft.replace(R.id.content_frame, FragmentPlaylist);
-				break;
-			default:
-				return super.onOptionsItemSelected(item);
-			}
-			ft.commit();
+		menu.add(0, 0, 0, "Refresh")
+				.setIcon(R.drawable.ic_refresh)
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return true;
+
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+		}
+
+		if (item.getItemId() == 0) {
+			refreshActivity();
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
@@ -275,10 +212,10 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 		// if (ic.checkConnection(this.getSherlockActivity())) {
 		// get selected items
 
-		Toast.makeText(this.getSherlockActivity(), videos.get(position),
+		Toast.makeText(this, videos.get(position),
 				Toast.LENGTH_SHORT).show();
 
-		Intent i = new Intent(this.getSherlockActivity(), YoutubeActionBarActivity.class);
+		Intent i = new Intent(this, YoutubeActionBarActivity.class);
 		i.putExtra("video", videolist.get(position));
 		startActivity(i);
 
@@ -412,7 +349,7 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (sfa.isTaskRoot()) {
+		if (isTaskRoot()) {
 			Log.d("UniversalImageLoader", "It's task root!");
 			imageLoader.clearDiscCache();
 			imageLoader.clearMemoryCache();
@@ -441,62 +378,18 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 
 	}
 
-	public void networkHandler(Fragment mFragment) {
-
-//		if (ic.isOnline(sfa)) {
-			// fullscreenLoadingView.setVisibility(View.GONE);
-			switch (ic.getNetworkError()) {
-			case 1:
-				// network lost during fullscreen loading
-				Toast.makeText(sfa, "network lost during fullscreen loading",
-						Toast.LENGTH_SHORT).show();
-
-				FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.content_frame, mFragment);
-				ft.commit();
-
-				break;
-			case 2:
-				// Internet lost during loading more
-				// This is for loadMoreTask, Should not reload the fragment,
-				// only hide the view of retry
-				Toast.makeText(sfa, "Internet lost during loading more",
-						Toast.LENGTH_SHORT).show();
-
-				// Continue previous loading
-				if (isMoreVideos == true) {
-					// new LoadMoreTask().execute(API.get(0));
-					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(LoadMoreTask.LOADMORETASK, myLoadMoreListView, fullscreenLoadingView, mRetryView);
-					newTask.execute(API.get(0));
-					mLoadMoreTasks.add(newTask);
-				}
-				break;
-
-//			case 3:
-//				// Internet lost during transition to video player
-//				// Hide the retry view if it is online
-//				Toast.makeText(sfa,
-//						"Internet lost during transition to video player",
-//						Toast.LENGTH_SHORT).show();
-//
-//				break;
-
-			default:
-				Toast.makeText(sfa, "Other unknown internet error!",
-						Toast.LENGTH_SHORT).show();
-				break;
-
-			}
-			// Clear the network error
-			ic.setNetworkError(0);
-//			DisplayView(fullscreenLoadingView, myLoadMoreListView, mRetryView) ;
-//		}
-	}
-
 	// Clear fragment back stack
-	public void clearFragmentStack() {
-		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+	public void refreshActivity() {
+		// Destroy current activity
+		finish();
+
+		Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show();
+
+		// Start a new activity
+		Intent i = new Intent(this, LoadMore_BaseActivity.class);
+		i.putExtra("API", API.get(0));
+		startActivity(i);
+
 	}
 		
 	public void hideAllViews(){
@@ -508,44 +401,5 @@ public class LoadMore_Base extends SherlockListFragment implements ActionBar.OnN
 			mRetryView.setVisibility(View.GONE);
 	}
 
-	@Override
-	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		
-		if (firstTime) {
-			firstTime = false;
-			
-			System.out.println("First time!!!!!!!!!!!!!!!!!!");
-			return true;
-		}
-		
-		System.out.println("Wo shi " + itemPosition);
-		
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		
-		switch (itemPosition){
-		
-		case 0:
-			// Menu option 1
-			ft.replace(R.id.content_frame, FragmentAll);
-			break;
-	
-		case 1:
-			// Menu option 2
-			ft.replace(R.id.content_frame, FragmentUploader);
-			break;
-	
-		case 2:
-			// Menu option 3
-			ft.replace(R.id.content_frame, FragmentPlaylist);
-			break;
-
-		}
-		
-		ft.commit();
-
-		
-		// TODO Auto-generated method stub
-		return true;
-	}
 	
 }

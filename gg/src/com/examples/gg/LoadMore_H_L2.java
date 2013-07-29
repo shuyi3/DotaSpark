@@ -4,8 +4,9 @@ package com.examples.gg;
 public class LoadMore_H_L2 extends LoadMore_Base {
 	private String mAPI;
 
-	public LoadMore_H_L2(String url) {
+	public LoadMore_H_L2(String url, int currentPosition) {
 		this.mAPI = url;
+		this.currentPosition = currentPosition;
 	}
 
 	@Override
@@ -31,12 +32,16 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 		setHasOptionsMenu(false);
 		
 		// Set retry button listener
+//		mActionBar = sfa.getSupportActionBar();
+//		mActionBar.setIcon(R.drawable.);
+
+
 
 	}
 	
 	@Override
 	public void refreshFragment(){
-		currentFragment = new LoadMore_H_L2(mAPI);
+		currentFragment = new LoadMore_H_L2(mAPI, currentPosition);
 	}
 	
 }
