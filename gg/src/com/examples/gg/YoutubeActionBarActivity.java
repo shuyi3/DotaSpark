@@ -51,7 +51,7 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 		
 		mActionBar = getSupportActionBar();
 		
-		mActionBar.setTitle("");
+		mActionBar.setTitle("Watch a Video");
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -60,6 +60,7 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 		Intent intent = getIntent();
 		if (isFullscreenMode = intent.getBooleanExtra("isfullscreen", false)) {
 			videoId = intent.getStringExtra("videoId");
+			setRequestedOrientation(LANDSCAPE_ORIENTATION);
 
 			setContentView(R.layout.fullscreenyoutube);
 
@@ -85,9 +86,10 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 
 		fragment = new YouTubePlayerSupportFragment();
 		fragmentTransaction.add(R.id.youtubeplayer, fragment);
-		fragmentTransaction.commit();
-		
+		fragmentTransaction.commit();		
 		fragment.initialize("AIzaSyAuEa3bIKbSYiXVWbHU_zueVzEBv9p2r_Y",this);
+		doLayout();
+
 	}
 	
 	@Override
@@ -110,8 +112,7 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 			// and set portrait mode always
 			//System.out.println("FULL!!!!!!!!!!!!!!!!!!!!!!!!");
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		} else
-			//System.out.println("NOT FULL!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
 
 		if (!isFullscreenMode)
 			doLayout();
@@ -126,8 +127,10 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 				myContent.setVisibility(View.GONE);
 			if (desc != null)
 				desc.setVisibility(View.GONE);
-			fragment.getView().setLayoutParams(new RelativeLayout.LayoutParams(
-					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+			if (fragment!=null) {
+				if (fragment.getView() != null) fragment.getView().setLayoutParams(new RelativeLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			}
 			mActionBar.hide();
 		} else {
 			if (title != null)
@@ -136,8 +139,11 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 				myContent.setVisibility(View.VISIBLE);
 			if (desc != null)
 				desc.setVisibility(View.VISIBLE);
-			fragment.getView().setLayoutParams(new RelativeLayout.LayoutParams(
+			if (fragment!=null){
+				if (fragment.getView() != null) fragment.getView().setLayoutParams(new RelativeLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			}
+
 			mActionBar.show();
 		}
 	}
@@ -171,8 +177,11 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 							if (isFullscreenMode)
 								finish();
 							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-							doLayout();
+//							doLayout();
 						}
+						
+						doLayout();
+
 
 					}
 				});
@@ -188,6 +197,8 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 
 			
 		}
+		
+		
 
 		  @Override
 		  public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult errorReason) {

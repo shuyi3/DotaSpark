@@ -123,7 +123,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		super.onListItemClick(l, v, position, id);
 
 		if (match.getMatchStatus() == Match.ENDED) {
-			Intent i = new Intent(this, VideoPlayer.class);
+			Intent i = new Intent(this, YoutubeActionBarActivity.class);
 			Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
 					.show();
 

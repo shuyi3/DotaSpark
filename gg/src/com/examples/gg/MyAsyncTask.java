@@ -9,6 +9,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
 import android.os.AsyncTask;
 import android.view.View;
@@ -69,10 +70,10 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 	@Override
 	protected String doInBackground(String... uri) {
 
-		// String userAgent =
-		// "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
+		 String userAgent =
+		 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
 		HttpClient httpclient = new DefaultHttpClient();
-		// httpclient.getParams().set
+		httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
 		HttpResponse response;
 
 		// if (!ic.isOnline(sfa)) {
