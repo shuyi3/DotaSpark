@@ -170,10 +170,8 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	private void selectItem(int position) {
 
-		for (Item i : items)
-			i.setUnchecked();
-		items.get(position).setChecked();
-		eAdapter.notifyDataSetChanged();
+		// Set the indicator in drawer to correct position
+		setDrawerIndicator(position);
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
@@ -274,6 +272,13 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 			super.onBackPressed();
 		}
+	}
+	
+	public void setDrawerIndicator(int position){
+		for (Item i : items)
+			i.setUnchecked();
+		items.get(position).setChecked();
+		eAdapter.notifyDataSetChanged();
 	}
 
 }

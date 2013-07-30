@@ -34,7 +34,7 @@ public class FeedManager_Uploader extends FeedManager_Base{
 
 				videoLink = oneVideo.getJSONArray("link").getJSONObject(0).getString("href");
 				
-				videoId = videoLink.substring(0, videoLink.length()-4) + "/uploads?start-index=1&max-results=50&v=2&alt=json";
+				videoId = videoLink.substring(0, videoLink.length()-4) + "/uploads?start-index=1&max-results=20&v=2&alt=json";
 
 				String thumbUrl = oneVideo.getJSONObject("media$thumbnail").getString("url");
 

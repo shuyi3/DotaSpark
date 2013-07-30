@@ -59,6 +59,8 @@ public class LoadMore_News extends LoadMore_Base {
 	private View listLoading;
 	private View listRetry;
 	private String url = "http://www.gosugamers.net/dota2/gosubet";
+	
+	private SideMenuActivity sma;
 
 	@Override
 	public void Initializing() {
@@ -77,6 +79,9 @@ public class LoadMore_News extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
+		
+		// Get sidemenuactivity
+		sma = (SideMenuActivity) sfa;
 
 	}
 
@@ -181,6 +186,10 @@ public class LoadMore_News extends LoadMore_Base {
 		v1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Set the drawer indicator in position "Upcoming Matches"
+				sma.setDrawerIndicator(8);
+				
+				// Replacing the current fragment
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.content_frame, new LoadMore_UpcomingMatch());
@@ -218,6 +227,10 @@ public class LoadMore_News extends LoadMore_Base {
 		v2.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				
+				// Set the drawer indicator in position "Recent Result"				
+				sma.setDrawerIndicator(9);
+				
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.content_frame, new LoadMore_Result());
