@@ -15,8 +15,7 @@ public class FeedManager_Playlist extends FeedManager_Base {
 
 		try {
 			processJSON(mJSON);
-			// get title of the playlist
-			String plTitle = feed.getJSONObject("title").getString("$t");
+
 			// System.out.println(plTitle);
 			// get the playlist
 			JSONArray playlist = feed.getJSONArray("entry");
@@ -51,7 +50,7 @@ public class FeedManager_Playlist extends FeedManager_Base {
 					video.setUploaderThumUrl("https://i1.ytimg.com/i/fsOfLvadg89Bx8Sv_6WERg/1.jpg?v=515d687f");
 				}
 
-				System.out.println("playlist: " + thumbUrl);
+				//System.out.println("playlist: " + thumbUrl);
 				// System.out.println(videoDesc);
 				// store title and link
 
@@ -71,7 +70,7 @@ public class FeedManager_Playlist extends FeedManager_Base {
 			}
 
 		} catch (JSONException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 
 		return videos;

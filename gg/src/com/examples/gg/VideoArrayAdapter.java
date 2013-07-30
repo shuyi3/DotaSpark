@@ -10,12 +10,10 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.costum.android.widget.LoadMoreListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -24,72 +22,63 @@ import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class VideoArrayAdapter extends ArrayAdapter<String> {
-	private final Context context;
+
 	private final ArrayList<String> values;
 	private ArrayList<Video> videos;
 	private LayoutInflater inflater;
-	private Animation fadeAnimation;
-	private ImageView mImageView;
-	private LoadMoreListView mLoadMore;
+
 	DisplayImageOptions options;
 	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 	private ImageLoader imageLoader;
-	
+
 	public VideoArrayAdapter(Context context, ArrayList<String> values,
 			ArrayList<Video> videos, ImageLoader imageLoader) {
 		super(context, R.layout.videolist, values);
-		this.context = context;
+
 		this.values = values;
 		this.videos = videos;
 		this.imageLoader = imageLoader;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		this.imageLoader.init(ImageLoaderConfiguration.createDefault(context));		
-//		imageLoader=new ImageLoader(context.getApplicationContext());
-		
-		
-		
+
+		this.imageLoader.init(ImageLoaderConfiguration.createDefault(context));
+		// imageLoader=new ImageLoader(context.getApplicationContext());
+
 		options = new DisplayImageOptions.Builder()
-		.showStubImage(R.drawable.loading)
-		.showImageForEmptyUri(R.drawable.loading)
-		.showImageOnFail(R.drawable.loading)
-		.cacheInMemory(true)
-		.cacheOnDisc(true)
-//		.displayer(new RoundedBitmapDisplayer(20))
-		.build();
-//						 
+				.showStubImage(R.drawable.loading)
+				.showImageForEmptyUri(R.drawable.loading)
+				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
+				.cacheOnDisc(true)
+				// .displayer(new RoundedBitmapDisplayer(20))
+				.build();
+		//
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		InternetConnection ic = new InternetConnection();
 		ViewHolder holder;
 
-		 if (convertView == null) {
-		convertView = inflater.inflate(R.layout.videolist, parent, false);
+		if (convertView == null) {
+			convertView = inflater.inflate(R.layout.videolist, parent, false);
 
-		holder = new ViewHolder();
+			holder = new ViewHolder();
 
-		holder.titleView = (TextView) convertView.findViewById(R.id.videotitle);
-		holder.imageView = (ImageView) convertView.findViewById(R.id.thumbnail);
-		mImageView = holder.imageView;
-		holder.countView = (TextView) convertView.findViewById(R.id.Desc);
-		holder.videoLength = (TextView) convertView
-				.findViewById(R.id.videolength);
+			holder.titleView = (TextView) convertView
+					.findViewById(R.id.videotitle);
+			holder.imageView = (ImageView) convertView
+					.findViewById(R.id.thumbnail);
+			holder.countView = (TextView) convertView.findViewById(R.id.Desc);
+			holder.videoLength = (TextView) convertView
+					.findViewById(R.id.videolength);
 
-		// set the author
-		holder.authorView = (TextView) convertView
-				.findViewById(R.id.videouploader);
+			// set the author
+			holder.authorView = (TextView) convertView
+					.findViewById(R.id.videouploader);
 
-		// Change icon based on name
-
-		// new
-		// DownloadImage(videos.get(position).getUploaderThumUrl()).execute(uploaderView);
-		convertView.setTag(holder);
-		 }else{
-			 holder = (ViewHolder) convertView.getTag();
-		 }
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
 
 		holder.titleView.setText(values.get(position));
 		holder.authorView.setText(videos.get(position).getAuthor());
@@ -110,9 +99,10 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 			holder.countView.setText(null);
 		}
 		holder.videoLength.setText(videos.get(position).getDuration());
-		
-		imageLoader.displayImage(videos.get(position).getThumbnailUrl(), holder.imageView, options, animateFirstListener);
-		 
+
+		imageLoader.displayImage(videos.get(position).getThumbnailUrl(),
+				holder.imageView, options, animateFirstListener);
+
 		return convertView;
 	}
 
@@ -124,13 +114,16 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		ImageView imageView;
 
 	}
-	
-	private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+	private static class AnimateFirstDisplayListener extends
+			SimpleImageLoadingListener {
+
+		static final List<String> displayedImages = Collections
+				.synchronizedList(new LinkedList<String>());
 
 		@Override
-		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+		public void onLoadingComplete(String imageUri, View view,
+				Bitmap loadedImage) {
 			if (loadedImage != null) {
 				ImageView imageView = (ImageView) view;
 				boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -141,5 +134,5 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 			}
 		}
 	}
-	
+
 }

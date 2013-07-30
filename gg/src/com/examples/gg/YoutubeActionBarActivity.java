@@ -1,18 +1,5 @@
 package com.examples.gg;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayer.OnInitializedListener;
-import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import com.google.android.youtube.player.YouTubePlayer.Provider;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerFragment;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -23,14 +10,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
+import com.google.android.youtube.player.YouTubePlayer.Provider;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+
 public class YoutubeActionBarActivity extends SherlockFragmentActivity implements YouTubePlayer.OnInitializedListener {
 
-	private EditText et;
 	private Video video;
 	private String videoId;
 	private TextView title;
@@ -39,7 +33,6 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 	private boolean isfullscreen;
 	private boolean isFullscreenMode;
 	private Activity sfa;
-	private RelativeLayout playerHolder;
 	private YouTubePlayerSupportFragment fragment;
 	private ActionBar mActionBar;
 	
@@ -55,7 +48,10 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 
 		sfa = this;
 		
+		
 		mActionBar = getSupportActionBar();
+		
+		mActionBar.setTitle("");
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -82,7 +78,6 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 
 		}
 		
-		playerHolder = (RelativeLayout) findViewById(R.id.youtubeplayer);
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager
@@ -113,10 +108,10 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 		if (isfullscreen) {
 			// Checks the orientation of the screen for landscape and portrait
 			// and set portrait mode always
-			System.out.println("FULL!!!!!!!!!!!!!!!!!!!!!!!!");
+			//System.out.println("FULL!!!!!!!!!!!!!!!!!!!!!!!!");
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		} else
-			System.out.println("NOT FULL!!!!!!!!!!!!!!!!!!!!!!!!");
+			//System.out.println("NOT FULL!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		if (!isFullscreenMode)
 			doLayout();

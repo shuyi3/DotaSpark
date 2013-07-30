@@ -1,21 +1,8 @@
 package com.examples.gg;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-
-import android.content.Context;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 public class LoadMore_H_Playlist extends LoadMore_Base_UP {
 	
-    private TextView mSelected;
-    private String[] mLocations;
-    
 	@Override
 	public void Initializing() {
 		// Give a title for the action bar

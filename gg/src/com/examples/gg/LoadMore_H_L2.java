@@ -31,11 +31,6 @@ public class LoadMore_H_L2 extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(false);
 		
-		// Set retry button listener
-//		mActionBar = sfa.getSupportActionBar();
-//		mActionBar.setIcon(R.drawable.);
-
-
 
 	}
 	

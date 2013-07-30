@@ -1,20 +1,11 @@
 package com.examples.gg;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,13 +15,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.AsyncTask.Status;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,15 +28,9 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-import com.costum.android.widget.LoadMoreListView;
-import com.examples.gg.LoadMore_Base.LoadMoreTask;
-import com.examples.gg.R.id;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
@@ -60,19 +40,16 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	private Match match;
 	private String baseUrl = "http://www.gosugamers.net";
 	protected View fullscreenLoadingView;
-	private InternetConnection ic;
 	private Activity mActivity;
 	private ImageLoader imageLoader = ImageLoader.getInstance();
 	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 	DisplayImageOptions options;
 	private ArrayList<String> lives = new ArrayList<String>();
 	private ArrayList<String> videoIds = new ArrayList<String>();
-	private Button mRetryButton;
 	private View mRetryView;
 	private TextView myTimer;
 	private View contentLayout;
 	private getMatchDetails mMatchDetails;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +63,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		
+
 		contentLayout = findViewById(R.id.contentLayout);
 
 		fullscreenLoadingView = findViewById(R.id.fullscreen_loading_indicator);
@@ -100,21 +77,16 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				.cacheOnDisc(true).displayer(new RoundedBitmapDisplayer(20))
 				.build();
 
-		ic = new InternetConnection();
-
 		mActivity = this;
-
-		// Get the button view in retry.xml
-		mRetryButton = (Button) mActivity.findViewById(R.id.mRetryButton);
 
 		// Get Retry view
 		mRetryView = mActivity.findViewById(R.id.mRetry);
 
 		// Set a listener for the button Retry
-		mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK, contentLayout, fullscreenLoadingView ,mRetryView );
+		mMatchDetails = new getMatchDetails(MyAsyncTask.INITTASK,
+				contentLayout, fullscreenLoadingView, mRetryView);
 
 		mMatchDetails.execute(match.getGosuLink());
-		
 
 	}
 
@@ -150,15 +122,15 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		super.onListItemClick(l, v, position, id);
 
-		if (match.getMatchStatus() == Match.ENDED){
+		if (match.getMatchStatus() == Match.ENDED) {
 			Intent i = new Intent(this, VideoPlayer.class);
-			Toast.makeText(this, videoIds.get(position),
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
+					.show();
 
 			i.putExtra("isfullscreen", true);
 			i.putExtra("videoId", videoIds.get(position));
 			startActivity(i);
-		}else{
+		} else {
 			Intent i = new Intent(this, TwitchPlayer.class);
 			i.putExtra("video", lives.get(position));
 			startActivity(i);
@@ -167,12 +139,11 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	}
 
 	public void initMatchView() {
-		
 
 	}
 
 	private class getMatchDetails extends MyAsyncTask {
-		
+
 		public getMatchDetails(int type, View contentView, View loadingView,
 				View retryView) {
 			super(type, contentView, loadingView, retryView);
@@ -180,50 +151,50 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		}
 
 		@Override
-		public void setRetryListener(final int type){
+		public void setRetryListener(final int type) {
 			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
-			
+
 			mRetryButton.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 
-					mMatchDetails = new getMatchDetails(type, contentView, loadingView, retryView);
+					mMatchDetails = new getMatchDetails(type, contentView,
+							loadingView, retryView);
 
 					mMatchDetails.execute(match.getGosuLink());
 
-
 				}
 			});
-			
-		}
 
-		
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
 			// Checking network status first
-			Log.d("AsyncDebug", "Into onPostExecute!");
+			//Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 
 				Document doc = Jsoup.parse(result);
-				
+
 				Element opp_1 = doc.select("div.opponent").first();
 
 				Element opp_2 = doc.select("div.opponent").get(1);
-				
-				Element scoreDiv_1 = doc.select("div[class=center-column]").first().select("div").get(1);
-				
-				Element scoreDiv_2 = doc.select("div[class=center-column]").first().select("div").get(2);
+
+				Element scoreDiv_1 = doc.select("div[class=center-column]")
+						.first().select("div").get(1);
+
+				Element scoreDiv_2 = doc.select("div[class=center-column]")
+						.first().select("div").get(2);
 
 				Element details = doc.select("table#match-details").first();
-				
+
 				Elements flash = doc.select("object");
-				
+
 				Elements videos = doc.select("div[class^=video]");
-				
-				if (match.getMatchStatus() != Match.ENDED){
+
+				if (match.getMatchStatus() != Match.ENDED) {
 					if (!flash.isEmpty())
 						for (Element f : flash) {
 							if (!flash.isEmpty()) {
@@ -235,20 +206,20 @@ public class MatchDetailsActivity extends SherlockListActivity {
 								lives.add(mData);
 							}
 						}
-				}
-				else {
-					if (!videos.isEmpty()){
+				} else {
+					if (!videos.isEmpty()) {
 						for (Element v : videos) {
 							String imgurl = v.select("img").first().attr("src");
-							String title = v.select("a").first().attr("data-dialog-title");
-							String mImgurl = imgurl.replaceAll("https://i1.ytimg.com/vi/(.*?)/(.*)","$1");
-							System.out.println("url: "+ mImgurl);
+							String title = v.select("a").first()
+									.attr("data-dialog-title");
+							String mImgurl = imgurl.replaceAll(
+									"https://i1.ytimg.com/vi/(.*?)/(.*)", "$1");
+							// System.out.println("url: "+ mImgurl);
 							lives.add(title);
 							videoIds.add(mImgurl);
 						}
 					}
-					
-					
+
 				}
 
 				myTimer = (TextView) findViewById(R.id.myTimer);
@@ -258,7 +229,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 				TextView teamName_1 = (TextView) findViewById(R.id.tName1);
 				TextView teamName_2 = (TextView) findViewById(R.id.tName2);
-				
+
 				TextView team1score = (TextView) findViewById(R.id.team1score);
 				TextView team2score = (TextView) findViewById(R.id.team2score);
 
@@ -268,21 +239,20 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				TextView liveLabel = (TextView) findViewById(R.id.livelabel);
 				TextView noLive = (TextView) findViewById(R.id.nolive);
 				TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
-				
+
 				teamName_1.setText(opp_1.select("a").first().text().trim());
 				teamName_2.setText(opp_2.select("a").first().text().trim());
-				
-				if (scoreDiv_1.className().trim().endsWith("winner")){
+
+				if (scoreDiv_1.className().trim().endsWith("winner")) {
 					team1score.setTextColor(Color.RED);
 				}
 				team1score.setText(scoreDiv_1.text().trim());
 
-				if (scoreDiv_2.className().trim().endsWith("winner")){
+				if (scoreDiv_2.className().trim().endsWith("winner")) {
 					team2score.setTextColor(Color.RED);
 				}
 				team2score.setText(scoreDiv_2.text().trim());
 
-				
 				imageLoader.displayImage(baseUrl
 						+ opp_1.select("img").first().attr("src"), icon_1,
 						options, animateFirstListener);
@@ -292,64 +262,63 @@ public class MatchDetailsActivity extends SherlockListActivity {
 						options, animateFirstListener);
 
 				Elements detailTd = details.select("td");
-				
-				if (detailTd.size() == 4){
-				
+
+				if (detailTd.size() == 4) {
+
 					tournamentName.setText("Tournament: "
 							+ detailTd.get(2).text().trim());
 					format.setText("Format: Best of "
 							+ detailTd.get(3).text().trim());
-					String dateInString = detailTd.first().text()
-							.trim();
-					startTime.setText("Start Time: " + processDate(dateInString)
-							+ " (Local)");
-								
-				}else{
+					String dateInString = detailTd.first().text().trim();
+					startTime.setText("Start Time: "
+							+ processDate(dateInString) + " (Local)");
+
+				} else {
 					tournamentName.setText("Tournament: "
 							+ detailTd.get(1).text().trim());
 					format.setText("Format: Best of "
 							+ detailTd.get(2).text().trim());
-					startTime.setText("Start Time: ");			
+					startTime.setText("Start Time: ");
 				}
-				
-				if (match.getMatchStatus() == Match.LIVE){
+
+				if (match.getMatchStatus() == Match.LIVE) {
 					liveStatus.setVisibility(View.VISIBLE);
-				}else if (match.getMatchStatus() == Match.NOTSTARTED){
+				} else if (match.getMatchStatus() == Match.NOTSTARTED) {
 					myTimer.setText(match.getTime());
 					myTimer.setVisibility(View.VISIBLE);
 				}
-				
-				if (match.getMatchStatus() == Match.ENDED){
+
+				if (match.getMatchStatus() == Match.ENDED) {
 					noLive.setText("No Videos Released Yet.");
 					liveLabel.setText("VODs");
 				}
-
 
 				if (lives.isEmpty()) {
 					liveLabel.setVisibility(View.GONE);
 					noLive.setVisibility(View.VISIBLE);
 				} else {
 
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity,
-							android.R.layout.simple_list_item_1, lives);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+							mActivity, android.R.layout.simple_list_item_1,
+							lives);
 
 					setListAdapter(adapter);
-				}		
+				}
 
-				DisplayView(contentView, retryView, loadingView) ;
-					
-			}else{
-				
+				DisplayView(contentView, retryView, loadingView);
+
+			} else {
+
 				handleCancelView();
 
 			}
 		}
-		
+
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
-			Log.d("AsyncDebug", "Into OnCancelled!");
-			handleCancelView();		
+			// Log.d("AsyncDebug", "Into OnCancelled!");
+			handleCancelView();
 		}
 
 	}
@@ -366,14 +335,14 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			date = sdf.parse(s);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		sdf = new SimpleDateFormat("MMMM d 'at' hh:mm a");
 		sdf.setTimeZone(TimeZone.getDefault());
 		// date.setHours(Integer.parseInt(hourInString));
 		return sdf.format(date);
-		
+
 	}
 
 	public void refreshActivity() {
@@ -390,8 +359,8 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	}
 
 	// set a listener for "Retry" button
-		
-	public void hideAllViews(){
+
+	public void hideAllViews() {
 		if (fullscreenLoadingView != null)
 			fullscreenLoadingView.setVisibility(View.GONE);
 		if (contentLayout != null)
@@ -399,32 +368,31 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		if (mRetryView != null)
 			mRetryView.setVisibility(View.GONE);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 
-			Log.d("UniversalImageLoader", "clear from MatchDetail");
-			imageLoader.clearDiscCache();
-			imageLoader.clearMemoryCache();
-		
+		// Log.d("UniversalImageLoader", "clear from MatchDetail");
+		imageLoader.clearDiscCache();
+		imageLoader.clearMemoryCache();
+
 		// check the state of the task
-			cancelAllTask();
-			hideAllViews();
-		
+		cancelAllTask();
+		hideAllViews();
+
 	}
-	
+
 	public void cancelAllTask() {
 
-			if (mMatchDetails != null && mMatchDetails.getStatus() == Status.RUNNING) {
-				mMatchDetails.cancel(true);
+		if (mMatchDetails != null
+				&& mMatchDetails.getStatus() == Status.RUNNING) {
+			mMatchDetails.cancel(true);
 
-				Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
-			} else
-				Log.d("AsyncDebug", "Task cancellation failed!!!!");
-
+			// Log.d("AsyncDebug", "Task cancelled!!!!!!!!");
+		} else {
+			// Log.d("AsyncDebug", "Task cancellation failed!!!!");
+		}
 	}
-
-
 
 }

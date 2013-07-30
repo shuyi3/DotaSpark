@@ -2,11 +2,7 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
-import com.examples.gg.R;
-import com.examples.gg.R.color;
-
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.examples.gg.R.color;
+
 public class EntryAdapter extends ArrayAdapter<Item> {
 
-	private Context context;
 	private ArrayList<Item> items;
 	private LayoutInflater vi;
 
 	public EntryAdapter(Context context, ArrayList<Item> items) {
 		super(context, 0, items);
-		this.context = context;
 		this.items = items;
 		vi = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -55,7 +51,7 @@ public class EntryAdapter extends ArrayAdapter<Item> {
 				final ImageView icon = (ImageView) v
 						.findViewById(R.id.list_item_entry_drawable);
 				final ImageView header = (ImageView) v
-						.findViewById(R.id.list_item_entry_header); 
+						.findViewById(R.id.list_item_entry_header);
 
 				if (title != null)
 					title.setText(ei.title);
@@ -66,11 +62,11 @@ public class EntryAdapter extends ArrayAdapter<Item> {
 				if (header != null)
 					header.setImageResource(color.transparent);
 
-				if (ei.isChecked()){
-					
+				if (ei.isChecked()) {
+
 					v.setBackgroundResource(color.grey);
 					header.setImageResource(color.red);
-					
+
 				}
 			}
 		}

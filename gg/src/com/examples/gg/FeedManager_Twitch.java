@@ -58,7 +58,7 @@ public class FeedManager_Twitch extends FeedManager_Base {
 			}
 		} catch (JSONException ex) {
 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 
 		return videos;

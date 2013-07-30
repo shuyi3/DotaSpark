@@ -1,15 +1,13 @@
 package com.examples.gg;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.examples.gg.LoadMore_Base.LoadMoreTask;
-
 import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class LoadMore_Twitch extends LoadMore_Base {
 	@Override
@@ -27,7 +25,6 @@ public class LoadMore_Twitch extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
-		// Set retry button listener
 		
 	}
 	

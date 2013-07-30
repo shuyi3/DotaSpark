@@ -1,6 +1,5 @@
 package com.examples.gg;
 
-import android.view.View;
 
 public class LoadMore_M_Subscription extends LoadMore_Base {
 

@@ -18,7 +18,6 @@ public class FeedManager_Base {
 	public static final String YOUTUBE = "Youtube";
 	public static final String TWITCH = "Twitch";
 	public static final String SUBSCRIPTION = "Subscription";
-	private String twtichNextApi;
 	protected String mJSON;
 
 	public String getmJSON() {
@@ -35,7 +34,7 @@ public class FeedManager_Base {
 				processJSON(mJSON);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		ArrayList<Video> videos = new ArrayList<Video>();
@@ -75,11 +74,6 @@ public class FeedManager_Base {
 						.getJSONObject("yt$duration").getString("seconds");
 				String convertedDuration = formatSecondsAsTime(inSecs) + " HD";
 
-				// System.out.println("date: " +
-				// updateTime.substring(0,updateTime.indexOf("T")));
-				// System.out.println("time: " +
-				// updateTime.substring(updateTime.indexOf("T")+1,
-				// updateTime.indexOf(".")));
 				updateTime = handleDate(updateTime);
 
 				Video video = new Video();
@@ -106,7 +100,7 @@ public class FeedManager_Base {
 
 		} catch (JSONException ex) {
 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 
 		return videos;
@@ -177,7 +171,7 @@ public class FeedManager_Base {
 			d2 = dateFormat.parse(dateInString);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// System.out.println("Date 1: " + dateFormat.format(d1));
 		// System.out.println("Date 2: " + dateFormat.format(d2));
@@ -237,10 +231,6 @@ public class FeedManager_Base {
 				}
 			}
 		}
-
-		// String result = "Years: " + diffYear + "\nMonths: " + diffMonth +
-		// "\nDays: " + diffDay + "\nHours: " + diffHour + "\nMinutes: " +
-		// diffMin + "\nSeconds: " + diffSec + "\n";
 
 		return "";
 	}

@@ -1,31 +1,21 @@
 package com.examples.gg;
 
-import android.os.Bundle;
-import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings.LayoutAlgorithm;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-import android.widget.ToggleButton;
-import android.os.Message;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class TwitchPlayer extends Activity {
@@ -36,7 +26,6 @@ public class TwitchPlayer extends Activity {
 	private View mCustomView = null;
 	private WebView mWebView;
 	private WebView mWebChat;
-	private ToggleButton lockButton;
 	private String video;
 	private String ua;
 	private View loadingIndicator;
@@ -58,21 +47,6 @@ public class TwitchPlayer extends Activity {
 		if (getPhoneAndroidSDK() >= 14) {
 			getWindow().setFlags(0x1000000, 0x1000000);
 		}
-
-		String stream = "";
-		stream = "<html>"
-				+ "<style>"
-				+ "html, body { height: 100%}"
-				+ "</style>"
-				+ "<body style='margin:0; padding:0;'>"
-				+ "<object type=\"application/x-shockwave-flash\" id=\"videoPlayer\" height='100%' width=\"100%\">"
-				+ "<param name=\"allowFullScreen\" value=\"false\" />"
-				+ "<param name=\"allowScriptAccess\" value=\"never\" />"
-				+ "<param name=\"allowNetworking\" value=\"internal\" />"
-				+ "<param name=\"movie\" value=\"http://www.twitch.tv/widgets/live_embed_player.swf\" />"
-				+ "<param name=\"flashvars\" value=\"hostname=www.twitch.tv&channel="
-				+ video + "&auto_play=true&start_volume=25\" />" + "</object>"
-				+ "</body>" + "</html>";
 
 		String chat = "";
 		chat = "<html>" + "<body style=\"margin:0; padding:0\">"
@@ -226,7 +200,7 @@ public class TwitchPlayer extends Activity {
 	}
 
 	class MyWebViewClient extends WebViewClient {
-		
+
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			// TODO Auto-generated method stub
@@ -267,18 +241,19 @@ public class TwitchPlayer extends Activity {
 					loadingIndicator.setVisibility(View.GONE);
 				}
 			}, 2000);
-//			loadingIndicator.setVisibility(View.GONE);
+			// loadingIndicator.setVisibility(View.GONE);
 		}
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int getPhoneAndroidSDK() {
 		// TODO Auto-generated method stub
 		int version = 0;
 		try {
 			version = Integer.valueOf(android.os.Build.VERSION.SDK);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return version;
 

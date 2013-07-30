@@ -13,7 +13,7 @@ public class FeedManager_Uploader extends FeedManager_Base{
 			processJSON(mJSON);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		ArrayList<Video> videos = new ArrayList<Video>();
 
@@ -58,7 +58,7 @@ public class FeedManager_Uploader extends FeedManager_Base{
 
 		} catch (JSONException ex) {
 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 
 		return videos;

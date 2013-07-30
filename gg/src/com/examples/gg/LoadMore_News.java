@@ -22,7 +22,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +37,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.costum.android.widget.LoadMoreListView;
-import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
 @SuppressLint("HandlerLeak")
 public class LoadMore_News extends LoadMore_Base {
@@ -49,12 +47,12 @@ public class LoadMore_News extends LoadMore_Base {
 	private AtomicInteger what = new AtomicInteger(0);
 	private boolean isContinue = true;
 	private ViewGroup group;
-	private ArrayList<String> matches = new ArrayList();
-	private ArrayList<String> results = new ArrayList();
+	private ArrayList<String> matches = new ArrayList<String>();
+	private ArrayList<String> results = new ArrayList<String>();
 	private Elements links;
 	boolean isPagerSet = false;
 	private getMatchInfo mMatchInfo;
-	
+
 	private View pagerContent;
 	private View pagerLoading;
 	private View pagerRetry;
@@ -62,23 +60,16 @@ public class LoadMore_News extends LoadMore_Base {
 	private View listRetry;
 	private String url = "http://www.gosugamers.net/dota2/gosubet";
 
-
 	@Override
 	public void Initializing() {
 		// Inflating view
 		view = mInflater.inflate(R.layout.whatsnew, null);
-		
 
 		// Give a title for the action bar
-		abTitle = "News";
+		abTitle = "What's New";
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/cpGJHANGum7tFm0kg6fh7g/newsubscriptionvideos?max-results=10&alt=json");
-
-		// initialize the fragments in the Menu
-		// FragmentAll = new LoadMore_H_Subscription();
-		// FragmentUploader = new LoadMore_H_Uploader();
-		// FragmentPlaylist = new LoadMore_H_Playlist();
 
 		// set a feed manager
 		feedManager = new FeedManager_Subscription();
@@ -86,7 +77,6 @@ public class LoadMore_News extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
-
 
 	}
 
@@ -105,10 +95,10 @@ public class LoadMore_News extends LoadMore_Base {
 	public void refreshFragment() {
 		currentFragment = new LoadMore_News();
 	}
-	
+
 	@Override
 	public void setListView() {
-		
+
 		pagerContent = sfa.findViewById(R.id.pageContent);
 		pagerLoading = sfa.findViewById(R.id.pagerLoadingIndicator);
 		pagerRetry = sfa.findViewById(R.id.pagerRetryView);
@@ -116,10 +106,9 @@ public class LoadMore_News extends LoadMore_Base {
 		listRetry = sfa.findViewById(R.id.ListViewRetryView);
 
 		super.setListView();
-		
+
 	}
 
-	@SuppressWarnings("deprecation")
 	private void initViewPager() {
 
 		for (Element link : links) {
@@ -169,7 +158,7 @@ public class LoadMore_News extends LoadMore_Base {
 			liveMatch1.setText(matcharray[0]);
 			live1.setVisibility(View.GONE);
 		}
-		System.out.println(matcharray[0]);
+		//System.out.println(matcharray[0]);
 
 		if (matcharray[1].endsWith("Live")) {
 			liveMatch2.setText(matcharray[1].substring(0,
@@ -178,7 +167,7 @@ public class LoadMore_News extends LoadMore_Base {
 			liveMatch2.setText(matcharray[1]);
 			live2.setVisibility(View.GONE);
 		}
-		System.out.println(matcharray[1]);
+		//System.out.println(matcharray[1]);
 
 		if (matcharray[2].endsWith("Live")) {
 			liveMatch3.setText(matcharray[2].substring(0,
@@ -187,19 +176,17 @@ public class LoadMore_News extends LoadMore_Base {
 			liveMatch3.setText(matcharray[2]);
 			live3.setVisibility(View.GONE);
 		}
-		System.out.println(matcharray[2]);
-		
-		v1.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
+		//System.out.println(matcharray[2]);
+
+		v1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.content_frame, new LoadMore_UpcomingMatch());
 				ft.commit();
-            }
-        });
+			}
+		});
 
 		advPics.add(v1);
 
@@ -227,18 +214,16 @@ public class LoadMore_News extends LoadMore_Base {
 		liveMatch3.setText(resultarray[2]);
 
 		live3.setVisibility(View.GONE);
-		
-		v2.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
+
+		v2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.content_frame, new LoadMore_Result());
 				ft.commit();
-            }
-        });
+			}
+		});
 
 		advPics.add(v2);
 
@@ -249,9 +234,9 @@ public class LoadMore_News extends LoadMore_Base {
 			imageView.setPadding(5, 5, 5, 5);
 			imageViews[i] = imageView;
 			if (i == 0) {
-				imageViews[i].setBackgroundResource(R.drawable.selected);
+				imageViews[i].setBackgroundResource(R.drawable.d2_selected);
 			} else {
-				imageViews[i].setBackgroundResource(R.drawable.unselected);
+				imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
 			}
 			group.addView(imageViews[i]);
 		}
@@ -332,9 +317,9 @@ public class LoadMore_News extends LoadMore_Base {
 		public void onPageSelected(int arg0) {
 			what.getAndSet(arg0);
 			for (int i = 0; i < imageViews.length; i++) {
-				imageViews[arg0].setBackgroundResource(R.drawable.selected);
+				imageViews[arg0].setBackgroundResource(R.drawable.d2_selected);
 				if (arg0 != i) {
-					imageViews[i].setBackgroundResource(R.drawable.unselected);
+					imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
 				}
 			}
 
@@ -395,34 +380,33 @@ public class LoadMore_News extends LoadMore_Base {
 
 	private class getMatchInfo extends MyAsyncTask {
 
-
 		public getMatchInfo(int type, View contentView, View loadingView,
 				View retryView) {
 			super(type, contentView, loadingView, retryView);
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		@Override
-		public void setRetryListener(final int type){
+		public void setRetryListener(final int type) {
 			mRetryButton = (Button) retryView.findViewById(R.id.mRetryButton);
-			
+
 			mRetryButton.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 
-					mMatchInfo = (getMatchInfo) new getMatchInfo(type, contentView, loadingView, retryView);
+					mMatchInfo = (getMatchInfo) new getMatchInfo(type,
+							contentView, loadingView, retryView);
 					mMatchInfo.execute(url);
 				}
 			});
-			
-		}
 
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
 
-			Log.d("AsyncDebug", "Into onPostExecute!");
+			//Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
@@ -430,17 +414,14 @@ public class LoadMore_News extends LoadMore_Base {
 				links = doc.select("tr:has(td.opp)");
 
 				initViewPager();
-				
-				DisplayView(contentView, retryView, loadingView) ;
 
+				DisplayView(contentView, retryView, loadingView);
 
 			} else {
 				handleCancelView();
 			}
 
 		}
-		
-
 
 	}
 
@@ -456,7 +437,7 @@ public class LoadMore_News extends LoadMore_Base {
 		protected void onPostExecute(String result) {
 			// Do anything with response..
 			// System.out.println(result);
-			Log.d("AsyncDebug", "Into onPostExecute!");
+			//Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 
@@ -466,7 +447,7 @@ public class LoadMore_News extends LoadMore_Base {
 
 				// adding new loaded videos to our current video list
 				for (Video v : newVideos) {
-					System.out.println("new id: " + v.getVideoId());
+					//System.out.println("new id: " + v.getVideoId());
 					if (needFilter) {
 						filtering(v);
 						// System.out.println("need filter!");
@@ -486,13 +467,13 @@ public class LoadMore_News extends LoadMore_Base {
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				vaa.notifyDataSetChanged();
 
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-				
-				DisplayView(contentView, retryView, loadingView) ;
+
+				DisplayView(contentView, retryView, loadingView);
 
 				if (!isMoreVideos) {
 					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
@@ -511,18 +492,20 @@ public class LoadMore_News extends LoadMore_Base {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			LoadMoreTask newTask = new LoadMoreTask_News(LoadMoreTask.INITTASK, myLoadMoreListView, listLoading, listRetry);
+			LoadMoreTask newTask = new LoadMoreTask_News(LoadMoreTask.INITTASK,
+					myLoadMoreListView, listLoading, listRetry);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
 			} else {
 				newTask.execute(s);
 			}
-			
+
 			mLoadMoreTasks.add(newTask);
 
 		}
 
-		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent, pagerLoading, pagerRetry);
+		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent,
+				pagerLoading, pagerRetry);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
@@ -530,23 +513,6 @@ public class LoadMore_News extends LoadMore_Base {
 			mMatchInfo.execute(url);
 		}
 	}
-	
-//	public void handleCancelView(LoadMoreTask mTask,boolean isException) {
-//		
-//		((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-//		
-//		if (isException){
-//			
-//				if (mTask.type == LoadMoreTask.INITTASK)		
-//					ic.setNetworkError(InternetConnection.fullscreenLoadingError);
-//		
-//				if (mTask.type == LoadMoreTask.LOADMORETASK)		
-//					ic.setNetworkError(InternetConnection.loadingMoreError);
-//				
-//				callRetryView();
-//		}
-//	}
-
 
 	@Override
 	public void onDestroy() {
