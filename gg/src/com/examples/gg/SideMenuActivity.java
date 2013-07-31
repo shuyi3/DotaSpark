@@ -3,6 +3,7 @@ package com.examples.gg;
 import java.util.ArrayList;
 
 import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -60,23 +61,23 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		// mMenuAdapter = new MenuListAdapter(this, title, subtitle, icon);
 		items.add(new SectionItem("Everyday's Feed"));
 		items.add(new EntryItem("What's new", "Fresh meat!",
-				R.drawable.action_about));
+				R.drawable.fresh_meat));
 
 		items.add(new SectionItem("Latest Videos"));
 		items.add(new EntryItem("Highlights", "Dota excitements",
-				R.drawable.action_about));
+				R.drawable.highlights));
 		items.add(new EntryItem("Matches", "You don't wanna miss it",
-				R.drawable.collections_cloud));
+				R.drawable.swords));
 
 		items.add(new SectionItem("Lives"));
 		items.add(new EntryItem("Twitch Streams", "Battle begins!",
-				R.drawable.collections_cloud));
+				R.drawable.live));
 
 		items.add(new SectionItem("Match Table"));
-		items.add(new EntryItem("Upcoming Matches", "matches approaching!",
-				R.drawable.collections_cloud));
+		items.add(new EntryItem("Upcomings", "Matches coming soon!",
+				R.drawable.upcoming));
 		items.add(new EntryItem("Recent Results", "It's in the bag!",
-				R.drawable.collections_cloud));
+				R.drawable.list_result));
 
 		eAdapter = new EntryAdapter(this, items);
 

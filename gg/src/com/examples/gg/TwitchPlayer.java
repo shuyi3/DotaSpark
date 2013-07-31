@@ -63,6 +63,26 @@ public class TwitchPlayer extends Activity {
 		// mWebView.loadData(stream, "text/html", null);
 		// mWebView.loadUrl("file:///android_asset/stream.html");
 		mWebView.loadUrl("http://www.twitch.tv/" + video + "/popout");
+		// String stream = "";
+		// stream = "<html>"+
+		// "<style>"+
+		// "html, body { height: 100%}"+
+		// "</style>"+
+		// "<body style='margin:0; padding:0;'>"+
+		// "<object type=\"application/x-shockwave-flash\" id=\"videoPlayer\" height='100%' width=\"100%\">"+
+		// "<param name=\"allowFullScreen\" value=\"false\" />"+
+		// "<param name=\"allowScriptAccess\" value=\"never\" />"+
+		// "<param name=\"allowNetworking\" value=\"internal\" />"+
+		// "<param name=\"movie\" value=\"http://www.twitch.tv/widgets/live_embed_player.swf\" />"+
+		// "<param name=\"flashvars\" value=\"hostname=www.twitch.tv&channel="+video+"&auto_play=true&start_volume=25\" />"+
+		// "</object>"+
+		// "</body>"+
+		// "</html>";
+		//
+		//
+		// mWebView.loadDataWithBaseURL("http://www-cdn.jtvnw.net/", stream,
+		// "text/html", "UTF-8", "http://www-cdn.jtvnw.net/");
+
 	}
 
 	@Override
@@ -238,11 +258,26 @@ public class TwitchPlayer extends Activity {
 			Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 				public void run() {
-					loadingIndicator.setVisibility(View.GONE);
+					 loadingIndicator.setVisibility(View.GONE);
 				}
 			}, 2000);
 			// loadingIndicator.setVisibility(View.GONE);
 		}
+
+		// public void onLoadResource(WebView paramWebView, String paramString)
+		// {
+		// if ((paramString.contains("usher.justin.tv/find")) &&
+		// (loadingIndicator.getVisibility() == View.VISIBLE))
+		// try
+		// {
+		// loadingIndicator.setVisibility(View.GONE);
+		// return;
+		// }
+		// catch (Exception localException)
+		// {
+		// return;
+		// }
+		// }
 
 	}
 
@@ -253,7 +288,7 @@ public class TwitchPlayer extends Activity {
 		try {
 			version = Integer.valueOf(android.os.Build.VERSION.SDK);
 		} catch (NumberFormatException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return version;
 

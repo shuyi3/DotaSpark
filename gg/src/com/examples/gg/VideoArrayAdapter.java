@@ -93,7 +93,11 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		} else if (videos.get(position).getViewCount() != null) {
 
 			// For Twitch, only showing number of viewers
-			holder.countView.setText(videos.get(position).getViewCount() + " viewers");
+			holder.watchingIcon = (ImageView) convertView
+					.findViewById(R.id.watching);
+			holder.watchingIcon.setVisibility(View.VISIBLE);
+			holder.countView.setText(videos.get(position).getViewCount());
+			
 		} else {
 
 			holder.countView.setText(null);
@@ -112,6 +116,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		TextView countView;
 		TextView videoLength;
 		ImageView imageView;
+		ImageView watchingIcon;
 
 	}
 
