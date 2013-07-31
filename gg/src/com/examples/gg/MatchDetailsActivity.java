@@ -124,8 +124,8 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		if (match.getMatchStatus() == Match.ENDED) {
 			Intent i = new Intent(this, YoutubeActionBarActivity.class);
-			Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
-					.show();
+//			Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
+//					.show();
 
 			i.putExtra("isfullscreen", true);
 			i.putExtra("videoId", videoIds.get(position));
