@@ -1,15 +1,11 @@
 package com.examples.gg;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 
 import android.os.AsyncTask;
 import android.view.View;
@@ -70,11 +66,11 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 	@Override
 	protected String doInBackground(String... uri) {
 
-		 String userAgent =
-		 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
-		HttpClient httpclient = new DefaultHttpClient();
-		httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
-		HttpResponse response;
+//		 String userAgent =
+//		 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2";
+//		HttpClient httpclient = new DefaultHttpClient();
+//		httpclient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
+//		HttpResponse response;
 
 		// if (!ic.isOnline(sfa)) {
 		// Log.d("AsyncDebug", "Ic not online!");
@@ -83,33 +79,14 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 		// taskCancel = true;
 		// } else
 		try {
-			HttpGet myGet = new HttpGet(uri[0]);
-			// myGet.setParams(httpParameters);
-			response = httpclient.execute(myGet);
-			StatusLine statusLine = response.getStatusLine();
-			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+			
+            URL url = new URL(uri[0]);  
+            URLConnection conn = url.openConnection();  
+            conn.connect();  
+            InputStream is = conn.getInputStream();  
+            responseString = getStringFromInputStream(is);
+            is.close();  
 
-				//Log.d("AsyncDebug", "200 OK!");
-
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				response.getEntity().writeTo(out);
-				out.close();
-				responseString = out.toString();
-			} else {
-
-				//Log.d("AsyncDebug", "Not 200 OK!");
-
-				// Closes the connection.
-				response.getEntity().getContent().close();
-				// throw new IOException(statusLine.getReasonPhrase());
-
-				isException = true;
-				cancel(true);
-				taskCancel = true;
-
-				throw new IOException(statusLine.getReasonPhrase());
-
-			}
 		} catch (Exception e) {
 			// throw new IOException(statusLine.getReasonPhrase());
 
@@ -123,7 +100,7 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 
 			//Log.d("AsyncDebug", "shutdown");
 
-			httpclient.getConnectionManager().shutdown();
+//			httpclient.getConnectionManager().shutdown();
 			//Log.d("AsyncDebug", "Do in background finished!");
 
 		}
@@ -136,4 +113,34 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 		//Log.d("AsyncDebug", "Into OnCancelled!");
 		handleCancelView();
 	}
+	
+	private static String getStringFromInputStream(InputStream is) {
+		 
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+ 
+		String line;
+		try {
+ 
+			br = new BufferedReader(new InputStreamReader(is));
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+ 
+		return sb.toString();
+ 
+	}
+
 }
