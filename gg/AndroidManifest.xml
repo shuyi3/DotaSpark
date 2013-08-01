@@ -6,7 +6,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -61,14 +62,13 @@
         <activity
             android:name="com.examples.gg.YoutubeActionBarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" 
-            >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".TwitchPlayer"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:label="@string/title_activity_main"
             android:screenOrientation="landscape"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.examples.gg.MatchDetailsActivity"
@@ -83,9 +83,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
+        <activity
             android:name=".LoadMore_BaseActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
+        </activity>
+        
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/app_name" >
         </activity>
     </application>
 

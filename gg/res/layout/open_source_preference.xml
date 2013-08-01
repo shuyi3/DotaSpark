@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/notices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/notices"
+        android:textStyle="bold" 
+        android:layout_margin="10dp"
+        android:textSize="15sp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="73dp"
+        android:layout_marginLeft="30dp"
+        android:background="#ffffff"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/open_source_link1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_source_link" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/open_source_link2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_source_link" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/open_source_link3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_source_link" >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="15dp"
+        android:background="#8b95a0"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/apache_license"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="@string/apache_license" >
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>

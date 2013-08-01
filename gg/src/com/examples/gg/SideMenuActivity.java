@@ -2,8 +2,8 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -148,6 +148,15 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 					}
 				}, 0);
 			}
+		}
+		
+		if(item.getItemId() == R.id.menu_settings){
+			
+			// Start setting activity
+			Intent i = new Intent(this,
+					SettingsActivity.class);
+			startActivity(i);
+			
 		}
 
 		return super.onOptionsItemSelected(item);

@@ -25,7 +25,10 @@
  	<string name="iconDesc">ICON</string>
  	<string name="versus">vs</string>
  	<string name="matchTime">2h+</string>
- 	
+ 	<string name="about_preferences">About</string>
+ 	<string name="notices">Notices for files:</string>
+ 	<string name="open_source_link">A link</string>
+ 	<string name="apache_license">License</string>
  	<string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
  	
 
