@@ -185,8 +185,8 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 
 					}
 				});
-				Toast.makeText(sfa, "Initialization  Success",
-						Toast.LENGTH_LONG).show();
+//				Toast.makeText(sfa, "Initialization  Success",
+//						Toast.LENGTH_LONG).show();
 				if (!wasRestored) {
 					if (isFullscreenMode) {
 						ytp.setFullscreen(true);
@@ -206,7 +206,7 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 		      errorReason.getErrorDialog(sfa, RECOVERY_DIALOG_REQUEST).show();
 		    } else {
 		      String errorMessage = String.format(getString(R.string.error_player), errorReason.toString());
-		      Toast.makeText(sfa, errorMessage, Toast.LENGTH_LONG).show();
+//		      Toast.makeText(sfa, errorMessage, Toast.LENGTH_LONG).show();
 		    }
 		  }
 

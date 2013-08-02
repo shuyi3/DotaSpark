@@ -57,6 +57,7 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	protected boolean firstTime = true;
 	protected int currentPosition = 0;
+	protected String title;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 
 		Intent intent = getIntent();
 		String mAPI = intent.getStringExtra("API");
-		String title = intent.getStringExtra("title");
+		title = intent.getStringExtra("title");
 
 		// set the layout
 		// Initial fragment manager
@@ -149,7 +150,7 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 						LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 								LoadMoreTask.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						newTask.execute(API.get(0));
+						newTask.execute(API.get(API.size()-1));
 						mLoadMoreTasks.add(newTask);
 					}
 
@@ -204,7 +205,7 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 		// if (ic.checkConnection(this.getSherlockActivity())) {
 		// get selected items
 
-		Toast.makeText(this, videos.get(position), Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, videos.get(position), Toast.LENGTH_SHORT).show();
 
 		Intent i = new Intent(this, YoutubeActionBarActivity.class);
 		i.putExtra("video", videolist.get(position));
@@ -277,9 +278,9 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 				}
 				try {
 					// put the next API in the first place of the array
-					API.set(0, feedManager.getNextApi());
+					API.add(feedManager.getNextApi());
 					// nextAPI = feedManager.getNextApi();
-					if (API.get(0) == null) {
+					if (API.get(API.size()-1) == null) {
 						// No more videos left
 						isMoreVideos = false;
 					}
@@ -343,11 +344,10 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (isTaskRoot()) {
 			// Log.d("UniversalImageLoader", "It's task root!");
-			imageLoader.clearDiscCache();
-			imageLoader.clearMemoryCache();
-		}
+		imageLoader.clearDiscCache();
+		imageLoader.clearMemoryCache();
+		
 		// check the state of the task
 		cancelAllTask();
 		hideAllViews();
@@ -378,11 +378,12 @@ public class LoadMore_BaseActivity extends SherlockListActivity {
 		// Destroy current activity
 		finish();
 
-		Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show();
 
 		// Start a new activity
 		Intent i = new Intent(this, LoadMore_BaseActivity.class);
 		i.putExtra("API", API.get(0));
+		i.putExtra("title", title);
 		startActivity(i);
 
 	}

@@ -92,7 +92,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
+		
 		menu.add(0, 0, 0, "Refresh")
 				.setIcon(R.drawable.ic_refresh)
 				.setShowAsAction(
@@ -271,7 +271,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 							+ detailTd.get(3).text().trim());
 					String dateInString = detailTd.first().text().trim();
 					startTime.setText("Start Time: "
-							+ processDate(dateInString) + " (Local)");
+							+ processDate(dateInString) + " (Your place)");
 
 				} else {
 					tournamentName.setText("Tournament: "

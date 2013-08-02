@@ -2,7 +2,10 @@ package com.examples.gg;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -16,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class TwitchPlayer extends Activity {
@@ -29,11 +33,57 @@ public class TwitchPlayer extends Activity {
 	private String video;
 	private String ua;
 	private View loadingIndicator;
+	private boolean doubleBackToExitPressedOnce = false;
+	
+	private SharedPreferences prefs;
+	private SharedPreferences.Editor editor;
+	private boolean IF_SKIP_INSTRUCTION;
+	private  AlertDialog dialog = null;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.twitchplayer);
+		
+		prefs = getPreferences(MODE_PRIVATE);
+
+		if (!prefs.getBoolean("IF_SKIP_INSTRUCTION", false)) {
+			// show dialog
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			// Add the buttons
+			builder.setPositiveButton("Remind me next time", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			               // User clicked OK button
+			        	    editor = prefs.edit();
+			        	    editor.putBoolean("IF_SKIP_INSTRUCTION", false);
+			        	    editor.commit();
+			           }
+			       });
+			builder.setNegativeButton("I know already", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			               // User cancelled the dialog
+			        	   
+			        	    editor = prefs.edit();
+			        	    editor.putBoolean("IF_SKIP_INSTRUCTION", true);
+			        	    editor.commit();
+			           }
+			       });
+			// Set other dialog properties
+			
+			builder.setTitle("Instructions:");
+			
+			builder.setMessage("1. This Twitch.tv player requires Flash Player installed\n\n" +
+					"2. Fullscreen Mode: Double press the screen (chat box cannot be invoked in Fullscreen mode)\n\n"+
+			"3. Chat box: Press MENU button to turn on/off\n\n"+
+					"Notice: Now chatting is only available for the people who have Justin.tv account. We are now working on implementing the chat box for Twitch.tv users");
+
+			// Create the AlertDialog
+			dialog = builder.create();
+			dialog.show();
+
+		
+		}
 
 		loadingIndicator = findViewById(R.id.fullscreen_loading_indicator);
 		loadingIndicator.setVisibility(View.VISIBLE);
@@ -258,7 +308,7 @@ public class TwitchPlayer extends Activity {
 			Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 				public void run() {
-					 loadingIndicator.setVisibility(View.GONE);
+					loadingIndicator.setVisibility(View.GONE);
 				}
 			}, 2000);
 			// loadingIndicator.setVisibility(View.GONE);
@@ -307,4 +357,29 @@ public class TwitchPlayer extends Activity {
 		mWebView.onResume();
 		mWebChat.onResume();
 	}
+
+	@Override
+	public void onBackPressed() {
+
+		// No fragment in back stack
+		if (doubleBackToExitPressedOnce) {
+			super.onBackPressed();
+			return;
+		}
+		this.doubleBackToExitPressedOnce = true;
+		Toast.makeText(this, "Please click BACK again to exit the stream",
+				Toast.LENGTH_SHORT).show();
+
+		// reset doubleBackToExitPressedOnce to false after 2 seconds
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				doubleBackToExitPressedOnce = false;
+
+			}
+		}, 2000);
+
+	}
+
 }

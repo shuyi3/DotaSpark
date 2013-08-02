@@ -9,9 +9,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-public class CustomDialogPreference extends DialogPreference{
+public class Dialog_Libraries extends DialogPreference{
 
-	public CustomDialogPreference(Context context, AttributeSet attrs) {
+	public Dialog_Libraries(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
 		this.setDialogLayoutResource(R.layout.open_source_preference);
@@ -31,18 +31,13 @@ public class CustomDialogPreference extends DialogPreference{
     public void onBindDialogView(View view){
     		TextView mLink1 = (TextView) view.findViewById(R.id.open_source_link1);
     		mLink1.setText(Html.fromHtml(
-    	            "<a href=\"http://www.google.com\">Universal Image Loader</a>"));
+    	            "<a href=\"https://github.com/nostra13/Android-Universal-Image-Loader\">Using Universal Image Loader (c) 2011-2013, Sergey Tarasevich</a>"));
     		mLink1.setMovementMethod(LinkMovementMethod.getInstance());
-    		
+    		    		
     		TextView mLink2 = (TextView) view.findViewById(R.id.open_source_link2);
     		mLink2.setText(Html.fromHtml(
-    	            "<a href=\"http://www.google.com\">Jsoup</a>"));
+    	            "<a href=\"https://github.com/shontauro/android-pulltorefresh-and-loadmore\">Load More Listview (c) 2012 Fabian Leon</a>"));
     		mLink2.setMovementMethod(LinkMovementMethod.getInstance());
-    		
-    		TextView mLink3 = (TextView) view.findViewById(R.id.open_source_link3);
-    		mLink3.setText(Html.fromHtml(
-    	            "<a href=\"http://www.google.com\">Load More Listview</a>"));
-    		mLink3.setMovementMethod(LinkMovementMethod.getInstance());
     		
     		TextView license = (TextView) view.findViewById(R.id.apache_license);
     		license.setText(Html.fromHtml(

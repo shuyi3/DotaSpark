@@ -41,7 +41,9 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		this.imageLoader.init(ImageLoaderConfiguration.createDefault(context));
+		if (!this.imageLoader.isInited()){
+			this.imageLoader.init(ImageLoaderConfiguration.createDefault(context));
+		}
 		// imageLoader=new ImageLoader(context.getApplicationContext());
 
 		options = new DisplayImageOptions.Builder()

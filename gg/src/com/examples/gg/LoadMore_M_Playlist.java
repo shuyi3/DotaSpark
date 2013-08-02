@@ -35,10 +35,5 @@ public class LoadMore_M_Playlist extends LoadMore_Base_UP {
 
 	// this method is used in the method "onListItemClick" to pass a API to the
 	// next fragment
-	@Override
-	public void InitializingNextFragment() {
 
-		mLoadMore = new LoadMore_M_L2(nextFragmentAPI, currentPosition);
-
-	}
 }

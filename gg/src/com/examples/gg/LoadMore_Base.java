@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -236,7 +237,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		case 0:
 			// Menu option 1
-			Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
 			refreshFragment();
 			ft.replace(R.id.content_frame, currentFragment);
 			break;
@@ -411,11 +412,10 @@ public class LoadMore_Base extends SherlockListFragment implements
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (sfa.isTaskRoot()) {
-			// Log.d("UniversalImageLoader", "It's task root!");
-			imageLoader.clearDiscCache();
-			imageLoader.clearMemoryCache();
-		}
+//		Log.d("UniversalImageLoader", "cleared!");
+		imageLoader.clearDiscCache();
+		imageLoader.clearMemoryCache();
+		
 		// check the state of the task
 		cancelAllTask();
 		hideAllViews();

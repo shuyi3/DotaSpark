@@ -101,9 +101,9 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		Toast.makeText(this.getSherlockActivity(),
-				matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
-				.show();
+//		Toast.makeText(this.getSherlockActivity(),
+//				matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
+//				.show();
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				MatchDetailsActivity.class);

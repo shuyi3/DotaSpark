@@ -2,6 +2,7 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONException;
@@ -37,6 +38,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.costum.android.widget.LoadMoreListView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 @SuppressLint("HandlerLeak")
 public class LoadMore_News extends LoadMore_Base {
@@ -46,6 +49,7 @@ public class LoadMore_News extends LoadMore_Base {
 	private ViewPager advPager = null;
 	private AtomicInteger what = new AtomicInteger(0);
 	private boolean isContinue = true;
+	private boolean isEnd = false;
 	private ViewGroup group;
 	private ArrayList<String> matches = new ArrayList<String>();
 	private ArrayList<String> results = new ArrayList<String>();
@@ -59,8 +63,21 @@ public class LoadMore_News extends LoadMore_Base {
 	private View listLoading;
 	private View listRetry;
 	private String url = "http://www.gosugamers.net/dota2/gosubet";
+	private int rand_1;
+	private int rand_2;
+	private Thread myThread;
+	
+	private int position = 0;
+	
+	DisplayImageOptions options;
+
 	
 	private SideMenuActivity sma;
+	private final int[] myDrawables = new int[] {R.drawable.bountyhunter, R.drawable.centaurwarlord, R.drawable.disruptor, R.drawable.dusa, R.drawable.invoker, R.drawable.jugg, R.drawable.pa, R.drawable.pudge, R.drawable.radient, R.drawable.razor, R.drawable.rubick,
+			R.drawable.slardar, R.drawable.snk, R.drawable.tiny, R.drawable.visage, R.drawable.faceless};
+	
+	private List<View> views = new ArrayList<View>();
+
 
 	@Override
 	public void Initializing() {
@@ -82,7 +99,28 @@ public class LoadMore_News extends LoadMore_Base {
 		
 		// Get sidemenuactivity
 		sma = (SideMenuActivity) sfa;
+		
+		Random random = new Random();
 
+		rand_1 = random.nextInt(myDrawables.length-1);
+		do {
+			rand_2 = random.nextInt(myDrawables.length-1);
+		}while (rand_1 == rand_2);
+		
+//		if (!this.imageLoader.isInited()){
+//			this.imageLoader.init(ImageLoaderConfiguration.createDefault(sfa));
+//		}
+//		// imageLoader=new ImageLoader(context.getApplicationContext());
+//
+//		options = new DisplayImageOptions.Builder()
+//				.showStubImage(R.drawable.loading)
+//				.showImageForEmptyUri(R.drawable.loading)
+//				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
+//				.cacheOnDisc(true)
+//				// .displayer(new RoundedBitmapDisplayer(20))
+//				.build();
+
+		
 	}
 
 	@Override
@@ -134,7 +172,7 @@ public class LoadMore_News extends LoadMore_Base {
 		advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
 		group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
 
-		List<View> advPics = new ArrayList<View>();
+//		List<View> advPics = new ArrayList<View>();
 
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
@@ -145,7 +183,13 @@ public class LoadMore_News extends LoadMore_Base {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		v1 = inflater.inflate(R.layout.livetext, null, false);
-		v1.setBackgroundResource(R.drawable.bountyhunter);
+		v1.setBackgroundResource(myDrawables[rand_1]);
+		
+//		ImageView backImge = (ImageView) v1.findViewById(R.id.background);
+//		
+//		imageLoader.displayImage("drawable://" + myDrawables[rand_1],
+//				backImge, options, null);
+
 
 		TextView liveTitle = (TextView) v1.findViewById(R.id.livetitle);
 		TextView liveMatch1 = (TextView) v1.findViewById(R.id.lineup1);
@@ -197,10 +241,15 @@ public class LoadMore_News extends LoadMore_Base {
 			}
 		});
 
-		advPics.add(v1);
+		views.add(v1);
 
 		v2 = inflater.inflate(R.layout.livetext, null, false);
-		v2.setBackgroundResource(R.drawable.centaurwarlord);
+		v2.setBackgroundResource(myDrawables[rand_2]);
+		
+//		backImge = (ImageView) v2.findViewById(R.id.background);
+//		
+//		imageLoader.displayImage("drawable://" + myDrawables[rand_2],
+//				backImge, options, null);
 
 		liveTitle = (TextView) v2.findViewById(R.id.livetitle);
 		liveMatch1 = (TextView) v2.findViewById(R.id.lineup1);
@@ -238,10 +287,10 @@ public class LoadMore_News extends LoadMore_Base {
 			}
 		});
 
-		advPics.add(v2);
+		views.add(v2);
 
-		imageViews = new ImageView[advPics.size()];
-		for (int i = 0; i < advPics.size(); i++) {
+		imageViews = new ImageView[views.size()];
+		for (int i = 0; i < views.size(); i++) {
 			imageView = new ImageView(sfa);
 			imageView.setLayoutParams(new LayoutParams(20, 20));
 			imageView.setPadding(5, 5, 5, 5);
@@ -254,7 +303,7 @@ public class LoadMore_News extends LoadMore_Base {
 			group.addView(imageViews[i]);
 		}
 
-		advPager.setAdapter(new AdvAdapter(advPics));
+		advPager.setAdapter(new AdvAdapter());
 		advPager.setOnPageChangeListener(new GuidePageChangeListener());
 		advPager.setOnTouchListener(new OnTouchListener() {
 
@@ -275,44 +324,61 @@ public class LoadMore_News extends LoadMore_Base {
 				return false;
 			}
 		});
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (true) {
-					if (isContinue) {
-						viewHandler.sendEmptyMessage(what.get());
-						whatOption();
-					}
-				}
-			}
-
-		}).start();
+//		myThread = new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				while (!isEnd) {
+//					if (isContinue) {
+//						viewHandler.sendEmptyMessage(what.get());
+//						whatOption();
+//					}
+//				}
+//			}
+//
+//		});
+//		
+//		myThread.start();
+		handler.postDelayed(runnable, 4000);
 
 		isPagerSet = true;
 	}
-
-	private void whatOption() {
-		what.incrementAndGet();
-		if (what.get() > imageViews.length - 1) {
-			what.getAndAdd(-4);
-		}
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-
-		}
-	}
-
-	private final Handler viewHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			advPager.setCurrentItem(msg.what);
-			super.handleMessage(msg);
-		}
-
+	
+	private Handler handler = new Handler();
+	private Runnable runnable = new Runnable() {
+	    public void run() {
+	            if( position == 0){
+	                position = 1;
+	            }else{
+	                position = 0;
+	            }
+	            advPager.setCurrentItem(position, true);
+	            handler.postDelayed(runnable, 4000);
+	    }
 	};
+
+
+//	private void whatOption() {
+//		what.incrementAndGet();
+//		if (what.get() > imageViews.length - 1) {
+//			what.getAndAdd(-4);
+//		}
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//
+//		}
+//	}
+//
+//	private final Handler viewHandler = new Handler() {
+//
+//		@Override
+//		public void handleMessage(Message msg) {
+//			advPager.setCurrentItem(msg.what);
+//			super.handleMessage(msg);
+//		}
+//
+//	};
 
 	private final class GuidePageChangeListener implements OnPageChangeListener {
 
@@ -341,15 +407,17 @@ public class LoadMore_News extends LoadMore_Base {
 	}
 
 	private final class AdvAdapter extends PagerAdapter {
-		private List<View> views = null;
+//		private List<View> views = null;
 
-		public AdvAdapter(List<View> views) {
-			this.views = views;
+		public AdvAdapter() {
+//			this.views = views;
 		}
 
 		@Override
-		public void destroyItem(View arg0, int arg1, Object arg2) {
-			((ViewPager) arg0).removeView(views.get(arg1));
+		public void destroyItem(ViewGroup collection, int position, Object view) {
+//			((ViewPager) arg0).removeView(views.get(arg1));
+			collection.removeView((View) view);
+			view = null;
 		}
 
 		@Override
@@ -363,9 +431,9 @@ public class LoadMore_News extends LoadMore_Base {
 		}
 
 		@Override
-		public Object instantiateItem(View collection, int position) {
+		public Object instantiateItem(ViewGroup collection, int position) {
 
-			((ViewPager) collection).addView(views.get(position), 0);
+			collection.addView(views.get(position), 0);
 			return views.get(position);
 		}
 
@@ -527,10 +595,23 @@ public class LoadMore_News extends LoadMore_Base {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onDestroy() {
 
 		super.onDestroy();
+		
+		views.clear();
+//		advPager.removeAllViews();
+//		group.removeAllViews();
+//		advPager = null;
+		isEnd = true;
+//		group = null;
+//		myThread.interrupt();
+		
+	    if (handler!= null) {
+	        handler.removeCallbacks(runnable);
+	    }
 
 		if (mMatchInfo != null && mMatchInfo.getStatus() == Status.RUNNING)
 			mMatchInfo.cancel(true);
