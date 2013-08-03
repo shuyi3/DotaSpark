@@ -14,6 +14,11 @@ public class Video implements Parcelable {
 	public String viewCount;
 	public String duration;
 
+	public String recentVideoUrl;
+	public String playlistsUrl;
+
+	public String updateTime;
+
 	public String getDuration() {
 		return duration;
 	}
@@ -38,9 +43,6 @@ public class Video implements Parcelable {
 		this.uploaderThumUrl = uploaderThumUrl;
 	}
 
-	public String playlistUrl;
-	public String updateTime;
-
 	public String getUpdateTime() {
 		return updateTime;
 	}
@@ -49,13 +51,24 @@ public class Video implements Parcelable {
 		this.updateTime = updateTime;
 	}
 
-	public String getPlaylistUrl() {
-		return playlistUrl;
+	public String getRecentVideoUrl() {
+		return recentVideoUrl;
 	}
 
-	public void setPlaylistUrl(String playlistUrl) {
-		this.playlistUrl = playlistUrl;
+	public void setRecentVideoUrl(String recentVideoUrl) {
+		this.recentVideoUrl = recentVideoUrl;
 	}
+	
+	public String getPlaylistsUrl() {
+		return playlistsUrl;
+	}
+
+	public void setPlaylistsUrl(String playlistsUrl) {
+		this.playlistsUrl = playlistsUrl;
+	}
+
+
+
 
 	public String getAuthor() {
 		return author;
@@ -78,7 +91,7 @@ public class Video implements Parcelable {
 		uploaderThumUrl = in.readString();
 		viewCount = in.readString();
 		duration = in.readString();
-		
+
 	}
 
 	public String getTitle() {

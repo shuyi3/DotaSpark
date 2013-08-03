@@ -134,7 +134,7 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 				try {
 					br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}

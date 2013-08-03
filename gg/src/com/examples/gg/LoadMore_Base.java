@@ -131,7 +131,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-			final String[] catagory = { "General", "Uploaders", "Playlists" };
+			final String[] catagory = { "General", "Channels" };
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 					mActionBar.getThemedContext(),
@@ -252,10 +252,10 @@ public class LoadMore_Base extends SherlockListFragment implements
 			ft.replace(R.id.content_frame, FragmentUploader);
 			break;
 
-		case 13:
-			// Menu option 3
-			ft.replace(R.id.content_frame, FragmentPlaylist);
-			break;
+//		case 13:
+//			// Menu option 3
+//			ft.replace(R.id.content_frame, FragmentPlaylist);
+//			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

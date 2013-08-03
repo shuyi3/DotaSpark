@@ -14,7 +14,7 @@ public class LoadMore_H_Subscription extends LoadMore_Base {
 		// initialize the fragments in the Menu
 		FragmentAll = new LoadMore_H_Subscription();
 		FragmentUploader = new LoadMore_H_Uploader();
-		FragmentPlaylist = new LoadMore_H_Playlist();
+//		FragmentPlaylist = new LoadMore_H_New_Playlist();
 
 		// set a feed manager
 		feedManager = new FeedManager_Subscription();

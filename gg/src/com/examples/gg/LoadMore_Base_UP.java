@@ -17,12 +17,13 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 		// Putting the current fragment into stack for later call back
 
 		// get the API corresponding to the item selected
-		nextFragmentAPI = videolist.get(position).getPlaylistUrl();
+		nextFragmentAPI = videolist.get(position).getRecentVideoUrl();
 		String title = videolist.get(position).getTitle();
 
 		Intent i = new Intent(this.getSherlockActivity(),
-				LoadMore_BaseActivity.class);
+				LoadMore_Activity_Channel.class);
 		i.putExtra("API", nextFragmentAPI);
+		i.putExtra("PLAYLIST_API", videolist.get(position).getPlaylistsUrl());
 		i.putExtra("title", title);
 		startActivity(i);
 

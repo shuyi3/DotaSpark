@@ -34,7 +34,9 @@ public class FeedManager_Uploader extends FeedManager_Base{
 
 				videoLink = oneVideo.getJSONArray("link").getJSONObject(0).getString("href");
 				
-				videoId = videoLink.substring(0, videoLink.length()-4) + "/uploads?start-index=1&max-results=20&v=2&alt=json";
+				videoId = videoLink.substring(0, videoLink.length()-4) + "/uploads?start-index=1&max-results=10&v=2&alt=json";
+				
+				String playlistsUrl = videoLink.substring(0, videoLink.length()-4) + "/playlists?start-index=1&max-results=10&v=2&alt=json";
 
 				String thumbUrl = oneVideo.getJSONObject("media$thumbnail").getString("url");
 
@@ -50,7 +52,11 @@ public class FeedManager_Uploader extends FeedManager_Base{
 
 				video.setAuthor(author);
 
-				video.setPlaylistUrl(videoId);
+				video.setRecentVideoUrl(videoId);
+				
+				video.setPlaylistsUrl(playlistsUrl);
+				
+				
 				
 				// push it to the list
 				videos.add(video);

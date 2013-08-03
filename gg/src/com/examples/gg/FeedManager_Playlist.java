@@ -58,7 +58,7 @@ public class FeedManager_Playlist extends FeedManager_Base {
 				video.setVideoId(videoId);
 				video.setThumbnailUrl(thumbUrl);
 				video.setAuthor(author);
-				video.setPlaylistUrl(videoLink
+				video.setRecentVideoUrl(videoLink
 						+ "&start-index=1&max-results=10&orderby=published&alt=json");
 				video.setVideoDesc(videoDesc);
 				video.setUpdateTime(updateTime);
