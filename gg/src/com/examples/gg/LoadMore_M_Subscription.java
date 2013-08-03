@@ -6,7 +6,7 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 	@Override
 	public void Initializing() {
 		// Give a title for the action bar
-		abTitle = "Match";
+		abTitle = "Matches";
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/GJoABYYxwoGsl6TuP0DGnw/newsubscriptionvideos?max-results=10&alt=json");

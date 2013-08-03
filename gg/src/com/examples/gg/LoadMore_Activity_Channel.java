@@ -10,6 +10,9 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
 public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
 		implements OnNavigationListener {
@@ -39,7 +42,7 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
 		case 0:
 			// In "Recent"
 			Intent i = new Intent(this, YoutubeActionBarActivity.class);
-			i.putExtra("video", videolist.get(position));
+			i.putExtra("video", videolist.get(position-1));
 			startActivity(i);
 			break;
 			
@@ -47,9 +50,10 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
 			// In "Playlists"
 			Intent i1 = new Intent(this, LoadMore_Activity_Base.class);
 			
-			i1.putExtra("API", videolist.get(position).getRecentVideoUrl());
-			i1.putExtra("PLAYLIST_API", videolist.get(position).getPlaylistsUrl());
-			i1.putExtra("title", title);
+			i1.putExtra("API", videolist.get(position-1).getRecentVideoUrl());
+			i1.putExtra("PLAYLIST_API", videolist.get(position-1).getPlaylistsUrl());
+			i1.putExtra("title", videolist.get(position-1).getTitle());
+			i1.putExtra("thumbnail", videolist.get(position-1).getThumbnailUrl());
 			startActivity(i1);
 			break;
 			

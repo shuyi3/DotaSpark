@@ -19,12 +19,14 @@ public class LoadMore_Base_UP extends LoadMore_Base {
 		// get the API corresponding to the item selected
 		nextFragmentAPI = videolist.get(position).getRecentVideoUrl();
 		String title = videolist.get(position).getTitle();
+		String url = videolist.get(position).getThumbnailUrl();
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				LoadMore_Activity_Channel.class);
 		i.putExtra("API", nextFragmentAPI);
 		i.putExtra("PLAYLIST_API", videolist.get(position).getPlaylistsUrl());
 		i.putExtra("title", title);
+		i.putExtra("thumbnail", videolist.get(position).getThumbnailUrl());
 		startActivity(i);
 
 	}

@@ -15,7 +15,9 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
@@ -23,7 +25,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class LoadMore_Activity_Base extends SherlockListActivity {
 	protected LoadMoreListView myLoadMoreListView;
@@ -59,7 +64,10 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	protected String title;
 	protected String recentAPI;
 	protected String playlistAPI;
+	protected String thumbnailUrl;
 	protected int section = 0;
+	private DisplayImageOptions options;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,21 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 		recentAPI = intent.getStringExtra("API");
 		playlistAPI = intent.getStringExtra("PLAYLIST_API");
 		title = intent.getStringExtra("title");
+		thumbnailUrl = intent.getStringExtra("thumbnail");
+		
+		if (!this.imageLoader.isInited()){
+			this.imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+		}
+		// imageLoader=new ImageLoader(context.getApplicationContext());
+
+		options = new DisplayImageOptions.Builder()
+				.showStubImage(R.drawable.loading)
+				.showImageForEmptyUri(R.drawable.loading)
+				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
+				.cacheOnDisc(true)
+				.displayer(new RoundedBitmapDisplayer(20))
+				.build();
+
 
 		// set the layout
 		// Initial fragment manager
@@ -102,7 +125,8 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 		API.add(recentAPI);
 		// Set action bar title
 		// System.out.println("My title: "+title);
-		ab.setTitle(title);
+		
+		ab.setTitle("");
 
 		feedManager = new FeedManager_Base();
 
@@ -131,6 +155,18 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	public void setListView() {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
+		
+		if (myLoadMoreListView.getHeaderViewsCount() == 0){
+	        View header = (View)getLayoutInflater().inflate(R.layout.titleview, null);
+	        myLoadMoreListView.addHeaderView(header,null,false);
+	        
+	        ImageView channelImage = (ImageView) findViewById(R.id.thumbnail);
+	        TextView channelName = (TextView) findViewById(R.id.name);
+	        
+			imageLoader.displayImage(thumbnailUrl,channelImage, options, null);
+			channelName.setText(title);
+	        
+		}
 
 		vaa = new VideoArrayAdapter(this, titles, videolist, imageLoader);
 		setListAdapter(vaa);
@@ -199,7 +235,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		Intent i = new Intent(this, YoutubeActionBarActivity.class);
-		i.putExtra("video", videolist.get(position));
+		i.putExtra("video", videolist.get(position-1));
 		startActivity(i);
 
 	}

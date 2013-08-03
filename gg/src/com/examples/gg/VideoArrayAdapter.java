@@ -27,7 +27,7 @@ public class VideoArrayAdapter extends ArrayAdapter<String> {
 	private ArrayList<Video> videos;
 	private LayoutInflater inflater;
 
-	DisplayImageOptions options;
+	private DisplayImageOptions options;
 	private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 	private ImageLoader imageLoader;
 
