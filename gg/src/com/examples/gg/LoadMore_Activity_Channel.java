@@ -14,11 +14,12 @@ import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.examples.gg.LoadMore_Base.LoadMoreTask;
 
-public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
-		implements OnNavigationListener {
+public class LoadMore_Activity_Channel extends LoadMore_Activity_Base implements
+		OnNavigationListener {
+	private boolean isFirstTimeLoading = true;
 
 	@Override
-	public void Initializing(){
+	public void Initializing() {
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
 		final String[] catagory = { "Recent", "Playlists" };
@@ -33,7 +34,7 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
 
 		ab.setSelectedNavigationItem(currentPosition);
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
@@ -42,44 +43,52 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base
 		case 0:
 			// In "Recent"
 			Intent i = new Intent(this, YoutubeActionBarActivity.class);
-			i.putExtra("video", videolist.get(position-1));
+			i.putExtra("video", videolist.get(position - 1));
 			startActivity(i);
 			break;
-			
+
 		case 1:
 			// In "Playlists"
 			Intent i1 = new Intent(this, LoadMore_Activity_Base.class);
-			
-			i1.putExtra("API", videolist.get(position-1).getRecentVideoUrl());
-			i1.putExtra("PLAYLIST_API", videolist.get(position-1).getPlaylistsUrl());
-			i1.putExtra("title", videolist.get(position-1).getTitle());
-			i1.putExtra("thumbnail", videolist.get(position-1).getThumbnailUrl());
+
+			i1.putExtra("API", videolist.get(position - 1).getRecentVideoUrl());
+			i1.putExtra("PLAYLIST_API", videolist.get(position - 1)
+					.getPlaylistsUrl());
+			i1.putExtra("title", videolist.get(position - 1).getTitle());
+			i1.putExtra("thumbnail", videolist.get(position - 1)
+					.getThumbnailUrl());
 			startActivity(i1);
 			break;
-			
+
 		}
 
 	}
-	
+
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+
 		// set section indicator
 		section = itemPosition;
 
+		if (isFirstTimeLoading) {
+			isFirstTimeLoading = false;
+			return true;
+		}
+
+		Log.i("debug", "Im doing ");
 		oneStepRefresh();
+
 		return true;
 	}
 
-
-	
 	@Override
 	public void refreshActivity() {
 
 		oneStepRefresh();
 
 	}
-	
-	public void oneStepRefresh(){
+
+	public void oneStepRefresh() {
 		if (section == 0) {
 			// Section "Recent"
 
