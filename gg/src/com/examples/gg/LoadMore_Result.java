@@ -28,11 +28,6 @@ public class LoadMore_Result extends LoadMore_Base {
 	private String baseUrl = "http://www.gosugamers.net";
 
 	@Override
-	public void refreshFragment() {
-		currentFragment = new LoadMore_Result();
-	}
-
-	@Override
 	public void Initializing() {
 		// Inflating view
 
@@ -49,6 +44,18 @@ public class LoadMore_Result extends LoadMore_Base {
 		setOptionMenu(true, false);
 
 	}
+	
+	@Override
+	public void refreshFragment() {
+		String firstApi = API.get(0);
+		API.clear();
+		API.add(firstApi);
+		isMoreVideos = true;
+		pageNum = 1;
+		matchArray.clear();
+		setListView();
+	}
+
 
 	@Override
 	public void setListView() {
@@ -73,7 +80,7 @@ public class LoadMore_Result extends LoadMore_Base {
 						mgetMatchInfo = new getMatchInfo(
 								getMatchInfo.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						mgetMatchInfo.execute(API.get(0));
+						mgetMatchInfo.execute(API.get(API.size()-1));
 					} else {
 
 						// ic.networkToast(sfa);
@@ -147,7 +154,7 @@ public class LoadMore_Result extends LoadMore_Base {
 
 					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type,
 							contentView, loadingView, retryView);
-					mgetMatchInfo.execute(API.get(0));
+					mgetMatchInfo.execute(API.get(API.size()-1));
 
 				}
 			});
@@ -177,8 +184,7 @@ public class LoadMore_Result extends LoadMore_Base {
 					} else {
 						isMoreVideos = true;
 						pageNum++;
-						API.set(0,
-								"http://www.gosugamers.net/dota2/gosubet?r-page="
+						API.add("http://www.gosugamers.net/dota2/gosubet?r-page="
 										+ pageNum);
 					}
 				}

@@ -31,11 +31,6 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 		currentPosition = 1;
 		
 	}
-		
-	@Override
-	public void refreshFragment(){
-		currentFragment = new LoadMore_M_Uploader();
-	}
 
 	// this method is used in the method "onListItemClick" to pass API to the
 	// next fragment

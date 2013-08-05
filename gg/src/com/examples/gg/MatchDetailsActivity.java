@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.jsoup.Jsoup;
@@ -14,6 +15,8 @@ import org.jsoup.select.Elements;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -131,9 +134,14 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			i.putExtra("videoId", videoIds.get(position));
 			startActivity(i);
 		} else {
-			Intent i = new Intent(this, TwitchPlayer.class);
-			i.putExtra("video", lives.get(position));
-			startActivity(i);
+			if (check()){
+				Intent i = new Intent(this, TwitchPlayer.class);
+				i.putExtra("video", lives.get(position));
+				startActivity(i);
+			}else{
+				Intent i = new Intent(this, FlashInstallerActivity.class);
+				startActivity(i);
+			}
 		}
 
 	}
@@ -393,6 +401,18 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		} else {
 			// Log.d("AsyncDebug", "Task cancellation failed!!!!");
 		}
+	}
+	
+	private boolean check() {
+		PackageManager pm = getPackageManager();
+		List<PackageInfo> infoList = pm
+				.getInstalledPackages(PackageManager.GET_SERVICES);
+		for (PackageInfo info : infoList) {
+			if ("com.adobe.flashplayer".equals(info.packageName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -29,11 +29,6 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	private String baseUrl = "http://www.gosugamers.net";
 
 	@Override
-	public void refreshFragment() {
-		currentFragment = new LoadMore_UpcomingMatch();
-	}
-
-	@Override
 	public void Initializing() {
 		// Inflating view
 
@@ -49,6 +44,17 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
 
+	}
+	
+	@Override
+	public void refreshFragment() {
+		String firstApi = API.get(0);
+		API.clear();
+		API.add(firstApi);
+		isMoreVideos = true;
+		pageNum = 1;
+		matchArray.clear();
+		setListView();
 	}
 
 	@Override
@@ -74,7 +80,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						mgetMatchInfo = new getMatchInfo(
 								getMatchInfo.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						mgetMatchInfo.execute(API.get(0));
+						mgetMatchInfo.execute(API.get(API.size()-1));
 					} else {
 
 						// ic.networkToast(sfa);
@@ -148,7 +154,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type,
 							contentView, loadingView, retryView);
-					mgetMatchInfo.execute(API.get(0));
+					mgetMatchInfo.execute(API.get(API.size()-1));
 
 				}
 			});
@@ -163,16 +169,17 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			if (!taskCancel && result != null) {
 
 				Document doc = Jsoup.parse(result);
-
-				Element box_1 = doc.select("div.box").first();
-
+				
 				Element box_2 = doc.select("div.box").get(1);
 
-				links = box_1.select("tr:has(td.opp)");
-
-				Elements upcoming_links = box_2.select("tr:has(td.opp)");
-
-				links.addAll(upcoming_links);
+				if (pageNum == 1) {
+					Element box_1 = doc.select("div.box").first();
+					links = box_1.select("tr:has(td.opp)");
+					Elements upcoming_links = box_2.select("tr:has(td.opp)");
+					links.addAll(upcoming_links);
+				}else{
+					links = box_2.select("tr:has(td.opp)");
+				}
 
 				Element paginator = box_2.select("div.paginator").first();
 
@@ -184,8 +191,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 					} else {
 						isMoreVideos = true;
 						pageNum++;
-						API.set(0,
-								"http://www.gosugamers.net/dota2/gosubet?u-page="
+						API.add("http://www.gosugamers.net/dota2/gosubet?u-page="
 										+ pageNum);
 					}
 				}
@@ -195,6 +201,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 				for (Element link : links) {
 
 					Match newMatch = new Match();
+					
 					Element opp_1 = link.select("td.opp").first();
 					Element opp_2 = link.select("td.opp").get(1);
 

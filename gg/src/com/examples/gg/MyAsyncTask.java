@@ -1,13 +1,16 @@
 package com.examples.gg;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -77,20 +80,32 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 		//
 		// cancel(true);
 		// taskCancel = true;
+		
+		HttpURLConnection conn = null;
 		// } else
 		try {
 			
             URL url = new URL(uri[0]);  
-            URLConnection conn = url.openConnection();  
+            conn = (HttpURLConnection) url.openConnection();  
+            
+            conn.setRequestMethod("GET");
+//            conn.setDoOutput(false); 
+
             conn.connect();  
-            InputStream is = conn.getInputStream();  
+            InputStream is = new BufferedInputStream(conn.getInputStream());  
             responseString = getStringFromInputStream(is);
             is.close();  
 
 		} catch (Exception e) {
 			// throw new IOException(statusLine.getReasonPhrase());
-
-			//Log.d("AsyncDebug", e.toString());
+//			conn.getResponseCode()
+			
+			try {
+				Log.d("AsyncDebug", Integer.toString(conn.getResponseCode()));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
 			isException = true;
 			cancel(true);
@@ -102,6 +117,7 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 
 //			httpclient.getConnectionManager().shutdown();
 			//Log.d("AsyncDebug", "Do in background finished!");
+			if (conn!=null) conn.disconnect();
 
 		}
 		return responseString;

@@ -36,7 +36,6 @@ public class LoadMore_Base extends SherlockListFragment implements
 		ActionBar.OnNavigationListener {
 	protected LoadMoreListView myLoadMoreListView;
 	protected ArrayList<String> titles;
-	protected ArrayList<String> videos;
 	protected ArrayList<Video> videolist;
 
 	protected boolean isMoreVideos;
@@ -100,7 +99,6 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		// Initilizing the empty arrays
 		titles = new ArrayList<String>();
-		videos = new ArrayList<String>();
 		videolist = new ArrayList<Video>();
 		// thumbList = new ArrayList<String>();
 
@@ -159,7 +157,13 @@ public class LoadMore_Base extends SherlockListFragment implements
 	}
 
 	public void refreshFragment() {
-		currentFragment = new LoadMore_Base();
+		String firstApi = API.get(0);
+		API.clear();
+		API.add(firstApi);
+		isMoreVideos = true;
+		titles.clear();
+		videolist.clear();
+		setListView();
 	}
 
 	public void setListView() {
@@ -184,7 +188,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 						LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 								LoadMoreTask.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						newTask.execute(API.get(0));
+						newTask.execute(API.get(API.size()-1));
 						mLoadMoreTasks.add(newTask);
 					}
 
@@ -239,7 +243,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 			// Menu option 1
 //			Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
 			refreshFragment();
-			ft.replace(R.id.content_frame, currentFragment);
+//			ft.replace(R.id.content_frame, currentFragment);
 			break;
 
 		case 11:
@@ -310,7 +314,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 							type, contentView, loadingView, retryView);
-					newTask.execute(API.get(0));
+					newTask.execute(API.get(API.size()-1));
 					mLoadMoreTasks.add(newTask);
 
 				}
@@ -340,15 +344,14 @@ public class LoadMore_Base extends SherlockListFragment implements
 						// System.out.println("need filter!");
 					} else {
 						titles.add(v.getTitle());
-						videos.add(v.getVideoId());
 						videolist.add(v);
 					}
 				}
 				try {
 					// put the next API in the first place of the array
-					API.set(0, feedManager.getNextApi());
+					API.add(feedManager.getNextApi());
 					// nextAPI = feedManager.getNextApi();
-					if (API.get(0) == null) {
+					if (API.get(API.size()-1) == null) {
 						// No more videos left
 						isMoreVideos = false;
 					}

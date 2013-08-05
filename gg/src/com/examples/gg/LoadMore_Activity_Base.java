@@ -270,7 +270,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 
 					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 							type, contentView, loadingView, retryView);
-					newTask.execute(API.get(0));
+					newTask.execute(API.get(API.size()-1));
 					mLoadMoreTasks.add(newTask);
 
 				}

@@ -30,11 +30,5 @@ public class LoadMore_M_Subscription extends LoadMore_Base {
 
 	}
 	
-	@Override
-	public void refreshFragment(){
-		currentFragment = new LoadMore_M_Subscription();
-	}
-
-	
 	
 }

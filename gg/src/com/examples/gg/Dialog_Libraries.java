@@ -39,6 +39,11 @@ public class Dialog_Libraries extends DialogPreference{
     	            "<a href=\"https://github.com/shontauro/android-pulltorefresh-and-loadmore\">Load More Listview (c) 2012 Fabian Leon</a>"));
     		mLink2.setMovementMethod(LinkMovementMethod.getInstance());
     		
+    		TextView mLink3 = (TextView) view.findViewById(R.id.open_source_link3);
+    		mLink3.setText(Html.fromHtml(
+    	            "<a href=\"https://github.com/JakeWharton/ActionBarSherlock\">ActionBarSherlock developed by Jake Wharton</a>"));
+    		mLink3.setVisibility(View.VISIBLE);
+    		mLink3.setMovementMethod(LinkMovementMethod.getInstance());
     		TextView license = (TextView) view.findViewById(R.id.apache_license);
     		license.setText(Html.fromHtml(
     	            "These projects are licensed under the Apache License v2.0.<br><br>" + 

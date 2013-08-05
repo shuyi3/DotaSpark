@@ -66,10 +66,13 @@ public class LoadMore_News extends LoadMore_Base {
 	private int rand_1;
 	private int rand_2;
 	private Thread myThread;
+	private AdvAdapter myAdvAdapter;
 	
 	private int position = 0;
 	
 	DisplayImageOptions options;
+	
+	private Random random;
 
 	
 	private SideMenuActivity sma;
@@ -100,13 +103,6 @@ public class LoadMore_News extends LoadMore_Base {
 		// Get sidemenuactivity
 		sma = (SideMenuActivity) sfa;
 		
-		Random random = new Random();
-
-		rand_1 = random.nextInt(myDrawables.length-1);
-		do {
-			rand_2 = random.nextInt(myDrawables.length-1);
-		}while (rand_1 == rand_2);
-		
 //		if (!this.imageLoader.isInited()){
 //			this.imageLoader.init(ImageLoaderConfiguration.createDefault(sfa));
 //		}
@@ -120,7 +116,8 @@ public class LoadMore_News extends LoadMore_Base {
 //				// .displayer(new RoundedBitmapDisplayer(20))
 //				.build();
 
-		
+		random = new Random();
+
 	}
 
 	@Override
@@ -135,11 +132,6 @@ public class LoadMore_News extends LoadMore_Base {
 	}
 
 	@Override
-	public void refreshFragment() {
-		currentFragment = new LoadMore_News();
-	}
-
-	@Override
 	public void setListView() {
 
 		pagerContent = sfa.findViewById(R.id.pageContent);
@@ -151,9 +143,9 @@ public class LoadMore_News extends LoadMore_Base {
 		super.setListView();
 
 	}
-
-	private void initViewPager() {
-
+	
+	private void setViewPager(){
+		
 		for (Element link : links) {
 
 			String match;
@@ -169,11 +161,6 @@ public class LoadMore_News extends LoadMore_Base {
 			}
 		}
 
-		advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
-		group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
-
-//		List<View> advPics = new ArrayList<View>();
-
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
 
@@ -184,12 +171,6 @@ public class LoadMore_News extends LoadMore_Base {
 
 		v1 = inflater.inflate(R.layout.livetext, null, false);
 		v1.setBackgroundResource(myDrawables[rand_1]);
-		
-//		ImageView backImge = (ImageView) v1.findViewById(R.id.background);
-//		
-//		imageLoader.displayImage("drawable://" + myDrawables[rand_1],
-//				backImge, options, null);
-
 
 		TextView liveTitle = (TextView) v1.findViewById(R.id.livetitle);
 		TextView liveMatch1 = (TextView) v1.findViewById(R.id.lineup1);
@@ -216,7 +197,6 @@ public class LoadMore_News extends LoadMore_Base {
 			liveMatch2.setText(matcharray[1]);
 			live2.setVisibility(View.GONE);
 		}
-		//System.out.println(matcharray[1]);
 
 		if (matcharray[2].endsWith("Live")) {
 			liveMatch3.setText(matcharray[2].substring(0,
@@ -225,7 +205,6 @@ public class LoadMore_News extends LoadMore_Base {
 			liveMatch3.setText(matcharray[2]);
 			live3.setVisibility(View.GONE);
 		}
-		//System.out.println(matcharray[2]);
 
 		v1.setOnClickListener(new OnClickListener() {
 			@Override
@@ -246,11 +225,6 @@ public class LoadMore_News extends LoadMore_Base {
 		v2 = inflater.inflate(R.layout.livetext, null, false);
 		v2.setBackgroundResource(myDrawables[rand_2]);
 		
-//		backImge = (ImageView) v2.findViewById(R.id.background);
-//		
-//		imageLoader.displayImage("drawable://" + myDrawables[rand_2],
-//				backImge, options, null);
-
 		liveTitle = (TextView) v2.findViewById(R.id.livetitle);
 		liveMatch1 = (TextView) v2.findViewById(R.id.lineup1);
 		liveMatch2 = (TextView) v2.findViewById(R.id.lineup2);
@@ -259,7 +233,7 @@ public class LoadMore_News extends LoadMore_Base {
 		live2 = (TextView) v2.findViewById(R.id.live2);
 		live3 = (TextView) v2.findViewById(R.id.live3);
 
-		liveTitle.setText("Resent Result");
+		liveTitle.setText("Resent Results");
 
 		liveMatch1.setText(resultarray[0]);
 
@@ -288,60 +262,74 @@ public class LoadMore_News extends LoadMore_Base {
 		});
 
 		views.add(v2);
+		
+		
+	}
 
-		imageViews = new ImageView[views.size()];
-		for (int i = 0; i < views.size(); i++) {
-			imageView = new ImageView(sfa);
-			imageView.setLayoutParams(new LayoutParams(20, 20));
-			imageView.setPadding(5, 5, 5, 5);
-			imageViews[i] = imageView;
-			if (i == 0) {
-				imageViews[i].setBackgroundResource(R.drawable.d2_selected);
-			} else {
-				imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
-			}
-			group.addView(imageViews[i]);
+	private void initViewPager() {
+		
+		rand_1 = random.nextInt(myDrawables.length-1);
+		System.out.println("New random:"+ rand_1);
+		do {
+			rand_2 = random.nextInt(myDrawables.length-1);
+		}while (rand_1 == rand_2);
+		
+		if (!isPagerSet){
+			advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
+			group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
+		}else{
+			views.clear();
 		}
-
-		advPager.setAdapter(new AdvAdapter());
-		advPager.setOnPageChangeListener(new GuidePageChangeListener());
-		advPager.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-				case MotionEvent.ACTION_MOVE:
-					isContinue = false;
-					break;
-				case MotionEvent.ACTION_UP:
-					isContinue = true;
-					break;
-				default:
-					isContinue = true;
-					break;
+		
+		setViewPager();
+		
+		if (!isPagerSet){
+	
+			imageViews = new ImageView[views.size()];
+			for (int i = 0; i < views.size(); i++) {
+				imageView = new ImageView(sfa);
+				imageView.setLayoutParams(new LayoutParams(20, 20));
+				imageView.setPadding(5, 5, 5, 5);
+				imageViews[i] = imageView;
+				if (i == 0) {
+					imageViews[i].setBackgroundResource(R.drawable.d2_selected);
+				} else {
+					imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
 				}
-				return false;
+				group.addView(imageViews[i]);
 			}
-		});
-//		myThread = new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				while (!isEnd) {
-//					if (isContinue) {
-//						viewHandler.sendEmptyMessage(what.get());
-//						whatOption();
-//					}
-//				}
-//			}
-//
-//		});
-//		
-//		myThread.start();
-		handler.postDelayed(runnable, 4000);
+			
+			advPager.setOnPageChangeListener(new GuidePageChangeListener());
+			advPager.setOnTouchListener(new OnTouchListener() {
+	
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+					case MotionEvent.ACTION_MOVE:
+						isContinue = false;
+						break;
+					case MotionEvent.ACTION_UP:
+						isContinue = true;
+						break;
+					default:
+						isContinue = true;
+						break;
+					}
+					return false;
+				}
+			});
+			
+			handler.postDelayed(runnable, 4000);
+	
+			isPagerSet = true;
+		}
+		
+		myAdvAdapter = new AdvAdapter();
+		
+		advPager.setAdapter(myAdvAdapter);
 
-		isPagerSet = true;
+		
 	}
 	
 	private Handler handler = new Handler();
@@ -506,74 +494,73 @@ public class LoadMore_News extends LoadMore_Base {
 
 	}
 
-	class LoadMoreTask_News extends LoadMoreTask {
-
-		public LoadMoreTask_News(int type, View contentView, View loadingView,
-				View retryView) {
-			super(type, contentView, loadingView, retryView);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			// Do anything with response..
-			// System.out.println(result);
-			//Log.d("AsyncDebug", "Into onPostExecute!");
-
-			if (!taskCancel && result != null) {
-
-				feedManager.setmJSON(result);
-
-				List<Video> newVideos = feedManager.getVideoPlaylist();
-
-				// adding new loaded videos to our current video list
-				for (Video v : newVideos) {
-					//System.out.println("new id: " + v.getVideoId());
-					if (needFilter) {
-						filtering(v);
-						// System.out.println("need filter!");
-					} else {
-						titles.add(v.getTitle());
-						videos.add(v.getVideoId());
-						videolist.add(v);
-					}
-				}
-				try {
-					// put the next API in the first place of the array
-					API.set(0, feedManager.getNextApi());
-					// nextAPI = feedManager.getNextApi();
-					if (API.get(0) == null) {
-						// No more videos left
-						isMoreVideos = false;
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				}
-				vaa.notifyDataSetChanged();
-
-				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-
-				DisplayView(contentView, retryView, loadingView);
-
-				if (!isMoreVideos) {
-					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
-					myLoadMoreListView.setOnLoadMoreListener(null);
-				}
-
-			} else {
-				handleCancelView();
-			}
-		}
-
-	}
+//	class LoadMoreTask_News extends LoadMoreTask {
+//
+//		public LoadMoreTask_News(int type, View contentView, View loadingView,
+//				View retryView) {
+//			super(type, contentView, loadingView, retryView);
+//			// TODO Auto-generated constructor stub
+//		}
+//
+//		@Override
+//		protected void onPostExecute(String result) {
+//			// Do anything with response..
+//			// System.out.println(result);
+//			//Log.d("AsyncDebug", "Into onPostExecute!");
+//
+//			if (!taskCancel && result != null) {
+//
+//				feedManager.setmJSON(result);
+//
+//				List<Video> newVideos = feedManager.getVideoPlaylist();
+//
+//				// adding new loaded videos to our current video list
+//				for (Video v : newVideos) {
+//					//System.out.println("new id: " + v.getVideoId());
+//					if (needFilter) {
+//						filtering(v);
+//						// System.out.println("need filter!");
+//					} else {
+//						titles.add(v.getTitle());
+//						videolist.add(v);
+//					}
+//				}
+//				try {
+//					// put the next API in the first place of the array
+//					API.add(feedManager.getNextApi());
+//					// nextAPI = feedManager.getNextApi();
+//					if (API.get(API.size()-1) == null) {
+//						// No more videos left
+//						isMoreVideos = false;
+//					}
+//				} catch (JSONException e) {
+//					// TODO Auto-generated catch block
+//					//e.printStackTrace();
+//				}
+//				vaa.notifyDataSetChanged();
+//
+//				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+//
+//				DisplayView(contentView, retryView, loadingView);
+//
+//				if (!isMoreVideos) {
+//					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+//
+//					myLoadMoreListView.setOnLoadMoreListener(null);
+//				}
+//
+//			} else {
+//				handleCancelView();
+//			}
+//		}
+//
+//	}
 
 	@Override
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 		for (String s : API) {
-			LoadMoreTask newTask = new LoadMoreTask_News(LoadMoreTask.INITTASK,
+			LoadMoreTask newTask = new LoadMoreTask(LoadMoreTask.INITTASK,
 					myLoadMoreListView, listLoading, listRetry);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				newTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s);
