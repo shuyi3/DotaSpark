@@ -63,9 +63,13 @@ public class LoadMore_Result extends LoadMore_Base {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
+		setBannerInHeader();
+		
 		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader,
 				true);
 		setListAdapter(mArrayAdatper);
+		
+
 
 		if (isMoreVideos) {
 			// there are more videos in the list

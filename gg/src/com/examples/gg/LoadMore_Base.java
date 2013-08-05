@@ -19,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -168,10 +170,14 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 	public void setListView() {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);
-
+		myLoadMoreListView.setDivider(null);		
+		
+		setBannerInHeader();
+		
 		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
 		setListAdapter(vaa);
+		
+
 
 		// Why check internet here?
 		// if (ic.checkConnection(sfa)) {
@@ -498,4 +504,11 @@ public class LoadMore_Base extends SherlockListFragment implements
 		return true;
 	}
 
+	public void setBannerInHeader(){
+		 if (myLoadMoreListView.getHeaderViewsCount() == 0){
+	           View header = (View) sfa.getLayoutInflater().inflate(R.layout.banner, null);
+	           myLoadMoreListView.addHeaderView(header,null,false);
+	           
+	     }
+	}
 }
