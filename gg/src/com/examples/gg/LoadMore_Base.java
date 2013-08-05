@@ -314,6 +314,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 							type, contentView, loadingView, retryView);
+					newTask.DisplayView(loadingView, contentView, retryView);
 					newTask.execute(API.get(API.size()-1));
 					mLoadMoreTasks.add(newTask);
 

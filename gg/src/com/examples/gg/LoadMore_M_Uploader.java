@@ -10,7 +10,7 @@ public class LoadMore_M_Uploader extends LoadMore_Base_UP {
 				View.VISIBLE);
 
 		// Give a title for the action bar
-		abTitle = "Match";
+		abTitle = "Matches";
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/GJoABYYxwoGsl6TuP0DGnw/subscriptions?v=2&max-results=10&alt=json");

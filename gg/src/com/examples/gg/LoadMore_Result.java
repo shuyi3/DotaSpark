@@ -154,6 +154,7 @@ public class LoadMore_Result extends LoadMore_Base {
 
 					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type,
 							contentView, loadingView, retryView);
+					mgetMatchInfo.DisplayView(loadingView, contentView, retryView);
 					mgetMatchInfo.execute(API.get(API.size()-1));
 
 				}
