@@ -74,9 +74,9 @@ public class TwitchPlayer extends Activity {
 			builder.setTitle("Instructions:");
 			
 			builder.setMessage("1. This Twitch.tv player requires Flash Player installed\n\n" +
-					"2. Fullscreen Mode: Double press the screen (chat box cannot be invoked in Fullscreen mode)\n\n"+
+					"2. Fullscreen Mode: Double press the screen to enter/exit the fullscreen mode (chat box cannot be invoked in Fullscreen mode)\n\n"+
 			"3. Chat box: Press MENU button to turn on/off\n\n"+
-					"Notice: Now chatting is only available for the people who have Justin.tv account. We are now working on implementing the chat box for Twitch.tv users");
+					"Notice: Now users can only see other people's chattings. We are now working on implementing the chatting functionalities");
 
 			// Create the AlertDialog
 			dialog = builder.create();

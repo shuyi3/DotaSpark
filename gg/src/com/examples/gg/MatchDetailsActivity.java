@@ -95,7 +95,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
+
 		menu.add(0, 0, 0, "Refresh")
 				.setIcon(R.drawable.ic_refresh)
 				.setShowAsAction(
@@ -127,18 +127,18 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		if (match.getMatchStatus() == Match.ENDED) {
 			Intent i = new Intent(this, YoutubeActionBarActivity.class);
-//			Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
-//					.show();
+			// Toast.makeText(this, videoIds.get(position), Toast.LENGTH_SHORT)
+			// .show();
 
 			i.putExtra("isfullscreen", true);
 			i.putExtra("videoId", videoIds.get(position));
 			startActivity(i);
 		} else {
-			if (check()){
+			if (check()) {
 				Intent i = new Intent(this, TwitchPlayer.class);
 				i.putExtra("video", lives.get(position));
 				startActivity(i);
-			}else{
+			} else {
 				Intent i = new Intent(this, FlashInstallerActivity.class);
 				startActivity(i);
 			}
@@ -180,140 +180,151 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			// Checking network status first
-			//Log.d("AsyncDebug", "Into onPostExecute!");
+			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 
 				Document doc = Jsoup.parse(result);
 
-				Element opp_1 = doc.select("div.opponent").first();
+				Element opp_1 = null;
 
-				Element opp_2 = doc.select("div.opponent").get(1);
+				opp_1 = doc.select("div.opponent").first();
 
-				Element scoreDiv_1 = doc.select("div[class=center-column]")
-						.first().select("div").get(1);
+				if (opp_1 != null) {
 
-				Element scoreDiv_2 = doc.select("div[class=center-column]")
-						.first().select("div").get(2);
+					Element opp_2 = doc.select("div.opponent").get(1);
 
-				Element details = doc.select("table#match-details").first();
+					Element scoreDiv_1 = doc.select("div[class=center-column]")
+							.first().select("div").get(1);
 
-				Elements flash = doc.select("object");
+					Element scoreDiv_2 = doc.select("div[class=center-column]")
+							.first().select("div").get(2);
 
-				Elements videos = doc.select("div[class^=video]");
+					Element details = doc.select("table#match-details").first();
 
-				if (match.getMatchStatus() != Match.ENDED) {
-					if (!flash.isEmpty())
-						for (Element f : flash) {
-							if (!flash.isEmpty()) {
-								String data = f.attr("data");
-								String mData = data.substring(
-										data.indexOf("=") + 1, data.length());
-								// String pattern = "(.*?)=(.*?)";
-								// data.replace(pattern, "$2");
-								lives.add(mData);
+					Elements flash = doc.select("object");
+
+					Elements videos = doc.select("div[class^=video]");
+
+					if (match.getMatchStatus() != Match.ENDED) {
+						if (!flash.isEmpty())
+							for (Element f : flash) {
+								if (!flash.isEmpty()) {
+									String data = f.attr("data");
+									String mData = data.substring(
+											data.indexOf("=") + 1,
+											data.length());
+									// String pattern = "(.*?)=(.*?)";
+									// data.replace(pattern, "$2");
+									lives.add(mData);
+								}
+							}
+					} else {
+						if (!videos.isEmpty()) {
+							for (Element v : videos) {
+								String imgurl = v.select("img").first()
+										.attr("src");
+								String title = v.select("a").first()
+										.attr("data-dialog-title");
+								String mImgurl = imgurl.replaceAll(
+										"https://i1.ytimg.com/vi/(.*?)/(.*)",
+										"$1");
+								// System.out.println("url: "+ mImgurl);
+								lives.add(title);
+								videoIds.add(mImgurl);
 							}
 						}
-				} else {
-					if (!videos.isEmpty()) {
-						for (Element v : videos) {
-							String imgurl = v.select("img").first().attr("src");
-							String title = v.select("a").first()
-									.attr("data-dialog-title");
-							String mImgurl = imgurl.replaceAll(
-									"https://i1.ytimg.com/vi/(.*?)/(.*)", "$1");
-							// System.out.println("url: "+ mImgurl);
-							lives.add(title);
-							videoIds.add(mImgurl);
-						}
+
 					}
 
-				}
+					myTimer = (TextView) findViewById(R.id.myTimer);
 
-				myTimer = (TextView) findViewById(R.id.myTimer);
+					ImageView icon_1 = (ImageView) findViewById(R.id.icon1);
+					ImageView icon_2 = (ImageView) findViewById(R.id.icon2);
 
-				ImageView icon_1 = (ImageView) findViewById(R.id.icon1);
-				ImageView icon_2 = (ImageView) findViewById(R.id.icon2);
+					TextView teamName_1 = (TextView) findViewById(R.id.tName1);
+					TextView teamName_2 = (TextView) findViewById(R.id.tName2);
 
-				TextView teamName_1 = (TextView) findViewById(R.id.tName1);
-				TextView teamName_2 = (TextView) findViewById(R.id.tName2);
+					TextView team1score = (TextView) findViewById(R.id.team1score);
+					TextView team2score = (TextView) findViewById(R.id.team2score);
 
-				TextView team1score = (TextView) findViewById(R.id.team1score);
-				TextView team2score = (TextView) findViewById(R.id.team2score);
+					TextView tournamentName = (TextView) findViewById(R.id.tournamentName);
+					TextView format = (TextView) findViewById(R.id.format);
+					TextView startTime = (TextView) findViewById(R.id.startTime);
+					TextView liveLabel = (TextView) findViewById(R.id.livelabel);
+					TextView noLive = (TextView) findViewById(R.id.nolive);
+					TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
 
-				TextView tournamentName = (TextView) findViewById(R.id.tournamentName);
-				TextView format = (TextView) findViewById(R.id.format);
-				TextView startTime = (TextView) findViewById(R.id.startTime);
-				TextView liveLabel = (TextView) findViewById(R.id.livelabel);
-				TextView noLive = (TextView) findViewById(R.id.nolive);
-				TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
+					teamName_1.setText(opp_1.select("a").first().text().trim());
+					teamName_2.setText(opp_2.select("a").first().text().trim());
 
-				teamName_1.setText(opp_1.select("a").first().text().trim());
-				teamName_2.setText(opp_2.select("a").first().text().trim());
+					if (scoreDiv_1.className().trim().endsWith("winner")) {
+						team1score.setTextColor(Color.RED);
+					}
+					team1score.setText(scoreDiv_1.text().trim());
 
-				if (scoreDiv_1.className().trim().endsWith("winner")) {
-					team1score.setTextColor(Color.RED);
-				}
-				team1score.setText(scoreDiv_1.text().trim());
+					if (scoreDiv_2.className().trim().endsWith("winner")) {
+						team2score.setTextColor(Color.RED);
+					}
+					team2score.setText(scoreDiv_2.text().trim());
 
-				if (scoreDiv_2.className().trim().endsWith("winner")) {
-					team2score.setTextColor(Color.RED);
-				}
-				team2score.setText(scoreDiv_2.text().trim());
+					imageLoader.displayImage(baseUrl
+							+ opp_1.select("img").first().attr("src"), icon_1,
+							options, animateFirstListener);
 
-				imageLoader.displayImage(baseUrl
-						+ opp_1.select("img").first().attr("src"), icon_1,
-						options, animateFirstListener);
+					imageLoader.displayImage(baseUrl
+							+ opp_2.select("img").first().attr("src"), icon_2,
+							options, animateFirstListener);
 
-				imageLoader.displayImage(baseUrl
-						+ opp_2.select("img").first().attr("src"), icon_2,
-						options, animateFirstListener);
+					Elements detailTd = details.select("td");
 
-				Elements detailTd = details.select("td");
+					if (detailTd.size() == 4) {
 
-				if (detailTd.size() == 4) {
+						tournamentName.setText("Tournament: "
+								+ detailTd.get(2).text().trim());
+						format.setText("Format: Best of "
+								+ detailTd.get(3).text().trim());
+						String dateInString = detailTd.first().text().trim();
+						startTime.setText("Start Time: "
+								+ processDate(dateInString) + " (Your place)");
 
-					tournamentName.setText("Tournament: "
-							+ detailTd.get(2).text().trim());
-					format.setText("Format: Best of "
-							+ detailTd.get(3).text().trim());
-					String dateInString = detailTd.first().text().trim();
-					startTime.setText("Start Time: "
-							+ processDate(dateInString) + " (Your place)");
+					} else {
+						tournamentName.setText("Tournament: "
+								+ detailTd.get(1).text().trim());
+						format.setText("Format: Best of "
+								+ detailTd.get(2).text().trim());
+						startTime.setText("Start Time: ");
+					}
+
+					if (match.getMatchStatus() == Match.LIVE) {
+						liveStatus.setVisibility(View.VISIBLE);
+					} else if (match.getMatchStatus() == Match.NOTSTARTED) {
+						myTimer.setText(match.getTime());
+						myTimer.setVisibility(View.VISIBLE);
+					}
+
+					if (match.getMatchStatus() == Match.ENDED) {
+						noLive.setText("No Videos Released Yet.");
+						liveLabel.setText("VODs");
+					}
+
+					if (lives.isEmpty()) {
+						liveLabel.setVisibility(View.GONE);
+						noLive.setVisibility(View.VISIBLE);
+					} else {
+
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+								mActivity, android.R.layout.simple_list_item_1,
+								lives);
+
+						setListAdapter(adapter);
+					}
+
+					DisplayView(contentView, retryView, loadingView);
 
 				} else {
-					tournamentName.setText("Tournament: "
-							+ detailTd.get(1).text().trim());
-					format.setText("Format: Best of "
-							+ detailTd.get(2).text().trim());
-					startTime.setText("Start Time: ");
+					handleCancelView();
 				}
-
-				if (match.getMatchStatus() == Match.LIVE) {
-					liveStatus.setVisibility(View.VISIBLE);
-				} else if (match.getMatchStatus() == Match.NOTSTARTED) {
-					myTimer.setText(match.getTime());
-					myTimer.setVisibility(View.VISIBLE);
-				}
-
-				if (match.getMatchStatus() == Match.ENDED) {
-					noLive.setText("No Videos Released Yet.");
-					liveLabel.setText("VODs");
-				}
-
-				if (lives.isEmpty()) {
-					liveLabel.setVisibility(View.GONE);
-					noLive.setVisibility(View.VISIBLE);
-				} else {
-
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-							mActivity, android.R.layout.simple_list_item_1,
-							lives);
-
-					setListAdapter(adapter);
-				}
-
-				DisplayView(contentView, retryView, loadingView);
 
 			} else {
 
@@ -343,7 +354,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			date = sdf.parse(s);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 		sdf = new SimpleDateFormat("MMMM d 'at' hh:mm a");
@@ -402,7 +413,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			// Log.d("AsyncDebug", "Task cancellation failed!!!!");
 		}
 	}
-	
+
 	private boolean check() {
 		PackageManager pm = getPackageManager();
 		List<PackageInfo> infoList = pm

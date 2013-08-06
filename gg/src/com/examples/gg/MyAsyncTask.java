@@ -81,31 +81,44 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 		// cancel(true);
 		// taskCancel = true;
 		
-		HttpURLConnection conn = null;
-		// } else
+		HttpURLConnection conn = null;		// } else
 		try {
 			
             URL url = new URL(uri[0]);  
-            conn = (HttpURLConnection) url.openConnection();  
+            conn = (HttpURLConnection) url.openConnection(); 
             
+//           HttpURLConnection connection = (HttpURLConnection) url.openConnection(); 
             conn.setRequestMethod("GET");
-//            conn.setDoOutput(false); 
+            conn.setReadTimeout(10000);
 
-            conn.connect();  
-            InputStream is = new BufferedInputStream(conn.getInputStream());  
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+
+                      
+//            conn.connect();  
+//            
+//            conn.addRequestProperty("Cache-Control", "only-if-cached");
+//            
+//            int maxStale = 60 * 60 * 24 * 7; // tolerate 4-weeks stale
+//            conn.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            
+            InputStream is = conn.getInputStream();  
+            
+            int http_status = conn.getResponseCode();
+
+            // better check it first
+            if (http_status / 100 != 2) {
+              
+    			isException = true;
+    			cancel(true);
+    			taskCancel = true;
+            	
+            }
+            
             responseString = getStringFromInputStream(is);
             is.close();  
 
 		} catch (Exception e) {
-			// throw new IOException(statusLine.getReasonPhrase());
-//			conn.getResponseCode()
-			
-			try {
-				Log.d("AsyncDebug", Integer.toString(conn.getResponseCode()));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			Log.d("AsyncDebug", conn.getErrorStream().toString());
 
 			isException = true;
 			cancel(true);

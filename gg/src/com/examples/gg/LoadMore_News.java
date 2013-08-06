@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.json.JSONException;
+//import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,7 +17,7 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
+//import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
@@ -37,9 +37,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.costum.android.widget.LoadMoreListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 @SuppressLint("HandlerLeak")
 public class LoadMore_News extends LoadMore_Base {
@@ -53,7 +51,7 @@ public class LoadMore_News extends LoadMore_Base {
 	private ViewGroup group;
 	private ArrayList<String> matches = new ArrayList<String>();
 	private ArrayList<String> results = new ArrayList<String>();
-	private Elements links;
+	private Elements links = new Elements();
 	boolean isPagerSet = false;
 	private getMatchInfo mMatchInfo;
 
@@ -65,7 +63,6 @@ public class LoadMore_News extends LoadMore_Base {
 	private String url = "http://www.gosugamers.net/dota2/gosubet";
 	private int rand_1;
 	private int rand_2;
-	private Thread myThread;
 	private AdvAdapter myAdvAdapter;
 	
 	private int position = 0;
@@ -80,6 +77,7 @@ public class LoadMore_News extends LoadMore_Base {
 			R.drawable.slardar, R.drawable.snk, R.drawable.tiny, R.drawable.visage, R.drawable.faceless};
 	
 	private List<View> views = new ArrayList<View>();
+//	private Thread myThread;
 
 
 	@Override
@@ -145,22 +143,7 @@ public class LoadMore_News extends LoadMore_Base {
 	}
 	
 	private void setViewPager(){
-		
-		for (Element link : links) {
-
-			String match;
-
-			match = link.select("span").first().text().trim() + " vs "
-					+ link.select("span").get(2).text().trim() + " ";
-			if (link.getElementsByClass("results").isEmpty()) {
-				match += link.select("td").get(3).text().trim();
-				matches.add(match);
-			} else {
-				match += link.select("span.hidden").first().text().trim();
-				results.add(match);
-			}
-		}
-
+	
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
 
@@ -181,31 +164,47 @@ public class LoadMore_News extends LoadMore_Base {
 		TextView live3 = (TextView) v1.findViewById(R.id.live3);
 
 		liveTitle.setText("Upcoming Matches");
-		if (matcharray[0].endsWith("Live")) {
-			liveMatch1.setText(matcharray[0].substring(0,
-					matcharray[0].length() - 4));
-		} else {
-			liveMatch1.setText(matcharray[0]);
+		
+		if (matcharray.length >= 1){
+			if (matcharray[0].endsWith("Live")) {
+				liveMatch1.setText(matcharray[0].substring(0,
+						matcharray[0].length() - 4));
+			} else {
+				liveMatch1.setText(matcharray[0]);
+				live1.setVisibility(View.GONE);
+			}
+		}else{
+			liveMatch1.setVisibility(View.GONE);
 			live1.setVisibility(View.GONE);
 		}
-		//System.out.println(matcharray[0]);
-
-		if (matcharray[1].endsWith("Live")) {
-			liveMatch2.setText(matcharray[1].substring(0,
-					matcharray[1].length() - 4));
-		} else {
-			liveMatch2.setText(matcharray[1]);
+			//System.out.println(matcharray[0]);
+	
+		if (matcharray.length >= 2){
+			if (matcharray[1].endsWith("Live")) {
+				liveMatch2.setText(matcharray[1].substring(0,
+						matcharray[1].length() - 4));
+			} else {
+				liveMatch2.setText(matcharray[1]);
+				live2.setVisibility(View.GONE);
+			}
+		}else{
+			liveMatch2.setVisibility(View.GONE);
 			live2.setVisibility(View.GONE);
 		}
-
-		if (matcharray[2].endsWith("Live")) {
-			liveMatch3.setText(matcharray[2].substring(0,
-					matcharray[2].length() - 4));
-		} else {
-			liveMatch3.setText(matcharray[2]);
+	
+		if (matcharray.length >= 3){
+			if (matcharray[2].endsWith("Live")) {
+				liveMatch3.setText(matcharray[2].substring(0,
+						matcharray[2].length() - 4));
+			} else {
+				liveMatch3.setText(matcharray[2]);
+				live3.setVisibility(View.GONE);
+			}
+		}else{
+			liveMatch3.setVisibility(View.GONE);
 			live3.setVisibility(View.GONE);
 		}
-
+			
 		v1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -233,18 +232,30 @@ public class LoadMore_News extends LoadMore_Base {
 		live2 = (TextView) v2.findViewById(R.id.live2);
 		live3 = (TextView) v2.findViewById(R.id.live3);
 
+		
+		
 		liveTitle.setText("Resent Results");
 
-		liveMatch1.setText(resultarray[0]);
-
+		if (resultarray.length >= 1){
+			liveMatch1.setText(resultarray[0]);
+		}else{
+			liveMatch1.setVisibility(View.GONE);
+		}
 		live1.setVisibility(View.GONE);
 
-		liveMatch2.setText(resultarray[1]);
-
+		if (resultarray.length >= 2){
+			liveMatch2.setText(resultarray[1]);
+		}else{
+			liveMatch2.setVisibility(View.GONE);
+		}
 		live2.setVisibility(View.GONE);
 
-		liveMatch3.setText(resultarray[2]);
-
+		
+		if (resultarray.length >= 3){
+			liveMatch3.setText(resultarray[2]);
+		}else{
+			liveMatch3.setVisibility(View.GONE);
+		}
 		live3.setVisibility(View.GONE);
 
 		v2.setOnClickListener(new OnClickListener() {
@@ -269,7 +280,7 @@ public class LoadMore_News extends LoadMore_Base {
 	private void initViewPager() {
 		
 		rand_1 = random.nextInt(myDrawables.length-1);
-		System.out.println("New random:"+ rand_1);
+//		System.out.println("New random:"+ rand_1);
 		do {
 			rand_2 = random.nextInt(myDrawables.length-1);
 		}while (rand_1 == rand_2);
@@ -299,7 +310,6 @@ public class LoadMore_News extends LoadMore_Base {
 				group.addView(imageViews[i]);
 			}
 			
-			advPager.setOnPageChangeListener(new GuidePageChangeListener());
 			advPager.setOnTouchListener(new OnTouchListener() {
 	
 				@Override
@@ -320,7 +330,23 @@ public class LoadMore_News extends LoadMore_Base {
 				}
 			});
 			
-			handler.postDelayed(runnable, 4000);
+			handler.postDelayed(runnable, 5000);
+			
+//			myThread = new Thread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					while (true) {
+//						if (myThread.isInterrupted()) break;
+//						if (isContinue) {
+//							viewHandler.sendEmptyMessage(what.get());
+//							whatOption();
+//						}
+//					}
+//				}
+//			});
+//
+//			myThread.start();
 	
 			isPagerSet = true;
 		}
@@ -328,6 +354,13 @@ public class LoadMore_News extends LoadMore_Base {
 		myAdvAdapter = new AdvAdapter();
 		
 		advPager.setAdapter(myAdvAdapter);
+		
+		advPager.setOnPageChangeListener(new GuidePageChangeListener());
+		
+		advPager.setCurrentItem(0);
+		
+		imageViews[0].setBackgroundResource(R.drawable.d2_selected);
+		imageViews[1].setBackgroundResource(R.drawable.d2_unselected);
 
 		
 	}
@@ -341,7 +374,8 @@ public class LoadMore_News extends LoadMore_Base {
 	                position = 0;
 	            }
 	            advPager.setCurrentItem(position, true);
-	            handler.postDelayed(runnable, 4000);
+//	            refreshFragment();
+	            handler.postDelayed(runnable, 5000);
 	    }
 	};
 
@@ -481,11 +515,31 @@ public class LoadMore_News extends LoadMore_Base {
 				// Do anything with response..
 				Document doc = Jsoup.parse(result);
 				links = doc.select("tr:has(td.opp)");
-
-				initViewPager();
-
-				DisplayView(contentView, retryView, loadingView);
-
+				
+				if (!links.isEmpty()){
+				
+					for (Element link : links) {
+	
+						String match;
+	
+						match = link.select("span").first().text().trim() + " vs "
+								+ link.select("span").get(2).text().trim() + " ";
+						if (link.getElementsByClass("results").isEmpty()) {
+							match += link.select("td").get(3).text().trim();
+							matches.add(match);
+						} else {
+							match += link.select("span.hidden").first().text().trim();
+							results.add(match);
+						}
+					}
+	
+					initViewPager();
+	
+					DisplayView(contentView, retryView, loadingView);
+				}
+				else{
+					handleCancelView();
+				}
 			} else {
 				handleCancelView();
 			}

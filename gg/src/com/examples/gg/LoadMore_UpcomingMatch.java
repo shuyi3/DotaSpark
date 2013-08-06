@@ -45,7 +45,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		setOptionMenu(true, false);
 
 	}
-	
+
 	@Override
 	public void refreshFragment() {
 		String firstApi = API.get(0);
@@ -62,14 +62,12 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
-		
+
 		setBannerInHeader();
 
 		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader,
 				false);
 		setListAdapter(mArrayAdatper);
-		
-
 
 		if (isMoreVideos) {
 			// there are more videos in the list
@@ -84,7 +82,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 						mgetMatchInfo = new getMatchInfo(
 								getMatchInfo.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						mgetMatchInfo.execute(API.get(API.size()-1));
+						mgetMatchInfo.execute(API.get(API.size() - 1));
 					} else {
 
 						// ic.networkToast(sfa);
@@ -111,13 +109,13 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-//		Toast.makeText(this.getSherlockActivity(),
-//				matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
-//				.show();
+		// Toast.makeText(this.getSherlockActivity(),
+		// matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
+		// .show();
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				MatchDetailsActivity.class);
-		i.putExtra("match", matchArray.get(position));
+		i.putExtra("match", matchArray.get(position - 1));
 		startActivity(i);
 
 	}
@@ -126,7 +124,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	protected void doRequest() {
 		// TODO Auto-generated method stub
 
-		//System.out.println("DO!!!!!");
+		// System.out.println("DO!!!!!");
 		for (String s : API) {
 			mgetMatchInfo = new getMatchInfo(getMatchInfo.INITTASK,
 					myLoadMoreListView, fullscreenLoadingView, mRetryView);
@@ -158,8 +156,9 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 					mgetMatchInfo = (getMatchInfo) new getMatchInfo(type,
 							contentView, loadingView, retryView);
-					mgetMatchInfo.DisplayView(loadingView, contentView, retryView);
-					mgetMatchInfo.execute(API.get(API.size()-1));
+					mgetMatchInfo.DisplayView(loadingView, contentView,
+							retryView);
+					mgetMatchInfo.execute(API.get(API.size() - 1));
 
 				}
 			});
@@ -169,89 +168,96 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		@Override
 		protected void onPostExecute(String result) {
 
-			//Log.d("AsyncDebug", "Into onPostExecute!");
+			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 
 				Document doc = Jsoup.parse(result);
-				
-				Element box_2 = doc.select("div.box").get(1);
 
-				if (pageNum == 1) {
-					Element box_1 = doc.select("div.box").first();
-					links = box_1.select("tr:has(td.opp)");
-					Elements upcoming_links = box_2.select("tr:has(td.opp)");
-					links.addAll(upcoming_links);
-				}else{
-					links = box_2.select("tr:has(td.opp)");
-				}
+				Element box_2 = null;
+				box_2 = doc.select("div.box").get(1);
+				if (box_2 != null) {
 
-				Element paginator = box_2.select("div.paginator").first();
+					if (pageNum == 1) {
+						Element box_1 = doc.select("div.box").first();
+						links = box_1.select("tr:has(td.opp)");
+						Elements upcoming_links = box_2
+								.select("tr:has(td.opp)");
+						links.addAll(upcoming_links);
+					} else {
+						links = box_2.select("tr:has(td.opp)");
+					}
 
-				if (paginator == null) {
-					isMoreVideos = false;
-				} else {
-					if (paginator.select("a").last().hasAttr("class")) {
+					Element paginator = box_2.select("div.paginator").first();
+
+					if (paginator == null) {
 						isMoreVideos = false;
 					} else {
-						isMoreVideos = true;
-						pageNum++;
-						API.add("http://www.gosugamers.net/dota2/gosubet?u-page="
-										+ pageNum);
+						if (paginator.select("a").last().hasAttr("class")) {
+							isMoreVideos = false;
+						} else {
+							isMoreVideos = true;
+							pageNum++;
+							API.add("http://www.gosugamers.net/dota2/gosubet?u-page="
+									+ pageNum);
+						}
 					}
-				}
 
-				// Setting layout
+					// Setting layout
 
-				for (Element link : links) {
+					for (Element link : links) {
 
-					Match newMatch = new Match();
-					
-					Element opp_1 = link.select("td.opp").first();
-					Element opp_2 = link.select("td.opp").get(1);
+						Match newMatch = new Match();
 
-					newMatch.setTeamName1(opp_1.select("span").first().text()
-							.trim());
-					newMatch.setTeamName2(opp_2.select("span").first().text()
-							.trim());
+						Element opp_1 = link.select("td.opp").first();
+						Element opp_2 = link.select("td.opp").get(1);
 
-					newMatch.setTeamIcon1(baseUrl
-							+ opp_1.select("img").attr("src"));
-					newMatch.setTeamIcon2(baseUrl
-							+ opp_2.select("img").attr("src"));
+						newMatch.setTeamName1(opp_1.select("span").first()
+								.text().trim());
+						newMatch.setTeamName2(opp_2.select("span").first()
+								.text().trim());
 
-					newMatch.setTime(link.select("td").get(3).text().trim());
+						newMatch.setTeamIcon1(baseUrl
+								+ opp_1.select("img").attr("src"));
+						newMatch.setTeamIcon2(baseUrl
+								+ opp_2.select("img").attr("src"));
 
-					newMatch.setGosuLink(baseUrl
-							+ opp_1.select("a[href]").attr("href"));
+						newMatch.setTime(link.select("td").get(3).text().trim());
 
-					if (newMatch.getTime().toLowerCase().matches("live")) {
-						newMatch.setMatchStatus(Match.LIVE);
-					} else
-						newMatch.setMatchStatus(Match.NOTSTARTED);
+						newMatch.setGosuLink(baseUrl
+								+ opp_1.select("a[href]").attr("href"));
 
-					matchArray.add(newMatch);
+						if (newMatch.getTime().toLowerCase().matches("live")) {
+							newMatch.setMatchStatus(Match.LIVE);
+						} else
+							newMatch.setMatchStatus(Match.NOTSTARTED);
 
-				}
+						matchArray.add(newMatch);
 
-//				for (Match m : matchArray) {
-//					System.out.println(m.getMatchStatus());
-//					System.out.println(m.getTime());
-//				}
+					}
 
-				mArrayAdatper.notifyDataSetChanged();
+					// for (Match m : matchArray) {
+					// System.out.println(m.getMatchStatus());
+					// System.out.println(m.getTime());
+					// }
 
-				// Call onLoadMoreComplete when the LoadMore task has
-				// finished
-				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+					mArrayAdatper.notifyDataSetChanged();
 
-				// loading done
-				DisplayView(contentView, retryView, loadingView);
+					// Call onLoadMoreComplete when the LoadMore task has
+					// finished
+					((LoadMoreListView) myLoadMoreListView)
+							.onLoadMoreComplete();
 
-				if (!isMoreVideos) {
-					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+					// loading done
+					DisplayView(contentView, retryView, loadingView);
 
-					myLoadMoreListView.setOnLoadMoreListener(null);
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						myLoadMoreListView.setOnLoadMoreListener(null);
+					}
+				} else {
+					handleCancelView();
 				}
 
 			} else {

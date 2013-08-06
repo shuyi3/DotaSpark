@@ -5,7 +5,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
     <com.google.ads.AdView android:id="@+id/ad"
-                           android:layout_width="wrap_content"
+                           android:layout_width="fill_parent"
                            android:layout_height="wrap_content"
                            ads:adSize="BANNER"
                            ads:adUnitId="a151ff32ae5f744"

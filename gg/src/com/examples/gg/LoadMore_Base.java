@@ -286,7 +286,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				YoutubeActionBarActivity.class);
-		i.putExtra("video", videolist.get(position));
+		i.putExtra("video", videolist.get(position-1));
 		startActivity(i);
 
 	}
@@ -508,7 +508,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 		 if (myLoadMoreListView.getHeaderViewsCount() == 0){
 	           View header = (View) sfa.getLayoutInflater().inflate(R.layout.banner, null);
 	           myLoadMoreListView.addHeaderView(header,null,false);
-	           
+	       
 	     }
 	}
 }
