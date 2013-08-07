@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
@@ -102,8 +104,46 @@ public class MatchDetailsActivity extends SherlockListActivity {
 						MenuItem.SHOW_AS_ACTION_IF_ROOM
 								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
+		getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
+
+		MenuItem actionItem = menu
+				.findItem(R.id.menu_item_share_action_provider_action_bar);
+		ShareActionProvider actionProvider = (ShareActionProvider) actionItem
+				.getActionProvider();
+		actionProvider
+				.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+		// Note that you can set/change the intent any time,
+		// say when the user has selected an image.
+		actionProvider.setShareIntent(createShareIntent());
+
 		return true;
 
+	}
+
+	private Intent createShareIntent() {
+		Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		// shareIntent.setType("image/*");
+		// Uri uri = Uri.fromFile(getFileStreamPath("shared.png"));
+		// shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		shareIntent.setAction(Intent.ACTION_SEND);
+
+		if (match.getMatchStatus() == Match.NOTSTARTED) {
+			shareIntent.putExtra(Intent.EXTRA_TEXT,
+					match.getTeamName1() + " vs " + match.getTeamName2()
+							+ " will start " + match.getTime()
+							+ " later shared via @Dota2TV1");
+		} else if (match.getMatchStatus() == Match.LIVE) {
+			shareIntent.putExtra(Intent.EXTRA_TEXT, match.getTeamName1()
+					+ " vs " + match.getTeamName2()
+					+ " is live now shared via @Dota2TV1");
+		} else if (match.getMatchStatus() == Match.ENDED){
+			shareIntent.putExtra(Intent.EXTRA_TEXT, match.getTeamName1() + " "
+					+ match.getScore() + " " + match.getTeamName2()
+					+ "shared via @Dota2TV1");
+
+		}
+		shareIntent.setType("text/plain");
+		return shareIntent;
 	}
 
 	@Override

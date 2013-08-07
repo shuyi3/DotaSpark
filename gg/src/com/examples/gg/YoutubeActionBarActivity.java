@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +17,9 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.OnFullscreenListener;
@@ -91,6 +94,50 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 		doLayout();
 
 	}
+	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate your menu.
+        getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
+
+        // Set file with share history to the provider and set the share intent.
+        MenuItem actionItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        // Note that you can set/change the intent any time,
+        // say when the user has selected an image.
+        actionProvider.setShareIntent(createShareIntent());
+
+        //XXX: For now, ShareActionProviders must be displayed on the action bar
+        // Set file with share history to the provider and set the share intent.
+        //MenuItem overflowItem = menu.findItem(R.id.menu_item_share_action_provider_overflow);
+        //ShareActionProvider overflowProvider =
+        //    (ShareActionProvider) overflowItem.getActionProvider();
+        //overflowProvider.setShareHistoryFileName(
+        //    ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        // Note that you can set/change the intent any time,
+        // say when the user has selected an image.
+        //overflowProvider.setShareIntent(createShareIntent());
+
+        return true;
+    }
+    
+    private Intent createShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//        shareIntent.setType("image/*");
+//        Uri uri = Uri.fromFile(getFileStreamPath("shared.png"));
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        if (isFullscreenMode){
+        	shareIntent.putExtra(Intent.EXTRA_TEXT, "http://www.youtube.com/watch?v="+videoId+" via @Dota2TV1");
+        }else{
+        	shareIntent.putExtra(Intent.EXTRA_TEXT, "http://www.youtube.com/watch?v="+video.getVideoId()+" via @Dota2TV1");
+        }
+        shareIntent.setType("text/plain");
+        return shareIntent;
+    }
+
+	
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

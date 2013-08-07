@@ -33,14 +33,17 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 @SuppressLint("HandlerLeak")
-public class LoadMore_News extends LoadMore_Base {
+public class LoadMore_News extends LoadMore_Base implements
+		SearchView.OnQueryTextListener {
 
 	private ImageView[] imageViews = null;
 	private ImageView imageView = null;
@@ -64,21 +67,24 @@ public class LoadMore_News extends LoadMore_Base {
 	private int rand_1;
 	private int rand_2;
 	private AdvAdapter myAdvAdapter;
-	
+
 	private int position = 0;
-	
+
 	DisplayImageOptions options;
-	
+
 	private Random random;
 
-	
 	private SideMenuActivity sma;
-	private final int[] myDrawables = new int[] {R.drawable.bountyhunter, R.drawable.centaurwarlord, R.drawable.disruptor, R.drawable.dusa, R.drawable.invoker, R.drawable.jugg, R.drawable.pa, R.drawable.pudge, R.drawable.radient, R.drawable.razor, R.drawable.rubick,
-			R.drawable.slardar, R.drawable.snk, R.drawable.tiny, R.drawable.visage, R.drawable.faceless};
-	
-	private List<View> views = new ArrayList<View>();
-//	private Thread myThread;
+	private final int[] myDrawables = new int[] { R.drawable.bountyhunter,
+			R.drawable.centaurwarlord, R.drawable.disruptor, R.drawable.dusa,
+			R.drawable.invoker, R.drawable.jugg, R.drawable.pa,
+			R.drawable.pudge, R.drawable.radient, R.drawable.razor,
+			R.drawable.rubick, R.drawable.slardar, R.drawable.snk,
+			R.drawable.tiny, R.drawable.visage, R.drawable.faceless };
 
+	private List<View> views = new ArrayList<View>();
+
+	// private Thread myThread;
 
 	@Override
 	public void Initializing() {
@@ -97,22 +103,22 @@ public class LoadMore_News extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, false);
-		
+
 		// Get sidemenuactivity
 		sma = (SideMenuActivity) sfa;
-		
-//		if (!this.imageLoader.isInited()){
-//			this.imageLoader.init(ImageLoaderConfiguration.createDefault(sfa));
-//		}
-//		// imageLoader=new ImageLoader(context.getApplicationContext());
-//
-//		options = new DisplayImageOptions.Builder()
-//				.showStubImage(R.drawable.loading)
-//				.showImageForEmptyUri(R.drawable.loading)
-//				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
-//				.cacheOnDisc(true)
-//				// .displayer(new RoundedBitmapDisplayer(20))
-//				.build();
+
+		// if (!this.imageLoader.isInited()){
+		// this.imageLoader.init(ImageLoaderConfiguration.createDefault(sfa));
+		// }
+		// // imageLoader=new ImageLoader(context.getApplicationContext());
+		//
+		// options = new DisplayImageOptions.Builder()
+		// .showStubImage(R.drawable.loading)
+		// .showImageForEmptyUri(R.drawable.loading)
+		// .showImageOnFail(R.drawable.loading).cacheInMemory(true)
+		// .cacheOnDisc(true)
+		// // .displayer(new RoundedBitmapDisplayer(20))
+		// .build();
 
 		random = new Random();
 
@@ -121,7 +127,19 @@ public class LoadMore_News extends LoadMore_Base {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		menu.add("Refresh")
+		SearchView searchView = new SearchView(sfa.getSupportActionBar()
+				.getThemedContext());
+		searchView.setQueryHint("Search Youtube");
+		searchView.setOnQueryTextListener(this);
+
+		menu.add(0,20,0,"Search")
+				.setIcon(R.drawable.abs__ic_search)
+				.setActionView(searchView)
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+		menu.add(0,0,0,"Refresh")
 				.setIcon(R.drawable.ic_refresh)
 				.setShowAsAction(
 						MenuItem.SHOW_AS_ACTION_IF_ROOM
@@ -141,9 +159,9 @@ public class LoadMore_News extends LoadMore_Base {
 		super.setListView();
 
 	}
-	
-	private void setViewPager(){
-	
+
+	private void setViewPager() {
+
 		String[] matcharray = matches.toArray(new String[matches.size()]);
 		String[] resultarray = results.toArray(new String[results.size()]);
 
@@ -164,8 +182,8 @@ public class LoadMore_News extends LoadMore_Base {
 		TextView live3 = (TextView) v1.findViewById(R.id.live3);
 
 		liveTitle.setText("Upcoming Matches");
-		
-		if (matcharray.length >= 1){
+
+		if (matcharray.length >= 1) {
 			if (matcharray[0].endsWith("Live")) {
 				liveMatch1.setText(matcharray[0].substring(0,
 						matcharray[0].length() - 4));
@@ -173,13 +191,13 @@ public class LoadMore_News extends LoadMore_Base {
 				liveMatch1.setText(matcharray[0]);
 				live1.setVisibility(View.GONE);
 			}
-		}else{
+		} else {
 			liveMatch1.setVisibility(View.GONE);
 			live1.setVisibility(View.GONE);
 		}
-			//System.out.println(matcharray[0]);
-	
-		if (matcharray.length >= 2){
+		// System.out.println(matcharray[0]);
+
+		if (matcharray.length >= 2) {
 			if (matcharray[1].endsWith("Live")) {
 				liveMatch2.setText(matcharray[1].substring(0,
 						matcharray[1].length() - 4));
@@ -187,12 +205,12 @@ public class LoadMore_News extends LoadMore_Base {
 				liveMatch2.setText(matcharray[1]);
 				live2.setVisibility(View.GONE);
 			}
-		}else{
+		} else {
 			liveMatch2.setVisibility(View.GONE);
 			live2.setVisibility(View.GONE);
 		}
-	
-		if (matcharray.length >= 3){
+
+		if (matcharray.length >= 3) {
 			if (matcharray[2].endsWith("Live")) {
 				liveMatch3.setText(matcharray[2].substring(0,
 						matcharray[2].length() - 4));
@@ -200,17 +218,17 @@ public class LoadMore_News extends LoadMore_Base {
 				liveMatch3.setText(matcharray[2]);
 				live3.setVisibility(View.GONE);
 			}
-		}else{
+		} else {
 			liveMatch3.setVisibility(View.GONE);
 			live3.setVisibility(View.GONE);
 		}
-			
+
 		v1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// Set the drawer indicator in position "Upcoming Matches"
 				sma.setDrawerIndicator(8);
-				
+
 				// Replacing the current fragment
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
@@ -223,7 +241,7 @@ public class LoadMore_News extends LoadMore_Base {
 
 		v2 = inflater.inflate(R.layout.livetext, null, false);
 		v2.setBackgroundResource(myDrawables[rand_2]);
-		
+
 		liveTitle = (TextView) v2.findViewById(R.id.livetitle);
 		liveMatch1 = (TextView) v2.findViewById(R.id.lineup1);
 		liveMatch2 = (TextView) v2.findViewById(R.id.lineup2);
@@ -232,28 +250,25 @@ public class LoadMore_News extends LoadMore_Base {
 		live2 = (TextView) v2.findViewById(R.id.live2);
 		live3 = (TextView) v2.findViewById(R.id.live3);
 
-		
-		
 		liveTitle.setText("Resent Results");
 
-		if (resultarray.length >= 1){
+		if (resultarray.length >= 1) {
 			liveMatch1.setText(resultarray[0]);
-		}else{
+		} else {
 			liveMatch1.setVisibility(View.GONE);
 		}
 		live1.setVisibility(View.GONE);
 
-		if (resultarray.length >= 2){
+		if (resultarray.length >= 2) {
 			liveMatch2.setText(resultarray[1]);
-		}else{
+		} else {
 			liveMatch2.setVisibility(View.GONE);
 		}
 		live2.setVisibility(View.GONE);
 
-		
-		if (resultarray.length >= 3){
+		if (resultarray.length >= 3) {
 			liveMatch3.setText(resultarray[2]);
-		}else{
+		} else {
 			liveMatch3.setVisibility(View.GONE);
 		}
 		live3.setVisibility(View.GONE);
@@ -261,10 +276,10 @@ public class LoadMore_News extends LoadMore_Base {
 		v2.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
-				// Set the drawer indicator in position "Recent Result"				
+
+				// Set the drawer indicator in position "Recent Result"
 				sma.setDrawerIndicator(9);
-				
+
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.content_frame, new LoadMore_Result());
@@ -273,29 +288,28 @@ public class LoadMore_News extends LoadMore_Base {
 		});
 
 		views.add(v2);
-		
-		
+
 	}
 
 	private void initViewPager() {
-		
-		rand_1 = random.nextInt(myDrawables.length-1);
-//		System.out.println("New random:"+ rand_1);
+
+		rand_1 = random.nextInt(myDrawables.length - 1);
+		// System.out.println("New random:"+ rand_1);
 		do {
-			rand_2 = random.nextInt(myDrawables.length-1);
-		}while (rand_1 == rand_2);
-		
-		if (!isPagerSet){
+			rand_2 = random.nextInt(myDrawables.length - 1);
+		} while (rand_1 == rand_2);
+
+		if (!isPagerSet) {
 			advPager = (ViewPager) sfa.findViewById(R.id.adv_pager);
 			group = (ViewGroup) sfa.findViewById(R.id.viewGroup);
-		}else{
+		} else {
 			views.clear();
 		}
-		
+
 		setViewPager();
-		
-		if (!isPagerSet){
-	
+
+		if (!isPagerSet) {
+
 			imageViews = new ImageView[views.size()];
 			for (int i = 0; i < views.size(); i++) {
 				imageView = new ImageView(sfa);
@@ -305,13 +319,14 @@ public class LoadMore_News extends LoadMore_Base {
 				if (i == 0) {
 					imageViews[i].setBackgroundResource(R.drawable.d2_selected);
 				} else {
-					imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
+					imageViews[i]
+							.setBackgroundResource(R.drawable.d2_unselected);
 				}
 				group.addView(imageViews[i]);
 			}
-			
+
 			advPager.setOnTouchListener(new OnTouchListener() {
-	
+
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					switch (event.getAction()) {
@@ -329,78 +344,76 @@ public class LoadMore_News extends LoadMore_Base {
 					return false;
 				}
 			});
-			
+
 			handler.postDelayed(runnable, 5000);
-			
-//			myThread = new Thread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					while (true) {
-//						if (myThread.isInterrupted()) break;
-//						if (isContinue) {
-//							viewHandler.sendEmptyMessage(what.get());
-//							whatOption();
-//						}
-//					}
-//				}
-//			});
-//
-//			myThread.start();
-	
+
+			// myThread = new Thread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// while (true) {
+			// if (myThread.isInterrupted()) break;
+			// if (isContinue) {
+			// viewHandler.sendEmptyMessage(what.get());
+			// whatOption();
+			// }
+			// }
+			// }
+			// });
+			//
+			// myThread.start();
+
 			isPagerSet = true;
 		}
-		
+
 		myAdvAdapter = new AdvAdapter();
-		
+
 		advPager.setAdapter(myAdvAdapter);
-		
+
 		advPager.setOnPageChangeListener(new GuidePageChangeListener());
-		
+
 		advPager.setCurrentItem(0);
-		
+
 		imageViews[0].setBackgroundResource(R.drawable.d2_selected);
 		imageViews[1].setBackgroundResource(R.drawable.d2_unselected);
 
-		
 	}
-	
+
 	private Handler handler = new Handler();
 	private Runnable runnable = new Runnable() {
-	    public void run() {
-	            if( position == 0){
-	                position = 1;
-	            }else{
-	                position = 0;
-	            }
-	            advPager.setCurrentItem(position, true);
-//	            refreshFragment();
-	            handler.postDelayed(runnable, 5000);
-	    }
+		public void run() {
+			if (position == 0) {
+				position = 1;
+			} else {
+				position = 0;
+			}
+			advPager.setCurrentItem(position, true);
+			// refreshFragment();
+			handler.postDelayed(runnable, 5000);
+		}
 	};
 
-
-//	private void whatOption() {
-//		what.incrementAndGet();
-//		if (what.get() > imageViews.length - 1) {
-//			what.getAndAdd(-4);
-//		}
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//
-//		}
-//	}
-//
-//	private final Handler viewHandler = new Handler() {
-//
-//		@Override
-//		public void handleMessage(Message msg) {
-//			advPager.setCurrentItem(msg.what);
-//			super.handleMessage(msg);
-//		}
-//
-//	};
+	// private void whatOption() {
+	// what.incrementAndGet();
+	// if (what.get() > imageViews.length - 1) {
+	// what.getAndAdd(-4);
+	// }
+	// try {
+	// Thread.sleep(5000);
+	// } catch (InterruptedException e) {
+	//
+	// }
+	// }
+	//
+	// private final Handler viewHandler = new Handler() {
+	//
+	// @Override
+	// public void handleMessage(Message msg) {
+	// advPager.setCurrentItem(msg.what);
+	// super.handleMessage(msg);
+	// }
+	//
+	// };
 
 	private final class GuidePageChangeListener implements OnPageChangeListener {
 
@@ -420,7 +433,8 @@ public class LoadMore_News extends LoadMore_Base {
 			for (int i = 0; i < imageViews.length; i++) {
 				imageViews[arg0].setBackgroundResource(R.drawable.d2_selected);
 				if (arg0 != i) {
-					imageViews[i].setBackgroundResource(R.drawable.d2_unselected);
+					imageViews[i]
+							.setBackgroundResource(R.drawable.d2_unselected);
 				}
 			}
 
@@ -429,15 +443,15 @@ public class LoadMore_News extends LoadMore_Base {
 	}
 
 	private final class AdvAdapter extends PagerAdapter {
-//		private List<View> views = null;
+		// private List<View> views = null;
 
 		public AdvAdapter() {
-//			this.views = views;
+			// this.views = views;
 		}
 
 		@Override
 		public void destroyItem(ViewGroup collection, int position, Object view) {
-//			((ViewPager) arg0).removeView(views.get(arg1));
+			// ((ViewPager) arg0).removeView(views.get(arg1));
 			collection.removeView((View) view);
 			view = null;
 		}
@@ -509,35 +523,37 @@ public class LoadMore_News extends LoadMore_Base {
 		@Override
 		protected void onPostExecute(String result) {
 
-			//Log.d("AsyncDebug", "Into onPostExecute!");
+			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
 				Document doc = Jsoup.parse(result);
 				links = doc.select("tr:has(td.opp)");
-				
-				if (!links.isEmpty()){
-				
+
+				if (!links.isEmpty()) {
+
 					for (Element link : links) {
-	
+
 						String match;
-	
-						match = link.select("span").first().text().trim() + " vs "
-								+ link.select("span").get(2).text().trim() + " ";
+
+						match = link.select("span").first().text().trim()
+								+ " vs "
+								+ link.select("span").get(2).text().trim()
+								+ " ";
 						if (link.getElementsByClass("results").isEmpty()) {
 							match += link.select("td").get(3).text().trim();
 							matches.add(match);
 						} else {
-							match += link.select("span.hidden").first().text().trim();
+							match += link.select("span.hidden").first().text()
+									.trim();
 							results.add(match);
 						}
 					}
-	
+
 					initViewPager();
-	
+
 					DisplayView(contentView, retryView, loadingView);
-				}
-				else{
+				} else {
 					handleCancelView();
 				}
 			} else {
@@ -548,67 +564,67 @@ public class LoadMore_News extends LoadMore_Base {
 
 	}
 
-//	class LoadMoreTask_News extends LoadMoreTask {
-//
-//		public LoadMoreTask_News(int type, View contentView, View loadingView,
-//				View retryView) {
-//			super(type, contentView, loadingView, retryView);
-//			// TODO Auto-generated constructor stub
-//		}
-//
-//		@Override
-//		protected void onPostExecute(String result) {
-//			// Do anything with response..
-//			// System.out.println(result);
-//			//Log.d("AsyncDebug", "Into onPostExecute!");
-//
-//			if (!taskCancel && result != null) {
-//
-//				feedManager.setmJSON(result);
-//
-//				List<Video> newVideos = feedManager.getVideoPlaylist();
-//
-//				// adding new loaded videos to our current video list
-//				for (Video v : newVideos) {
-//					//System.out.println("new id: " + v.getVideoId());
-//					if (needFilter) {
-//						filtering(v);
-//						// System.out.println("need filter!");
-//					} else {
-//						titles.add(v.getTitle());
-//						videolist.add(v);
-//					}
-//				}
-//				try {
-//					// put the next API in the first place of the array
-//					API.add(feedManager.getNextApi());
-//					// nextAPI = feedManager.getNextApi();
-//					if (API.get(API.size()-1) == null) {
-//						// No more videos left
-//						isMoreVideos = false;
-//					}
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					//e.printStackTrace();
-//				}
-//				vaa.notifyDataSetChanged();
-//
-//				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-//
-//				DisplayView(contentView, retryView, loadingView);
-//
-//				if (!isMoreVideos) {
-//					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-//
-//					myLoadMoreListView.setOnLoadMoreListener(null);
-//				}
-//
-//			} else {
-//				handleCancelView();
-//			}
-//		}
-//
-//	}
+	// class LoadMoreTask_News extends LoadMoreTask {
+	//
+	// public LoadMoreTask_News(int type, View contentView, View loadingView,
+	// View retryView) {
+	// super(type, contentView, loadingView, retryView);
+	// // TODO Auto-generated constructor stub
+	// }
+	//
+	// @Override
+	// protected void onPostExecute(String result) {
+	// // Do anything with response..
+	// // System.out.println(result);
+	// //Log.d("AsyncDebug", "Into onPostExecute!");
+	//
+	// if (!taskCancel && result != null) {
+	//
+	// feedManager.setmJSON(result);
+	//
+	// List<Video> newVideos = feedManager.getVideoPlaylist();
+	//
+	// // adding new loaded videos to our current video list
+	// for (Video v : newVideos) {
+	// //System.out.println("new id: " + v.getVideoId());
+	// if (needFilter) {
+	// filtering(v);
+	// // System.out.println("need filter!");
+	// } else {
+	// titles.add(v.getTitle());
+	// videolist.add(v);
+	// }
+	// }
+	// try {
+	// // put the next API in the first place of the array
+	// API.add(feedManager.getNextApi());
+	// // nextAPI = feedManager.getNextApi();
+	// if (API.get(API.size()-1) == null) {
+	// // No more videos left
+	// isMoreVideos = false;
+	// }
+	// } catch (JSONException e) {
+	// // TODO Auto-generated catch block
+	// //e.printStackTrace();
+	// }
+	// vaa.notifyDataSetChanged();
+	//
+	// ((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+	//
+	// DisplayView(contentView, retryView, loadingView);
+	//
+	// if (!isMoreVideos) {
+	// ((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+	//
+	// myLoadMoreListView.setOnLoadMoreListener(null);
+	// }
+	//
+	// } else {
+	// handleCancelView();
+	// }
+	// }
+	//
+	// }
 
 	@Override
 	protected void doRequest() {
@@ -641,22 +657,35 @@ public class LoadMore_News extends LoadMore_Base {
 	public void onDestroy() {
 
 		super.onDestroy();
-		
+
 		views.clear();
-//		advPager.removeAllViews();
-//		group.removeAllViews();
-//		advPager = null;
+		// advPager.removeAllViews();
+		// group.removeAllViews();
+		// advPager = null;
 		isEnd = true;
-//		group = null;
-//		myThread.interrupt();
-		
-	    if (handler!= null) {
-	        handler.removeCallbacks(runnable);
-	    }
+		// group = null;
+		// myThread.interrupt();
+
+		if (handler != null) {
+			handler.removeCallbacks(runnable);
+		}
 
 		if (mMatchInfo != null && mMatchInfo.getStatus() == Status.RUNNING)
 			mMatchInfo.cancel(true);
 
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		Toast.makeText(sfa, "You searched for: " + query, Toast.LENGTH_LONG)
+				.show();
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
