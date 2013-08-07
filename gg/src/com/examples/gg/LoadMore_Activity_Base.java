@@ -26,6 +26,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -68,6 +69,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	protected String thumbnailUrl;
 	protected int section = 0;
 	private DisplayImageOptions options;
+	protected AdView adView;
 
 
 	@Override
@@ -78,7 +80,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 
 		// Get loading view
 		fullscreenLoadingView = findViewById(R.id.fullscreen_loading_indicator);
-
+		adView = (AdView) findViewById(R.id.ad);
 		// default no filter for videos
 
 		Intent intent = getIntent();
@@ -362,6 +364,11 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		
+		// Destroy ads when the view is destroyed
+		if(adView != null){
+			adView.destroy();
+		}
 
 		// Log.d("UniversalImageLoader", "It's task root!");
 		imageLoader.clearDiscCache();

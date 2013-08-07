@@ -32,6 +32,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class LoadMore_Base extends SherlockListFragment implements
@@ -67,6 +68,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 	protected ActionBar mActionBar;
 	protected boolean firstTime = true;
 	protected int currentPosition = 0;
+	protected AdView adView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +81,9 @@ public class LoadMore_Base extends SherlockListFragment implements
 		fullscreenLoadingView = sfa
 				.findViewById(R.id.fullscreen_loading_indicator);
 
+		// Get ads view
+		adView = (AdView) sfa.findViewById(R.id.ad);
+		
 		// default no filter for videos
 		needFilter = false;
 
@@ -422,6 +427,10 @@ public class LoadMore_Base extends SherlockListFragment implements
 	public void onDestroy() {
 		super.onDestroy();
 
+		// Destroy ads when the view is destroyed
+		if(adView != null){
+			adView.destroy();
+		}
 //		Log.d("UniversalImageLoader", "cleared!");
 		imageLoader.clearDiscCache();
 		imageLoader.clearMemoryCache();
@@ -508,6 +517,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 		 if (myLoadMoreListView.getHeaderViewsCount() == 0){
 	           View header = (View) sfa.getLayoutInflater().inflate(R.layout.banner, null);
 	           myLoadMoreListView.addHeaderView(header,null,false);
+	           
 	       
 	     }
 	}
