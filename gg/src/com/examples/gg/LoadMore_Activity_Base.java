@@ -169,6 +169,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 		vaa = new VideoArrayAdapter(this, titles, videolist, imageLoader);
 		setListAdapter(vaa);
 
+		forceSet();
 		if (isMoreVideos) {
 
 			// there are more videos in the list
@@ -200,6 +201,12 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 			doRequest();
 		}
 
+	}
+
+	// Used to force set isMoreVideos variable
+	protected void forceSet() {
+		
+		
 	}
 
 	@Override

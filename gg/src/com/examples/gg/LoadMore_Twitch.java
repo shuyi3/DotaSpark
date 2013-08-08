@@ -39,7 +39,7 @@ SearchView.OnQueryTextListener {
 		
 		SearchView searchView = new SearchView(sfa.getSupportActionBar()
 				.getThemedContext());
-		searchView.setQueryHint("Search Youtube");
+		searchView.setQueryHint("Search Twitch.tv");
 		searchView.setOnQueryTextListener(this);
 
 		menu.add(0,20,0,"Search")

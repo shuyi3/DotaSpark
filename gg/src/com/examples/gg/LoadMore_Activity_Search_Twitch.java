@@ -22,7 +22,7 @@ public class LoadMore_Activity_Search_Twitch extends LoadMore_Activity_Search
 	@Override
 	public void Initializing() {
 		// Give a title for the action bar
-		abTitle = "Search";
+		abTitle = "Search Lives";
 		
 		ab.setTitle(abTitle);
 
@@ -30,7 +30,6 @@ public class LoadMore_Activity_Search_Twitch extends LoadMore_Activity_Search
 		Intent i = getIntent();
 		mQuery = i.getStringExtra("query");
 		
-		Log.i("debug: 1", mQuery);
 		    
 		// encoding the query
 		try {
@@ -52,7 +51,7 @@ public class LoadMore_Activity_Search_Twitch extends LoadMore_Activity_Search
 		hasHeader = false;
 		
 		// set text in search field
-		queryHint = "Search Twitch";
+		queryHint = "Search streams";
 
 	}
 
@@ -107,5 +106,11 @@ public class LoadMore_Activity_Search_Twitch extends LoadMore_Activity_Search
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	protected void forceSet() {
+		isMoreVideos = false;
+		
 	}
 }

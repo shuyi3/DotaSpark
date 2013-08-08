@@ -19,7 +19,7 @@ public class LoadMore_Activity_Search_Youtube extends LoadMore_Activity_Search
 	@Override
 	public void Initializing() {
 		// Give a title for the action bar
-		abTitle = "Search";
+		abTitle = "Search Youtube";
 		
 		ab.setTitle(abTitle);
 
@@ -49,7 +49,7 @@ public class LoadMore_Activity_Search_Youtube extends LoadMore_Activity_Search
 		hasHeader = false;
 		
 		// set text in search field
-		queryHint = "Search Youtube";
+		queryHint = "Search videos";
 
 	}
 
