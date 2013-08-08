@@ -44,15 +44,6 @@ public class FeedManager_Playlist extends FeedManager_Base {
 				String updateTime = oneVideo.getJSONObject("updated")
 						.getString("$t");
 
-				if (author.toUpperCase().equals("DOTACINEMA")) {
-					video.setUploaderThumUrl("https://i1.ytimg.com/i/NRQ-DWUXf4UVN9L31Y9f3Q/1.jpg?v=5067cf3b");
-				} else if (author.toUpperCase().equals("NOOBFROMUA")) {
-					video.setUploaderThumUrl("https://i1.ytimg.com/i/fsOfLvadg89Bx8Sv_6WERg/1.jpg?v=515d687f");
-				}
-
-				//System.out.println("playlist: " + thumbUrl);
-				// System.out.println(videoDesc);
-				// store title and link
 
 				video.setTitle(videoTitle);
 				video.setVideoId(videoId);

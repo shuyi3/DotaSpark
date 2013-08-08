@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
@@ -677,8 +678,13 @@ public class LoadMore_News extends LoadMore_Base implements
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		Toast.makeText(sfa, "You searched for: " + query, Toast.LENGTH_LONG)
-				.show();
+//		Toast.makeText(sfa, "You searched for: " + query, Toast.LENGTH_LONG)
+//				.show();
+		
+		// starting search activity
+		Intent intent = new Intent(sfa, LoadMore_Activity_Search_Youtube.class);
+		intent.putExtra("query", query);
+		startActivity(intent);
 		return true;
 	}
 

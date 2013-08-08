@@ -75,7 +75,7 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base implements
 			return true;
 		}
 
-		Log.i("debug", "Im doing ");
+		
 		oneStepRefresh();
 
 		return true;

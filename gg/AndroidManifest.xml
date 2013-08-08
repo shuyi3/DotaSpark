@@ -28,47 +28,6 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
         <activity
-            android:name="com.examples.gg.StartActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.Fragment_Base"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.Youku"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.openanimation"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.ViewPagerExample"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.inside_listview"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.Swipe"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.animation"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.TabActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.examples.gg.VideoPlayer"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name="com.examples.gg.YoutubeActionBarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
@@ -85,9 +44,8 @@
         </activity>
         <activity
             android:name="com.examples.gg.SideMenuActivity"
-            android:label="@string/app_name" 
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -117,6 +75,18 @@
         <activity
             android:name="com.google.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        <activity
+            android:name=".LoadMore_Activity_Search"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".LoadMore_Activity_Search_Youtube"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".LoadMore_Activity_Search_Twitch"
+            android:label="@string/app_name" >
+        </activity>
 
         <receiver
             android:name=".MyBroadcastReceiver"

@@ -45,7 +45,6 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	protected Fragment nextFragment;
 	protected Fragment FragmentAll;
 	protected Fragment FragmentUploader;
-	protected Fragment FragmentPlaylist;
 	protected ArrayList<String> API;
 	protected View view;
 	protected LayoutInflater mInflater;
@@ -70,7 +69,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	protected int section = 0;
 	private DisplayImageOptions options;
 	protected AdView adView;
-
+	protected boolean hasHeader = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,8 +87,8 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 		playlistAPI = intent.getStringExtra("PLAYLIST_API");
 		title = intent.getStringExtra("title");
 		thumbnailUrl = intent.getStringExtra("thumbnail");
-		
-		if (!this.imageLoader.isInited()){
+
+		if (!this.imageLoader.isInited()) {
 			this.imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		}
 		// imageLoader=new ImageLoader(context.getApplicationContext());
@@ -98,14 +97,9 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 				.showStubImage(R.drawable.loading)
 				.showImageForEmptyUri(R.drawable.loading)
 				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
-				.cacheOnDisc(true)
-				.displayer(new RoundedBitmapDisplayer(20))
+				.cacheOnDisc(true).displayer(new RoundedBitmapDisplayer(20))
 				.build();
 
-
-		// set the layout
-		// Initial fragment manager
-		// Get the button view in retry.xml
 		// Get Retry view
 		mRetryView = findViewById(R.id.mRetry);
 
@@ -128,7 +122,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 		API.add(recentAPI);
 		// Set action bar title
 		// System.out.println("My title: "+title);
-		
+
 		ab.setTitle("");
 
 		feedManager = new FeedManager_Base();
@@ -158,17 +152,18 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	public void setListView() {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
-		
-		if (myLoadMoreListView.getHeaderViewsCount() == 0){
-	        View header = (View)getLayoutInflater().inflate(R.layout.titleview, null);
-	        myLoadMoreListView.addHeaderView(header,null,false);
-	        
-	        ImageView channelImage = (ImageView) findViewById(R.id.thumbnail);
-	        TextView channelName = (TextView) findViewById(R.id.name);
-	        
-			imageLoader.displayImage(thumbnailUrl,channelImage, options, null);
+
+		if (myLoadMoreListView.getHeaderViewsCount() == 0 && hasHeader == true) {
+			View header = (View) getLayoutInflater().inflate(
+					R.layout.titleview, null);
+			myLoadMoreListView.addHeaderView(header, null, false);
+
+			ImageView channelImage = (ImageView) findViewById(R.id.thumbnail);
+			TextView channelName = (TextView) findViewById(R.id.name);
+
+			imageLoader.displayImage(thumbnailUrl, channelImage, options, null);
 			channelName.setText(title);
-	        
+
 		}
 
 		vaa = new VideoArrayAdapter(this, titles, videolist, imageLoader);
@@ -238,7 +233,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		Intent i = new Intent(this, YoutubeActionBarActivity.class);
-		i.putExtra("video", videolist.get(position-1));
+		i.putExtra("video", videolist.get(position - 1));
 		startActivity(i);
 
 	}
@@ -273,7 +268,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 							type, contentView, loadingView, retryView);
 					newTask.DisplayView(loadingView, contentView, retryView);
-					newTask.execute(API.get(API.size()-1));
+					newTask.execute(API.get(API.size() - 1));
 					mLoadMoreTasks.add(newTask);
 
 				}
@@ -364,9 +359,9 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
+
 		// Destroy ads when the view is destroyed
-		if(adView != null){
+		if (adView != null) {
 			adView.destroy();
 		}
 

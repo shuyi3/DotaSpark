@@ -12,15 +12,17 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 
-public class LoadMore_Twitch extends LoadMore_Base {
+public class LoadMore_Twitch extends LoadMore_Base implements
+SearchView.OnQueryTextListener {
 	@Override
 	public void Initializing() {
 		// Give a title for the action bar
 		abTitle = "Twitch Dota2 Streams";
 
 		// Give API URLs
-		API.add("https://api.twitch.tv/kraken/streams?game=Dota+2");
+		API.add("https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10");
 
 		// set a feed manager
 		feedManager = new FeedManager_Twitch();
@@ -35,9 +37,23 @@ public class LoadMore_Twitch extends LoadMore_Base {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		
-        menu.add("Refresh")
-        .setIcon(R.drawable.ic_refresh)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		SearchView searchView = new SearchView(sfa.getSupportActionBar()
+				.getThemedContext());
+		searchView.setQueryHint("Search Youtube");
+		searchView.setOnQueryTextListener(this);
+
+		menu.add(0,20,0,"Search")
+				.setIcon(R.drawable.abs__ic_search)
+				.setActionView(searchView)
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+		menu.add(0,0,0,"Refresh")
+				.setIcon(R.drawable.ic_refresh)
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
 	}
 	
@@ -67,6 +83,22 @@ public class LoadMore_Twitch extends LoadMore_Base {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		// start search activity
+		Intent intent = new Intent(sfa, LoadMore_Activity_Search_Twitch.class);
+		intent.putExtra("query", query);
+		startActivity(intent);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }
