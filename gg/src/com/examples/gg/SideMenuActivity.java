@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -79,6 +80,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new EntryItem("Recent Results", "It's in the bag!",
 				R.drawable.list_result));
 
+		// "About" section
+		items.add(new SectionItem("About App"));
+		items.add(new EntryItem("Feedback", "Help us make it better",
+				R.drawable.feedback));
+		
+		
 		eAdapter = new EntryAdapter(this, items);
 
 		// setListAdapter(adapter);
@@ -124,7 +131,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		getSupportMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
 
@@ -227,6 +234,14 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		case 9:
 			// result section
 			ft.replace(R.id.content_frame, new LoadMore_Result());
+			break;
+			
+		case 11:
+			// Feedback
+
+			Intent email = new Intent(Intent.ACTION_VIEW);
+			email.setData(Uri.parse("mailto:dota2tv1@gmail.com?subject=Dota2TV Feedback"));
+			startActivity(email);
 			break;
 		}
 
