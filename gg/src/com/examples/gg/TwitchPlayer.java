@@ -8,12 +8,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -76,7 +80,7 @@ public class TwitchPlayer extends Activity {
 			builder.setMessage("1. This Twitch.tv player requires Flash Player installed\n\n" +
 					"2. Fullscreen Mode: Double press the screen to enter/exit the fullscreen mode (chat box cannot be invoked in Fullscreen mode)\n\n"+
 			"3. Chat box: Press MENU button to turn on/off\n\n"+
-					"Notice: Now users can only see other people's chattings. We are now working on implementing the chatting functionalities");
+					"Notice: Now you can log in and chat with your Twitch.tv account in the Chatbox (and remember your account)");
 
 			// Create the AlertDialog
 			dialog = builder.create();
@@ -97,15 +101,24 @@ public class TwitchPlayer extends Activity {
 		if (getPhoneAndroidSDK() >= 14) {
 			getWindow().setFlags(0x1000000, 0x1000000);
 		}
+				
+		DisplayMetrics metrics = getResources().getDisplayMetrics();
+		float density  = getResources().getDisplayMetrics().density;
+		int height = (int) (metrics.heightPixels/density);
+		int width = (int) (metrics.widthPixels/density);
+		
+		System.out.println("height: "+ height);
+		System.out.println("width: "+ width);
 
 		String chat = "";
 		chat = "<html>" + "<body style=\"margin:0; padding:0\">"
-				+ "<iframe width=\"400\" height=\"500\" scrolling=\"yes\""
-				+ "src=\"http://www.justin.tv/chat/embed?channel=" + video
+				+ "<iframe width=\"300\" height=\""+height+"\" scrolling=\"yes\""
+				+ "src=\"http://www.twitch.tv/chat/embed?channel=" + video
 				+ "\">" + "</iframe>" + "</body>" + "</html>";
 
 		// mWebChat.loadUrl("http://www.justin.tv/chat/embed?channel=beyondthesummit&hide_chat=myspace,facebook&default_chat=jtv");
 		mWebChat.loadData(chat, "text/html", "UTF-8");
+//		mWebChat.loadUrl("http://www.twitch.tv/chat/embed?channel="+video);
 		mWebChat.getSettings().setUserAgentString(ua);
 		// mWebChat.loadUrl("file:///android_asset/chat.html");
 
@@ -167,9 +180,11 @@ public class TwitchPlayer extends Activity {
 		chatSettings.setSupportMultipleWindows(true);
 		chatSettings.setPluginsEnabled(true);
 		chatSettings.setAllowFileAccess(true);
-		// chatSettings.setUseWideViewPort(true);
+//		chatSettings.setUseWideViewPort(true);
 		chatSettings.setLoadWithOverviewMode(true);
-		// chatSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+		chatSettings.setDomStorageEnabled(true);
+		chatSettings.setAllowUniversalAccessFromFileURLs(true);
+//		chatSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 		ua = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
 		chatSettings.setUserAgentString(ua);
 		mWebChat.setWebViewClient(new MyWebViewClient());
@@ -347,6 +362,7 @@ public class TwitchPlayer extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		mWebView.onPause();
 		mWebChat.onPause();
 	}
@@ -354,6 +370,7 @@ public class TwitchPlayer extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		mWebView.onResume();
 		mWebChat.onResume();
 	}
@@ -381,5 +398,6 @@ public class TwitchPlayer extends Activity {
 		}, 2000);
 
 	}
+	
 
 }
