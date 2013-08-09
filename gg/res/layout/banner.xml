@@ -8,6 +8,6 @@
                            android:layout_width="fill_parent"
                            android:layout_height="wrap_content"
                            ads:adSize="BANNER"
-                           ads:adUnitId="a151ff32ae5f744"
+                           ads:adUnitId="ca-app-pub-6718707824713684/9583271057"
                            ads:loadAdOnCreate="true"/>
 </LinearLayout>
