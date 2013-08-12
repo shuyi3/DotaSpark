@@ -183,7 +183,9 @@ public class TwitchPlayer extends Activity {
 //		chatSettings.setUseWideViewPort(true);
 		chatSettings.setLoadWithOverviewMode(true);
 		chatSettings.setDomStorageEnabled(true);
-		chatSettings.setAllowUniversalAccessFromFileURLs(true);
+		if(getPhoneAndroidSDK() >= 16) {
+			chatSettings.setAllowUniversalAccessFromFileURLs(true);
+		}
 //		chatSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 		ua = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
 		chatSettings.setUserAgentString(ua);
