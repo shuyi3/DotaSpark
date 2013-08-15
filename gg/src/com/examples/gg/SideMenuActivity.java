@@ -2,6 +2,7 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -84,6 +85,9 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new SectionItem("About App"));
 		items.add(new EntryItem("Feedback", "Help us make it better",
 				R.drawable.feedback));
+		
+		items.add(new EntryItem("Share", "Tell your friends about it", R.drawable.feedback));
+		items.add(new EntryItem("Rate Dota2TV", "Like it?", R.drawable.feedback));
 		
 		
 		eAdapter = new EntryAdapter(this, items);
@@ -241,9 +245,38 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 			Intent email = new Intent(Intent.ACTION_VIEW);
 			email.setData(Uri.parse("mailto:dota2tv1@gmail.com?subject=Dota2TV Feedback"));
+//			startActivity(Intent.createChooser(email, "Send feedback via.."));
 			startActivity(email);
 			break;
+			
+		case 12:
+			// Share Dota2TV
+			Intent sendIntent = new Intent();
+			sendIntent.setAction(Intent.ACTION_SEND);
+			sendIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.examples.gg");
+			sendIntent.setType("text/plain");
+//			startActivity(Intent.createChooser(sendIntent, "Share Dota2TV to.."));
+			startActivity(sendIntent);
+			break;
+			
+		case 13:
+			// Rate Dota2TV
+		    Intent rateIntent = new Intent(Intent.ACTION_VIEW);
+		    //Try Google play
+		    rateIntent.setData(Uri.parse("market://details?id=com.examples.gg"));
+		    if (tryStartActivity(rateIntent) == false) {
+		        //Market (Google play) app seems not installed, let's try to open a webbrowser
+		        rateIntent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.examples.gg"));
+		        if (tryStartActivity(rateIntent) == false) {
+		            //Well if this also fails, we have run out of options, inform the user.
+		            Toast.makeText(this, "Could not open Google Play, please install Google Play.", Toast.LENGTH_SHORT).show();
+		        }
+		    }
+			
+			break;
 		}
+		
+
 
 		ft.commit();
 	}
@@ -305,5 +338,18 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.get(position).setChecked();
 		eAdapter.notifyDataSetChanged();
 	}
+	
+	private boolean tryStartActivity(Intent aIntent) {
+	    try
+	    {
+	        startActivity(aIntent);
+	        return true;
+	    }
+	    catch (ActivityNotFoundException e)
+	    {
+	        return false;
+	    }
+	}
+	 
 
 }

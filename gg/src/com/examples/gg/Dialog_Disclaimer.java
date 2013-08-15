@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class Dialog_Disclaimer extends DialogPreference{
@@ -38,6 +39,22 @@ public class Dialog_Disclaimer extends DialogPreference{
     		
     		TextView mLink2 = (TextView) view.findViewById(R.id.open_source_link2);
     		mLink2.setVisibility(View.GONE);
+    		
+    		TextView mLink4 = (TextView) view.findViewById(R.id.open_source_link4);
+    		mLink4.setVisibility(View.GONE);
+
+    		
+    		TextView mLink5 = (TextView) view.findViewById(R.id.open_source_link5);
+    		mLink5.setVisibility(View.GONE);
+    		
+    		ViewGroup jsoupLayout = (ViewGroup) view.findViewById(R.id.jsoup_layout);
+    		jsoupLayout.setVisibility(View.GONE);
+    		
+    		ViewGroup imageLayout = (ViewGroup) view.findViewById(R.id.image_layout);
+    		imageLayout.setVisibility(View.GONE);
+    		
+    		
+    		
     		    		
     		TextView license = (TextView) view.findViewById(R.id.apache_license);
     		license.setText(Html.fromHtml(

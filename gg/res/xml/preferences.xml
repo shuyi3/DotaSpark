@@ -16,15 +16,8 @@
 
         <com.examples.gg.Dialog_Libraries
             android:summary="License details for open source software"
-            android:title="Apache 2.0 Licenses" />
+            android:title="Open source licenses" />
 
-        <com.examples.gg.Dialog_Jsoup
-            android:summary="MIT License"
-            android:title="Jsoup License" />
-
-        <com.examples.gg.Dialog_Images
-            android:summary="License details for some images used in this app"
-            android:title="Image License" />
         <com.examples.gg.Dialog_Disclaimer
             android:summary=""
             android:title="Disclaimer" />
