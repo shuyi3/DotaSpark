@@ -1,42 +1,46 @@
 package com.examples.gg;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
-public class LoadMore_UpcomingMatch extends LoadMore_Base {
+public class LoadMore_Gosu_News extends LoadMore_Base {
+	private ArrayList<News> mNews = new ArrayList<News>();
 
-	private Elements links;
-	private ArrayList<Match> matchArray = new ArrayList<Match>();
-	private MatchArrayAdapter mArrayAdatper;
+	private NewsArrayAdapter mArrayAdatper;
 	private getMatchInfo mgetMatchInfo;
 	private int pageNum;
-	private String baseUrl = "http://www.gosugamers.net";
+	private final String baseUri = "http://www.gosugamers.net";
 
 	@Override
 	public void Initializing() {
 		// Inflating view
 
 		// Give a title for the action bar
-		abTitle = "Upcoming Matches";
+		abTitle = "Gosu News";
 
 		// Give API URLs
-		API.add("http://www.gosugamers.net/dota2/gosubet");
+		API.add("http://www.gosugamers.net/dota2/news/archive");
 
 		pageNum = 1;
 
@@ -53,7 +57,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		API.add(firstApi);
 		isMoreVideos = true;
 		pageNum = 1;
-		matchArray.clear();
+		mNews.clear();
 		setListView();
 	}
 
@@ -61,12 +65,11 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 	public void setListView() {
 
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);
+		// myLoadMoreListView.setDivider(null);
 
 		setBannerInHeader();
 
-		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader,
-				false);
+		mArrayAdatper = new NewsArrayAdapter(sfa, mNews);
 		setListAdapter(mArrayAdatper);
 
 		if (isMoreVideos) {
@@ -113,10 +116,16 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		// matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
 		// .show();
 
-		Intent i = new Intent(this.getSherlockActivity(),
-				MatchDetailsActivity.class);
-		i.putExtra("match", matchArray.get(position - 1));
-		startActivity(i);
+		// Intent i = new Intent(this.getSherlockActivity(),
+		// MatchDetailsActivity.class);
+		// i.putExtra("match", matchArray.get(position - 1));
+		// startActivity(i);
+
+		String url = mNews.get(position - 1).getLink();
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		// startActivity(i);
+		startActivity(Intent.createChooser(i, "Choose a browser"));
 
 	}
 
@@ -171,7 +180,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			super.doInBackground(uri[0]);
 
 			if (!taskCancel && responseString != null) {
-				pullResults(responseString);
+				pullNews(responseString);
 			} else {
 				handleCancelView();
 			}
@@ -179,74 +188,50 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			return responseString;
 		}
 
-		private void pullResults(String responseString) {
+		private void pullNews(String responseString) {
 			Document doc = Jsoup.parse(responseString);
+			// get all links
+			Elements links = new Elements();
+			links = doc.select("tr:has(td)");
+			if (!links.isEmpty()) {
+				String href = "";
+				String newsTitle = "";
+				String date = "";
+				for (Element link : links) {
 
-			Element box_2 = null;
-			box_2 = doc.select("div.box").get(1);
-			if (box_2 != null) {
+					// get the value from href attribute
+					href = link.select("a").first().attr("href");
+					newsTitle = link.select("a").first().text();
+					date = link.select("td").get(1).text();
+					if (href.contains("news")) {
 
-				if (pageNum == 1) {
-					Element box_1 = doc.select("div.box").first();
-					links = box_1.select("tr:has(td.opp)");
-					Elements upcoming_links = box_2.select("tr:has(td.opp)");
-					links.addAll(upcoming_links);
-				} else {
-					links = box_2.select("tr:has(td.opp)");
-				}
-
-				Element paginator = box_2.select("div.paginator").first();
-
-				if (paginator == null) {
-					isMoreVideos = false;
-				} else {
-					if (paginator.select("a").last().hasAttr("class")) {
-						isMoreVideos = false;
-					} else {
-						isMoreVideos = true;
-						pageNum++;
-						API.add("http://www.gosugamers.net/dota2/gosubet?u-page="
-								+ pageNum);
+						News aNews = new News();
+						aNews.setLink(baseUri + href);
+						aNews.setTitle(newsTitle);
+						aNews.setDate(processDate(date));
+						mNews.add(aNews);
 					}
 				}
 
-				// Setting layout
-
-				for (Element link : links) {
-
-					Match newMatch = new Match();
-
-					Element opp_1 = link.select("td.opp").first();
-					Element opp_2 = link.select("td.opp").get(1);
-
-					newMatch.setTeamName1(opp_1.select("span").first().text()
-							.trim());
-					newMatch.setTeamName2(opp_2.select("span").first().text()
-							.trim());
-
-					newMatch.setTeamIcon1(baseUrl
-							+ opp_1.select("img").attr("src"));
-					newMatch.setTeamIcon2(baseUrl
-							+ opp_2.select("img").attr("src"));
-
-					newMatch.setTime(link.select("td").get(3).text().trim());
-
-					newMatch.setGosuLink(baseUrl
-							+ opp_1.select("a[href]").attr("href"));
-
-					if (newMatch.getTime().toLowerCase().matches("live")) {
-						newMatch.setMatchStatus(Match.LIVE);
-					} else
-						newMatch.setMatchStatus(Match.NOTSTARTED);
-
-					matchArray.add(newMatch);
-
-				}
-
-			} else {
-				handleCancelView();
 			}
 
+			Elements pages = new Elements();
+			pages = doc.select("div.pages");
+			if (pages != null) {
+				Elements page_indicators = pages.select("a");
+				if (page_indicators != null) {
+					isMoreVideos = false;
+
+					if ((page_indicators.size() > 7) || (pageNum == 1)) {
+						isMoreVideos = true;
+						pageNum++;
+						API.add("http://www.gosugamers.net/dota2/news/archive?page="
+								+ pageNum);
+					} else {
+						isMoreVideos = false;
+					}
+				}
+			}
 		}
 
 		@Override
@@ -255,6 +240,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
+
 				mArrayAdatper.notifyDataSetChanged();
 
 				// Call onLoadMoreComplete when the LoadMore task has
@@ -276,7 +262,6 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			}
 
 		}
-
 	}
 
 	@Override
@@ -287,6 +272,28 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		if (mgetMatchInfo != null
 				&& mgetMatchInfo.getStatus() == Status.RUNNING)
 			mgetMatchInfo.cancel(true);
+
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	public String processDate(String s) {
+
+		Date date = new Date();
+		// Calendar c = new Calendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy HH:mm");
+		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
+
+		try {
+			date = sdf.parse(s);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+		}
+
+		sdf = new SimpleDateFormat("MMMM d");
+		sdf.setTimeZone(TimeZone.getDefault());
+		// date.setHours(Integer.parseInt(hourInString));
+		return sdf.format(date);
 
 	}
 

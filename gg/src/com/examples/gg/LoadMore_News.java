@@ -228,7 +228,7 @@ public class LoadMore_News extends LoadMore_Base implements
 			@Override
 			public void onClick(View v) {
 				// Set the drawer indicator in position "Upcoming Matches"
-				sma.setDrawerIndicator(8);
+				sma.setDrawerIndicator(9);
 
 				// Replacing the current fragment
 				FragmentTransaction ft = getFragmentManager()
@@ -279,7 +279,7 @@ public class LoadMore_News extends LoadMore_Base implements
 			public void onClick(View v) {
 
 				// Set the drawer indicator in position "Recent Result"
-				sma.setDrawerIndicator(9);
+				sma.setDrawerIndicator(10);
 
 				FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
@@ -346,7 +346,7 @@ public class LoadMore_News extends LoadMore_Base implements
 				}
 			});
 
-			handler.postDelayed(runnable, 5000);
+			handler.postDelayed(runnable, 10000);
 
 			// myThread = new Thread(new Runnable() {
 			//
@@ -390,7 +390,7 @@ public class LoadMore_News extends LoadMore_Base implements
 			}
 			advPager.setCurrentItem(position, true);
 			// refreshFragment();
-			handler.postDelayed(runnable, 5000);
+			handler.postDelayed(runnable, 10000);
 		}
 	};
 
@@ -645,6 +645,16 @@ public class LoadMore_News extends LoadMore_Base implements
 	@Override
 	protected void doRequest() {
 		// TODO Auto-generated method stub
+		
+		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent,
+				pagerLoading, pagerRetry);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+		} else {
+			mMatchInfo.execute(url);
+		}
+		
 		for (String s : API) {
 			LoadMoreTask newTask = new LoadMoreTask(LoadMoreTask.INITTASK,
 					myLoadMoreListView, listLoading, listRetry);
@@ -658,14 +668,7 @@ public class LoadMore_News extends LoadMore_Base implements
 
 		}
 
-		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent,
-				pagerLoading, pagerRetry);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			mMatchInfo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-		} else {
-			mMatchInfo.execute(url);
-		}
 	}
 
 	@SuppressWarnings("deprecation")

@@ -2,6 +2,7 @@ package com.examples.gg;
 
 import java.util.ArrayList;
 
+import android.R.color;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.examples.gg.R.color;
 
 public class EntryAdapter extends ArrayAdapter<Item> {
 
@@ -64,8 +63,8 @@ public class EntryAdapter extends ArrayAdapter<Item> {
 
 				if (ei.isChecked()) {
 
-					v.setBackgroundResource(color.grey);
-					header.setImageResource(color.red);
+					v.setBackgroundResource(R.color.grey);
+					header.setImageResource(R.color.red);
 
 				}
 			}

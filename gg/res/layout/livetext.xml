@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="AAA vs BBB "
+            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -54,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="AAA vs BBB "
+            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -81,6 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="AAA vs BBB "
+            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
