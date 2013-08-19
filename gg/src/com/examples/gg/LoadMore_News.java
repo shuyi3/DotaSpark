@@ -133,14 +133,14 @@ public class LoadMore_News extends LoadMore_Base implements
 		searchView.setQueryHint("Search Youtube");
 		searchView.setOnQueryTextListener(this);
 
-		menu.add(0,20,0,"Search")
+		menu.add(0, 20, 0, "Search")
 				.setIcon(R.drawable.abs__ic_search)
 				.setActionView(searchView)
 				.setShowAsAction(
 						MenuItem.SHOW_AS_ACTION_IF_ROOM
 								| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
-		menu.add(0,0,0,"Refresh")
+		menu.add(0, 0, 0, "Refresh")
 				.setIcon(R.drawable.ic_refresh)
 				.setShowAsAction(
 						MenuItem.SHOW_AS_ACTION_IF_ROOM
@@ -522,41 +522,56 @@ public class LoadMore_News extends LoadMore_Base implements
 		}
 
 		@Override
+		public String doInBackground(String... uri) {
+
+			super.doInBackground(uri[0]);
+
+			if (!taskCancel && responseString != null) {
+				pullMatch(responseString);
+			} else {
+				handleCancelView();
+			}
+			// pullNews();
+			return responseString;
+		}
+
+		private void pullMatch(String responseString) {
+			Document doc = Jsoup.parse(responseString);
+			links = doc.select("tr:has(td.opp)");
+			if (!links.isEmpty()) {
+
+				for (Element link : links) {
+
+					String match;
+
+					match = link.select("span").first().text().trim() + " vs "
+							+ link.select("span").get(2).text().trim() + " ";
+					if (link.getElementsByClass("results").isEmpty()) {
+						match += link.select("td").get(3).text().trim();
+						matches.add(match);
+					} else {
+						match += link.select("span.hidden").first().text()
+								.trim();
+						results.add(match);
+					}
+				}
+
+			} else {
+				handleCancelView();
+			}
+		}
+
+		@Override
 		protected void onPostExecute(String result) {
 
 			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
-				Document doc = Jsoup.parse(result);
-				links = doc.select("tr:has(td.opp)");
+				initViewPager();
 
-				if (!links.isEmpty()) {
+				DisplayView(contentView, retryView, loadingView);
 
-					for (Element link : links) {
-
-						String match;
-
-						match = link.select("span").first().text().trim()
-								+ " vs "
-								+ link.select("span").get(2).text().trim()
-								+ " ";
-						if (link.getElementsByClass("results").isEmpty()) {
-							match += link.select("td").get(3).text().trim();
-							matches.add(match);
-						} else {
-							match += link.select("span.hidden").first().text()
-									.trim();
-							results.add(match);
-						}
-					}
-
-					initViewPager();
-
-					DisplayView(contentView, retryView, loadingView);
-				} else {
-					handleCancelView();
-				}
 			} else {
 				handleCancelView();
 			}
@@ -678,9 +693,9 @@ public class LoadMore_News extends LoadMore_Base implements
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-//		Toast.makeText(sfa, "You searched for: " + query, Toast.LENGTH_LONG)
-//				.show();
-		
+		// Toast.makeText(sfa, "You searched for: " + query, Toast.LENGTH_LONG)
+		// .show();
+
 		// starting search activity
 		Intent intent = new Intent(sfa, LoadMore_Activity_Search_Youtube.class);
 		intent.putExtra("query", query);
