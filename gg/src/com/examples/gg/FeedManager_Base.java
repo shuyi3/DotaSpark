@@ -34,7 +34,7 @@ public class FeedManager_Base {
 				processJSON(mJSON);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 		ArrayList<Video> videos = new ArrayList<Video>();
@@ -100,7 +100,7 @@ public class FeedManager_Base {
 
 		} catch (JSONException ex) {
 
-			//ex.printStackTrace();
+			// ex.printStackTrace();
 		}
 
 		return videos;
@@ -171,7 +171,7 @@ public class FeedManager_Base {
 			d2 = dateFormat.parse(dateInString);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		// System.out.println("Date 1: " + dateFormat.format(d1));
 		// System.out.println("Date 2: " + dateFormat.format(d2));
@@ -188,6 +188,7 @@ public class FeedManager_Base {
 		long diffMin = (diff / (60L * 1000L)) % 60L;
 		long diffHour = (diff / (60L * 60L * 1000L)) % 24L;
 		long diffDay = (diff / (24L * 60L * 60L * 1000L)) % 30L;
+		long diffWeek = (diff / (7L * 24L * 60L * 60L * 1000L)) % 7L;
 		long diffMonth = (diff / (30L * 24L * 60L * 60L * 1000L)) % 12L;
 		long diffYear = (diff / (12L * 30L * 24L * 60L * 60L * 1000L));
 
@@ -202,29 +203,37 @@ public class FeedManager_Base {
 			} else if (diffMonth > 1) {
 				return diffMonth + " months ago";
 			} else {
-				// less than 1 month
-				if (diffDay == 1) {
-					return diffDay + " day ago";
-				} else if (diffDay > 1) {
-					return diffDay + " days ago";
+				// less than 1 week
+				if (diffWeek == 1) {
+					return diffWeek + " week ago";
+				} else if (diffWeek > 1) {
+					return diffWeek + " weeks ago";
 				} else {
-					// less than 1 day
-					if (diffHour == 1) {
-						return diffHour + " hour ago";
-					} else if (diffHour > 1) {
-						return diffHour + " hours ago";
+					// less than 1 month
+					if (diffDay == 1) {
+						return diffDay + " day ago";
+					} else if (diffDay > 1) {
+						return diffDay + " days ago";
 					} else {
-						// less than 1 hour
-						if (diffMin == 1) {
-							return diffMin + " minute ago";
-						} else if (diffMin > 1) {
-							return diffMin + " minutes ago";
+
+						// less than 1 day
+						if (diffHour == 1) {
+							return diffHour + " hour ago";
+						} else if (diffHour > 1) {
+							return diffHour + " hours ago";
 						} else {
-							// less than 1 minute
-							if (diffSec == 0 || diffSec == 1) {
-								return diffSec + " second ago";
-							} else if (diffSec > 1) {
-								return diffSec + " seconds ago";
+							// less than 1 hour
+							if (diffMin == 1) {
+								return diffMin + " minute ago";
+							} else if (diffMin > 1) {
+								return diffMin + " minutes ago";
+							} else {
+								// less than 1 minute
+								if (diffSec == 0 || diffSec == 1) {
+									return diffSec + " second ago";
+								} else if (diffSec > 1) {
+									return diffSec + " seconds ago";
+								}
 							}
 						}
 					}

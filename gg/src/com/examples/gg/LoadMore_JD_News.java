@@ -1,6 +1,5 @@
 package com.examples.gg;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,14 +28,13 @@ import com.actionbarsherlock.app.ActionBar;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
-
-public class LoadMore_Gosu_News extends LoadMore_Base {
+public class LoadMore_JD_News extends LoadMore_Base {
 	private ArrayList<News> mNews = new ArrayList<News>();
 
 	private NewsArrayAdapter mArrayAdatper;
 	private getMatchInfo mgetMatchInfo;
 	private int pageNum;
-	private final String baseUri = "http://www.gosugamers.net";
+	private final String baseUri = "http://www.joindota.com/en/news/archive";
 
 	@Override
 	public void Initializing() {
@@ -45,7 +44,7 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		abTitle = "News";
 
 		// Give API URLs
-		API.add("http://www.gosugamers.net/dota2/news/archive");
+		API.add("http://www.joindota.com/en/news/archive");
 
 		pageNum = 1;
 
@@ -53,7 +52,9 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		setHasOptionsMenu(true);
 		setOptionMenu(true, true);
 
+		currentPosition = 1;
 	}
+
 	@Override
 	public void setDropdown() {
 		if (hasDropDown) {
@@ -101,7 +102,6 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 			ft.replace(R.id.content_frame, new LoadMore_JD_News());
 			break;
 
-
 		}
 
 		ft.commit();
@@ -109,7 +109,7 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
+
 	@Override
 	public void refreshFragment() {
 		String firstApi = API.get(0);
@@ -250,46 +250,40 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 			Document doc = Jsoup.parse(responseString);
 			// get all links
 			Elements links = new Elements();
-			links = doc.select("tr:has(td)");
+			links = doc.select("a.list_item");
 			if (!links.isEmpty()) {
 				String href = "";
 				String newsTitle = "";
 				String date = "";
 				for (Element link : links) {
 
-					// get the value from href attribute
-					href = link.select("a").first().attr("href");
-					newsTitle = link.select("a").first().text();
-					date = link.select("td").get(1).text();
-					if (href.contains("news")) {
+					href = link.attr("href");
+					date = link.select("div.sub").first().text();
+					newsTitle = link.select("div.sub").get(1).text();
 
-						News aNews = new News();
-						aNews.setLink(baseUri + href);
-						aNews.setTitle(newsTitle);
-						aNews.setDate(processDate(date));
-						mNews.add(aNews);
-					}
+					News aNews = new News();
+					aNews.setLink(href);
+					aNews.setDate(processDate(date));
+					aNews.setTitle(newsTitle);
+					mNews.add(aNews);
 				}
 
 			}
 
 			Elements pages = new Elements();
-			pages = doc.select("div.pages");
+			pages = doc.select("td[align=center]");
 			if (pages != null) {
-				Elements page_indicators = pages.select("a");
-				if (page_indicators != null) {
+				Elements tds = new Elements();
+				tds = pages.select("div");
+				if (tds.size() > 5 || pageNum == 1) {
+					isMoreVideos = true;
+					pageNum++;
+					API.add(baseUri + "/&archiv_page=" + pageNum);
+				} else {
 					isMoreVideos = false;
-
-					if ((page_indicators.size() > 7) || (pageNum == 1)) {
-						isMoreVideos = true;
-						pageNum++;
-						API.add("http://www.gosugamers.net/dota2/news/archive?page="
-								+ pageNum);
-					} else {
-						isMoreVideos = false;
-					}
 				}
-			}else{
+
+			} else {
 				isMoreVideos = false;
 			}
 		}
@@ -340,25 +334,20 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		Date today = new Date();
 		Date pastDate = new Date();
 		// Calendar c = new Calendar();
-		SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
 
 		try {
 			pastDate = sdf.parse(s);
-//			today = sdf.parse(sdf.format(today));
+
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
 
-//		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		sdf.setTimeZone(TimeZone.getDefault());
-		
-
-		return calculateDateDifference(today,pastDate);
+		return calculateDateDifference(today, pastDate);
 
 	}
-	
+
 	private String calculateDateDifference(Date today, Date past) {
 		long diff = today.getTime() - past.getTime();
 		// System.out.println("diff: " + diff);

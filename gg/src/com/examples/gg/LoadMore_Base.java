@@ -35,6 +35,7 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+
 public class LoadMore_Base extends SherlockListFragment implements
 		ActionBar.OnNavigationListener {
 	protected LoadMoreListView myLoadMoreListView;
@@ -131,7 +132,14 @@ public class LoadMore_Base extends SherlockListFragment implements
 		// setListAdapter(vaa);
 
 		mActionBar = sfa.getSupportActionBar();
+		setDropdown();
 
+		return view;
+
+	}
+	
+	
+	public void setDropdown(){
 		if (hasDropDown) {
 
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -153,11 +161,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 		}
-
-		return view;
-
 	}
-
 	public void setOptionMenu(boolean hasRefresh, boolean hasDropDown) {
 		this.hasRefresh = hasRefresh;
 		this.hasDropDown = hasDropDown;
