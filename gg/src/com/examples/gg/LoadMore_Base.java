@@ -128,8 +128,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 		else if (API.get(0) != null)
 			isMoreVideos = true;
 
-		// set the adapter
-		// setListAdapter(vaa);
+		forceNoMore();
 
 		mActionBar = sfa.getSupportActionBar();
 		setDropdown();
@@ -139,6 +138,11 @@ public class LoadMore_Base extends SherlockListFragment implements
 	}
 	
 	
+	protected void forceNoMore() {
+
+	}
+
+
 	public void setDropdown(){
 		if (hasDropDown) {
 

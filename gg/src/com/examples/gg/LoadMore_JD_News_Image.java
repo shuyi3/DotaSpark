@@ -1,24 +1,18 @@
 package com.examples.gg;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,13 +22,13 @@ import com.actionbarsherlock.app.ActionBar;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 
-public class LoadMore_JD_News extends LoadMore_Base {
+public class LoadMore_JD_News_Image extends LoadMore_Base {
 	private ArrayList<News> mNews = new ArrayList<News>();
 
-	private NewsArrayAdapter mArrayAdatper;
+	private NewsArrayAdapter_Official mArrayAdatper;
 	private getMatchInfo mgetMatchInfo;
 	private int pageNum;
-	private final String baseUri = "http://www.joindota.com/en/news/archive";
+	private final String baseUri = "http://beta.na.leagueoflegends.com";
 
 	@Override
 	public void Initializing() {
@@ -44,24 +38,30 @@ public class LoadMore_JD_News extends LoadMore_Base {
 		abTitle = "Latest News";
 
 		// Give API URLs
-		API.add("http://www.joindota.com/en/news/archive");
+		API.add("http://www.joindota.com/en/start");
 
-		pageNum = 1;
+		pageNum = 0;
 
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, true);
 
-		currentPosition = 1;
-	}
+		currentPosition = 0;
 
+	}
+	
+	@Override
+	protected void forceNoMore() {
+		isMoreVideos = false;
+	}
+	
 	@Override
 	public void setDropdown() {
 		if (hasDropDown) {
 
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-			final String[] catagory = { "GG", "JD" };
+			final String[] catagory = { "JD", "GG" };
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 					mActionBar.getThemedContext(),
@@ -94,12 +94,12 @@ public class LoadMore_JD_News extends LoadMore_Base {
 
 		case 0:
 			// Menu option 1
-			ft.replace(R.id.content_frame, new LoadMore_Gosu_News());
+			ft.replace(R.id.content_frame, new LoadMore_JD_News_Image());
 			break;
 
 		case 1:
 			// Menu option 2
-			ft.replace(R.id.content_frame, new LoadMore_JD_News());
+			ft.replace(R.id.content_frame, new LoadMore_Gosu_News());
 			break;
 
 		}
@@ -115,8 +115,9 @@ public class LoadMore_JD_News extends LoadMore_Base {
 		String firstApi = API.get(0);
 		API.clear();
 		API.add(firstApi);
-		isMoreVideos = true;
-		pageNum = 1;
+		isMoreVideos = false;
+		pageNum = 0;
+		titles.clear();
 		mNews.clear();
 		setListView();
 	}
@@ -129,7 +130,8 @@ public class LoadMore_JD_News extends LoadMore_Base {
 
 		setBannerInHeader();
 
-		mArrayAdatper = new NewsArrayAdapter(sfa, mNews);
+		mArrayAdatper = new NewsArrayAdapter_Official(sfa, titles, mNews,
+				imageLoader);
 		setListAdapter(mArrayAdatper);
 
 		if (isMoreVideos) {
@@ -184,8 +186,8 @@ public class LoadMore_JD_News extends LoadMore_Base {
 		String url = mNews.get(position - 1).getLink();
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
-		// startActivity(i);
-		startActivity(Intent.createChooser(i, "Choose a browser"));
+		startActivity(i);
+		// startActivity(Intent.createChooser(i, "Choose a browser"));
 
 	}
 
@@ -242,7 +244,7 @@ public class LoadMore_JD_News extends LoadMore_Base {
 			if (!taskCancel && responseString != null) {
 				pullNews(responseString);
 			}
-
+			// pullNews();
 			return responseString;
 		}
 
@@ -250,41 +252,35 @@ public class LoadMore_JD_News extends LoadMore_Base {
 			Document doc = Jsoup.parse(responseString);
 			// get all links
 			Elements links = new Elements();
-			links = doc.select("a.list_item");
+			links = doc.select("div.news_item");
+
 			if (!links.isEmpty()) {
-				String href = "";
+				String imageUri = "";
+				String newsUri = "";
 				String newsTitle = "";
+				String newsSubtitle = "";
 				String date = "";
+				System.out.println("Number of News: " + links.size());
+
 				for (Element link : links) {
-
-					href = link.attr("href");
-					date = link.select("div.sub").first().text();
-					newsTitle = link.select("div.sub").get(1).text();
-
+					imageUri = link.select("img").first().attr("src");
+					newsUri = link.select("h2.news_title_new").first()
+							.select("a").first().attr("href");
+					newsTitle = link.select("h2.news_title_new").first()
+							.select("a").first().text();
+					newsSubtitle = link.select("div.news_teaser_text.image")
+							.first().text();
+					date = link.select("span.maketip").first().text();
 					News aNews = new News();
-					aNews.setLink(href);
-					aNews.setDate(processDate(date));
+					aNews.setImageUri(imageUri);
+					aNews.setLink(newsUri);
 					aNews.setTitle(newsTitle);
+					aNews.setSubTitle(newsSubtitle);
+					aNews.setDate(date);
+					
+					titles.add(newsTitle);
 					mNews.add(aNews);
 				}
-
-			}
-
-			Elements pages = new Elements();
-			pages = doc.select("td[align=center]");
-			if (pages != null) {
-				Elements tds = new Elements();
-				tds = pages.select("div");
-				if (tds.size() > 5 || pageNum == 1) {
-					isMoreVideos = true;
-					pageNum++;
-					API.add(baseUri + "/&archiv_page=" + pageNum);
-				} else {
-					isMoreVideos = false;
-				}
-
-			} else {
-				isMoreVideos = false;
 			}
 		}
 
@@ -297,8 +293,7 @@ public class LoadMore_JD_News extends LoadMore_Base {
 
 				mArrayAdatper.notifyDataSetChanged();
 
-				// Call onLoadMoreComplete when the LoadMore task has
-				// finished
+				// Call onLoadMoreComplete when the LoadMore task has finished
 				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
 
 				// loading done
@@ -329,86 +324,5 @@ public class LoadMore_JD_News extends LoadMore_Base {
 
 	}
 
-	@SuppressLint("SimpleDateFormat")
-	public String processDate(String s) {
-		Date today = new Date();
-		Date pastDate = new Date();
-		// Calendar c = new Calendar();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
-
-		try {
-			pastDate = sdf.parse(s);
-
-		} catch (ParseException e) {
-			// e.printStackTrace();
-		}
-
-		return calculateDateDifference(today, pastDate);
-
-	}
-
-	private String calculateDateDifference(Date today, Date past) {
-		long diff = today.getTime() - past.getTime();
-		// System.out.println("diff: " + diff);
-		long diffSec = (diff / 1000L) % 60L;
-		long diffMin = (diff / (60L * 1000L)) % 60L;
-		long diffHour = (diff / (60L * 60L * 1000L)) % 24L;
-		long diffDay = (diff / (24L * 60L * 60L * 1000L)) % 30L;
-		long diffWeek = (diff / (7L * 24L * 60L * 60L * 1000L)) % 7L;
-		long diffMonth = (diff / (30L * 24L * 60L * 60L * 1000L)) % 12L;
-		long diffYear = (diff / (12L * 30L * 24L * 60L * 60L * 1000L));
-
-		if (diffYear == 1) {
-			return diffYear + " year ago";
-		} else if (diffYear > 1) {
-			return diffYear + " years ago";
-		} else {
-			// less than 1 year
-			if (diffMonth == 1) {
-				return diffMonth + " month ago";
-			} else if (diffMonth > 1) {
-				return diffMonth + " months ago";
-			} else {
-				// less than 1 week
-				if (diffWeek == 1) {
-					return diffWeek + " week ago";
-				} else if (diffWeek > 1) {
-					return diffWeek + " weeks ago";
-				} else {
-					// less than 1 month
-					if (diffDay == 1) {
-						return diffDay + " day ago";
-					} else if (diffDay > 1) {
-						return diffDay + " days ago";
-					} else {
-
-						// less than 1 day
-						if (diffHour == 1) {
-							return diffHour + " hour ago";
-						} else if (diffHour > 1) {
-							return diffHour + " hours ago";
-						} else {
-							// less than 1 hour
-							if (diffMin == 1) {
-								return diffMin + " minute ago";
-							} else if (diffMin > 1) {
-								return diffMin + " minutes ago";
-							} else {
-								// less than 1 minute
-								if (diffSec == 0 || diffSec == 1) {
-									return diffSec + " second ago";
-								} else if (diffSec > 1) {
-									return diffSec + " seconds ago";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return "";
-	}
 
 }

@@ -42,7 +42,7 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		// Inflating view
 
 		// Give a title for the action bar
-		abTitle = "News";
+		abTitle = "Latest News";
 
 		// Give API URLs
 		API.add("http://www.gosugamers.net/dota2/news/archive");
@@ -52,6 +52,8 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		// Show menu
 		setHasOptionsMenu(true);
 		setOptionMenu(true, true);
+		
+		currentPosition = 1;
 
 	}
 	@Override
@@ -60,7 +62,7 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-			final String[] catagory = { "GG", "JD" };
+			final String[] catagory = { "JD", "GG" };
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 					mActionBar.getThemedContext(),
@@ -93,12 +95,12 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 
 		case 0:
 			// Menu option 1
-			ft.replace(R.id.content_frame, new LoadMore_Gosu_News());
+			ft.replace(R.id.content_frame, new LoadMore_JD_News_Image());
 			break;
 
 		case 1:
 			// Menu option 2
-			ft.replace(R.id.content_frame, new LoadMore_JD_News());
+			ft.replace(R.id.content_frame, new LoadMore_Gosu_News());
 			break;
 
 
@@ -184,8 +186,8 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 		String url = mNews.get(position - 1).getLink();
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
-		// startActivity(i);
-		startActivity(Intent.createChooser(i, "Choose a browser"));
+		startActivity(i);
+//		startActivity(Intent.createChooser(i, "Choose a browser"));
 
 	}
 

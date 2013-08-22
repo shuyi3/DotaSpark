@@ -67,7 +67,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new EntryItem("What's new", "Fresh meat!",
 				R.drawable.fresh_meat));
 		
-		items.add(new EntryItem("Latest News", "From GG, JD",
+		items.add(new EntryItem("Latest News", "From JoinDota, Gosugames",
 				R.drawable.fresh_meat));
 
 		items.add(new SectionItem("Latest Videos"));
@@ -223,7 +223,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			
 		case 2:
 			// Gosu news
-			ft.replace(R.id.content_frame, new LoadMore_Gosu_News());
+			ft.replace(R.id.content_frame, new LoadMore_JD_News_Image());
 			break;
 
 		case 4:
