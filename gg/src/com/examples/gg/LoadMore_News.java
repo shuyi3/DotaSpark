@@ -159,14 +159,12 @@ public class LoadMore_News extends LoadMore_Base implements
 		listRetry = sfa.findViewById(R.id.ListViewRetryView);
 
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);		
-		
+		myLoadMoreListView.setDivider(null);
+
 		setBannerInHeader();
-		
+
 		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
 		setListAdapter(vaa);
-		
-
 
 		// Why check internet here?
 		// if (ic.checkConnection(sfa)) {
@@ -183,7 +181,7 @@ public class LoadMore_News extends LoadMore_Base implements
 						LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 								LoadMoreTask.LOADMORETASK, myLoadMoreListView,
 								listLoading, listRetry);
-						newTask.execute(API.get(API.size()-1));
+						newTask.execute(API.get(API.size() - 1));
 						mLoadMoreTasks.add(newTask);
 					}
 
@@ -570,12 +568,16 @@ public class LoadMore_News extends LoadMore_Base implements
 			super.doInBackground(uri[0]);
 
 			if (!taskCancel && responseString != null) {
-				pullMatch(responseString);
+				try {
+					pull(responseString);
+				} catch (Exception e) {
+
+				}
 			}
 			return responseString;
 		}
 
-		private void pullMatch(String responseString) {
+		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
 			links = doc.select("tr:has(td.opp)");
 			if (!links.isEmpty()) {
@@ -608,8 +610,11 @@ public class LoadMore_News extends LoadMore_Base implements
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
-				initViewPager();
+				try {
+					initViewPager();
+				} catch (Exception e) {
 
+				}
 				DisplayView(contentView, retryView, loadingView);
 
 			} else {
@@ -685,7 +690,7 @@ public class LoadMore_News extends LoadMore_Base implements
 	@Override
 	protected void doRequest() {
 		// TODO Auto-generated method stub
-		
+
 		mMatchInfo = new getMatchInfo(getMatchInfo.INITTASK, pagerContent,
 				pagerLoading, pagerRetry);
 
@@ -694,7 +699,7 @@ public class LoadMore_News extends LoadMore_Base implements
 		} else {
 			mMatchInfo.execute(url);
 		}
-		
+
 		for (String s : API) {
 			LoadMoreTask newTask = new LoadMoreTask(LoadMoreTask.INITTASK,
 					myLoadMoreListView, listLoading, listRetry);
@@ -707,7 +712,6 @@ public class LoadMore_News extends LoadMore_Base implements
 			mLoadMoreTasks.add(newTask);
 
 		}
-
 
 	}
 

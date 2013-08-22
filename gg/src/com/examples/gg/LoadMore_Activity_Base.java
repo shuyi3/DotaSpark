@@ -205,8 +205,7 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 
 	// Used to force set isMoreVideos variable
 	protected void forceSet() {
-		
-		
+
 	}
 
 	@Override
@@ -292,48 +291,52 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
-
-				feedManager.setmJSON(result);
-
-				List<Video> newVideos = feedManager.getVideoPlaylist();
-
-				// adding new loaded videos to our current video list
-				for (Video v : newVideos) {
-					// System.out.println("new id: " + v.getVideoId());
-					if (needFilter) {
-						filtering(v);
-						// System.out.println("need filter!");
-					} else {
-						titles.add(v.getTitle());
-						videos.add(v.getVideoId());
-						videolist.add(v);
-					}
-				}
 				try {
-					// put the next API in the first place of the array
-					API.add(feedManager.getNextApi());
-					// nextAPI = feedManager.getNextApi();
-					if (API.get(API.size() - 1) == null) {
-						// No more videos left
-						isMoreVideos = false;
+					feedManager.setmJSON(result);
+
+					List<Video> newVideos = feedManager.getVideoPlaylist();
+
+					// adding new loaded videos to our current video list
+					for (Video v : newVideos) {
+						// System.out.println("new id: " + v.getVideoId());
+						if (needFilter) {
+							filtering(v);
+							// System.out.println("need filter!");
+						} else {
+							titles.add(v.getTitle());
+							videos.add(v.getVideoId());
+							videolist.add(v);
+						}
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
-				}
-				vaa.notifyDataSetChanged();
+					try {
+						// put the next API in the first place of the array
+						API.add(feedManager.getNextApi());
+						// nextAPI = feedManager.getNextApi();
+						if (API.get(API.size() - 1) == null) {
+							// No more videos left
+							isMoreVideos = false;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						// e.printStackTrace();
+					}
+					vaa.notifyDataSetChanged();
 
-				// Call onLoadMoreComplete when the LoadMore task, has
-				// finished
-				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
-
-				// loading done
-				DisplayView(contentView, retryView, loadingView);
-				if (!isMoreVideos) {
-					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
+					// Call onLoadMoreComplete when the LoadMore task, has
+					// finished
 					((LoadMoreListView) myLoadMoreListView)
-							.setOnLoadMoreListener(null);
+							.onLoadMoreComplete();
+
+					// loading done
+					DisplayView(contentView, retryView, loadingView);
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						((LoadMoreListView) myLoadMoreListView)
+								.setOnLoadMoreListener(null);
+					}
+				} catch (Exception e) {
+
 				}
 
 			} else {

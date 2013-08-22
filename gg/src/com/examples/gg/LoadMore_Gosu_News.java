@@ -242,13 +242,17 @@ public class LoadMore_Gosu_News extends LoadMore_Base {
 			super.doInBackground(uri[0]);
 
 			if (!taskCancel && responseString != null) {
-				pullNews(responseString);
+				try {
+					pull(responseString);
+				} catch (Exception e) {
+
+				}
 			}
 
 			return responseString;
 		}
 
-		private void pullNews(String responseString) {
+		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
 			// get all links
 			Elements links = new Elements();

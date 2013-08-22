@@ -10,7 +10,7 @@
 
         <RelativeLayout
             android:id="@+id/news_layout"
-            android:layout_width="256dip"
+            android:layout_width="250dip"
             android:layout_height="match_parent" >
 
             <TextView
@@ -27,7 +27,7 @@
 
         <RelativeLayout
             android:id="@+id/date_layout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/news_layout" >
             
@@ -35,8 +35,8 @@
                 android:id="@+id/mydate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Aug 18 at 06:00 AM"
+                android:layout_centerVertical="true"
+                android:text="10 hours ago"
                 android:textSize="12sp"
                 />
             

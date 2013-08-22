@@ -171,12 +171,16 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 			super.doInBackground(uri[0]);
 
 			if (!taskCancel && responseString != null) {
-				pullResults(responseString);
+				try {
+					pull(responseString);
+				} catch (Exception e) {
+
+				}
 			}
 			return responseString;
 		}
 
-		private void pullResults(String responseString) {
+		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
 
 			Element box_2 = null;

@@ -35,7 +35,6 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-
 public class LoadMore_Base extends SherlockListFragment implements
 		ActionBar.OnNavigationListener {
 	protected LoadMoreListView myLoadMoreListView;
@@ -84,7 +83,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		// Get ads view
 		adView = (AdView) sfa.findViewById(R.id.ad);
-		
+
 		// default no filter for videos
 		needFilter = false;
 
@@ -136,14 +135,12 @@ public class LoadMore_Base extends SherlockListFragment implements
 		return view;
 
 	}
-	
-	
+
 	protected void forceNoMore() {
 
 	}
 
-
-	public void setDropdown(){
+	public void setDropdown() {
 		if (hasDropDown) {
 
 			mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -166,6 +163,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		}
 	}
+
 	public void setOptionMenu(boolean hasRefresh, boolean hasDropDown) {
 		this.hasRefresh = hasRefresh;
 		this.hasDropDown = hasDropDown;
@@ -183,14 +181,12 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 	public void setListView() {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
-		myLoadMoreListView.setDivider(null);		
-		
+		myLoadMoreListView.setDivider(null);
+
 		setBannerInHeader();
-		
+
 		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
 		setListAdapter(vaa);
-		
-
 
 		// Why check internet here?
 		// if (ic.checkConnection(sfa)) {
@@ -207,7 +203,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 						LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 								LoadMoreTask.LOADMORETASK, myLoadMoreListView,
 								fullscreenLoadingView, mRetryView);
-						newTask.execute(API.get(API.size()-1));
+						newTask.execute(API.get(API.size() - 1));
 						mLoadMoreTasks.add(newTask);
 					}
 
@@ -260,9 +256,9 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 		case 0:
 			// Menu option 1
-//			Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(sfa, "Refreshing", Toast.LENGTH_SHORT).show();
 			refreshFragment();
-//			ft.replace(R.id.content_frame, currentFragment);
+			// ft.replace(R.id.content_frame, currentFragment);
 			break;
 
 		case 11:
@@ -275,10 +271,10 @@ public class LoadMore_Base extends SherlockListFragment implements
 			ft.replace(R.id.content_frame, FragmentUploader);
 			break;
 
-//		case 13:
-//			// Menu option 3
-//			ft.replace(R.id.content_frame, FragmentPlaylist);
-//			break;
+		// case 13:
+		// // Menu option 3
+		// ft.replace(R.id.content_frame, FragmentPlaylist);
+		// break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -294,12 +290,12 @@ public class LoadMore_Base extends SherlockListFragment implements
 		// if (ic.checkConnection(this.getSherlockActivity())) {
 		// get selected items
 
-//		Toast.makeText(this.getSherlockActivity(), videos.get(position),
-//				Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this.getSherlockActivity(), videos.get(position),
+		// Toast.LENGTH_SHORT).show();
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				YoutubeActionBarActivity.class);
-		i.putExtra("video", videolist.get(position-1));
+		i.putExtra("video", videolist.get(position - 1));
 		startActivity(i);
 
 	}
@@ -334,7 +330,7 @@ public class LoadMore_Base extends SherlockListFragment implements
 					LoadMoreTask newTask = (LoadMoreTask) new LoadMoreTask(
 							type, contentView, loadingView, retryView);
 					newTask.DisplayView(loadingView, contentView, retryView);
-					newTask.execute(API.get(API.size()-1));
+					newTask.execute(API.get(API.size() - 1));
 					mLoadMoreTasks.add(newTask);
 
 				}
@@ -351,47 +347,48 @@ public class LoadMore_Base extends SherlockListFragment implements
 
 			if (!taskCancel && result != null) {
 				// Do anything with response..
-
-				feedManager.setmJSON(result);
-
-				List<Video> newVideos = feedManager.getVideoPlaylist();
-
-				// adding new loaded videos to our current video list
-				for (Video v : newVideos) {
-					// System.out.println("new id: " + v.getVideoId());
-					if (needFilter) {
-						filtering(v);
-						// System.out.println("need filter!");
-					} else {
-						titles.add(v.getTitle());
-						videolist.add(v);
-					}
-				}
 				try {
+					feedManager.setmJSON(result);
+
+					List<Video> newVideos = feedManager.getVideoPlaylist();
+
+					// adding new loaded videos to our current video list
+					for (Video v : newVideos) {
+						// System.out.println("new id: " + v.getVideoId());
+						if (needFilter) {
+							filtering(v);
+							// System.out.println("need filter!");
+						} else {
+							titles.add(v.getTitle());
+							videolist.add(v);
+						}
+					}
+
 					// put the next API in the first place of the array
 					API.add(feedManager.getNextApi());
 					// nextAPI = feedManager.getNextApi();
-					if (API.get(API.size()-1) == null) {
+					if (API.get(API.size() - 1) == null) {
 						// No more videos left
 						isMoreVideos = false;
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				}
-				vaa.notifyDataSetChanged();
 
-				// Call onLoadMoreComplete when the LoadMore task, has
-				// finished
-				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+					vaa.notifyDataSetChanged();
 
-				// loading done
-				DisplayView(contentView, retryView, loadingView);
-				if (!isMoreVideos) {
-					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
+					// Call onLoadMoreComplete when the LoadMore task, has
+					// finished
 					((LoadMoreListView) myLoadMoreListView)
-							.setOnLoadMoreListener(null);
+							.onLoadMoreComplete();
+
+					// loading done
+					DisplayView(contentView, retryView, loadingView);
+					if (!isMoreVideos) {
+						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+						((LoadMoreListView) myLoadMoreListView)
+								.setOnLoadMoreListener(null);
+					}
+				} catch (Exception e) {
+
 				}
 
 			} else {
@@ -436,13 +433,13 @@ public class LoadMore_Base extends SherlockListFragment implements
 		super.onDestroy();
 
 		// Destroy ads when the view is destroyed
-		if(adView != null){
+		if (adView != null) {
 			adView.destroy();
 		}
-//		Log.d("UniversalImageLoader", "cleared!");
+		// Log.d("UniversalImageLoader", "cleared!");
 		imageLoader.clearDiscCache();
 		imageLoader.clearMemoryCache();
-		
+
 		// check the state of the task
 		cancelAllTask();
 		hideAllViews();
@@ -521,12 +518,12 @@ public class LoadMore_Base extends SherlockListFragment implements
 		return true;
 	}
 
-	public void setBannerInHeader(){
-		 if (myLoadMoreListView.getHeaderViewsCount() == 0){
-	           View header = (View) sfa.getLayoutInflater().inflate(R.layout.banner, null);
-	           myLoadMoreListView.addHeaderView(header,null,false);
-	           
-	       
-	     }
+	public void setBannerInHeader() {
+		if (myLoadMoreListView.getHeaderViewsCount() == 0) {
+			View header = (View) sfa.getLayoutInflater().inflate(
+					R.layout.banner, null);
+			myLoadMoreListView.addHeaderView(header, null, false);
+
+		}
 	}
 }

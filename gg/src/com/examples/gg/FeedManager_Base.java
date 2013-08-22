@@ -29,13 +29,8 @@ public class FeedManager_Base {
 	}
 
 	public ArrayList<Video> getVideoPlaylist() {
-		try {
-			if (mJSON != null)
-				processJSON(mJSON);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-		}
+		
+		processJSON(mJSON);
 
 		ArrayList<Video> videos = new ArrayList<Video>();
 
@@ -98,7 +93,7 @@ public class FeedManager_Base {
 
 			}
 
-		} catch (JSONException ex) {
+		} catch (Exception ex) {
 
 			// ex.printStackTrace();
 		}
@@ -244,10 +239,14 @@ public class FeedManager_Base {
 		return "";
 	}
 
-	protected void processJSON(String json) throws JSONException {
-		JSONTokener jsonParser = new JSONTokener(json);
-		JSONObject wholeJson = (JSONObject) jsonParser.nextValue();
-		this.feed = wholeJson.getJSONObject("feed");
+	protected void processJSON(String json) {
+		try {
+			JSONTokener jsonParser = new JSONTokener(json);
+			JSONObject wholeJson = (JSONObject) jsonParser.nextValue();
+			this.feed = wholeJson.getJSONObject("feed");
+		} catch (Exception e) {
+
+		}
 	}
 
 }

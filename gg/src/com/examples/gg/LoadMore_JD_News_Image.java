@@ -174,15 +174,6 @@ public class LoadMore_JD_News_Image extends LoadMore_Base {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		// Toast.makeText(this.getSherlockActivity(),
-		// matchArray.get(position).getGosuLink(), Toast.LENGTH_SHORT)
-		// .show();
-
-		// Intent i = new Intent(this.getSherlockActivity(),
-		// MatchDetailsActivity.class);
-		// i.putExtra("match", matchArray.get(position - 1));
-		// startActivity(i);
-
 		String url = mNews.get(position - 1).getLink();
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
@@ -242,13 +233,17 @@ public class LoadMore_JD_News_Image extends LoadMore_Base {
 			super.doInBackground(uri[0]);
 
 			if (!taskCancel && responseString != null) {
-				pullNews(responseString);
+				try {
+					pull(responseString);
+				} catch (Exception e) {
+
+				}
 			}
 			// pullNews();
 			return responseString;
 		}
 
-		private void pullNews(String responseString) {
+		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
 			// get all links
 			Elements links = new Elements();

@@ -68,6 +68,8 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		
+		mActionBar.setTitle("Match Details");
 
 		contentLayout = findViewById(R.id.contentLayout);
 
@@ -136,7 +138,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			shareIntent.putExtra(Intent.EXTRA_TEXT, match.getTeamName1()
 					+ " vs " + match.getTeamName2()
 					+ " is live now shared via @Dota2TV1");
-		} else if (match.getMatchStatus() == Match.ENDED){
+		} else if (match.getMatchStatus() == Match.ENDED) {
 			shareIntent.putExtra(Intent.EXTRA_TEXT, match.getTeamName1() + " "
 					+ match.getScore() + " " + match.getTeamName2()
 					+ "shared via @Dota2TV1");
@@ -192,6 +194,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 	private class getMatchDetails extends MyAsyncTask {
 		Document doc;
+
 		public getMatchDetails(int type, View contentView, View loadingView,
 				View retryView) {
 			super(type, contentView, loadingView, retryView);
@@ -216,7 +219,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			});
 
 		}
-		
+
 		@Override
 		public String doInBackground(String... uri) {
 
@@ -235,147 +238,157 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			// Log.d("AsyncDebug", "Into onPostExecute!");
 
 			if (!taskCancel && result != null) {
+				try {
+					Element opp_1 = null;
 
-				Element opp_1 = null;
+					opp_1 = doc.select("div.opponent").first();
 
-				opp_1 = doc.select("div.opponent").first();
+					if (opp_1 != null) {
 
-				if (opp_1 != null) {
+						Element opp_2 = doc.select("div.opponent").get(1);
 
-					Element opp_2 = doc.select("div.opponent").get(1);
+						Element scoreDiv_1 = doc
+								.select("div[class=center-column]").first()
+								.select("div").get(1);
 
-					Element scoreDiv_1 = doc.select("div[class=center-column]")
-							.first().select("div").get(1);
+						Element scoreDiv_2 = doc
+								.select("div[class=center-column]").first()
+								.select("div").get(2);
 
-					Element scoreDiv_2 = doc.select("div[class=center-column]")
-							.first().select("div").get(2);
+						Element details = doc.select("table#match-details")
+								.first();
 
-					Element details = doc.select("table#match-details").first();
+						Elements flash = doc.select("object");
 
-					Elements flash = doc.select("object");
+						Elements videos = doc.select("div[class^=video]");
 
-					Elements videos = doc.select("div[class^=video]");
-
-					if (match.getMatchStatus() != Match.ENDED) {
-						if (!flash.isEmpty())
-							for (Element f : flash) {
-								if (!flash.isEmpty()) {
-									String data = f.attr("data");
-									String mData = data.substring(
-											data.indexOf("=") + 1,
-											data.length());
-									// String pattern = "(.*?)=(.*?)";
-									// data.replace(pattern, "$2");
-									lives.add(mData);
+						if (match.getMatchStatus() != Match.ENDED) {
+							if (!flash.isEmpty())
+								for (Element f : flash) {
+									if (!flash.isEmpty()) {
+										String data = f.attr("data");
+										String mData = data.substring(
+												data.indexOf("=") + 1,
+												data.length());
+										// String pattern = "(.*?)=(.*?)";
+										// data.replace(pattern, "$2");
+										lives.add(mData);
+									}
+								}
+						} else {
+							if (!videos.isEmpty()) {
+								for (Element v : videos) {
+									String imgurl = v.select("img").first()
+											.attr("src");
+									String title = v.select("a").first()
+											.attr("data-dialog-title");
+									String mImgurl = imgurl
+											.replaceAll(
+													"https://i1.ytimg.com/vi/(.*?)/(.*)",
+													"$1");
+									// System.out.println("url: "+ mImgurl);
+									lives.add(title);
+									videoIds.add(mImgurl);
 								}
 							}
-					} else {
-						if (!videos.isEmpty()) {
-							for (Element v : videos) {
-								String imgurl = v.select("img").first()
-										.attr("src");
-								String title = v.select("a").first()
-										.attr("data-dialog-title");
-								String mImgurl = imgurl.replaceAll(
-										"https://i1.ytimg.com/vi/(.*?)/(.*)",
-										"$1");
-								// System.out.println("url: "+ mImgurl);
-								lives.add(title);
-								videoIds.add(mImgurl);
-							}
+
 						}
 
-					}
+						myTimer = (TextView) findViewById(R.id.myTimer);
 
-					myTimer = (TextView) findViewById(R.id.myTimer);
+						ImageView icon_1 = (ImageView) findViewById(R.id.icon1);
+						ImageView icon_2 = (ImageView) findViewById(R.id.icon2);
 
-					ImageView icon_1 = (ImageView) findViewById(R.id.icon1);
-					ImageView icon_2 = (ImageView) findViewById(R.id.icon2);
+						TextView teamName_1 = (TextView) findViewById(R.id.tName1);
+						TextView teamName_2 = (TextView) findViewById(R.id.tName2);
 
-					TextView teamName_1 = (TextView) findViewById(R.id.tName1);
-					TextView teamName_2 = (TextView) findViewById(R.id.tName2);
+						TextView team1score = (TextView) findViewById(R.id.team1score);
+						TextView team2score = (TextView) findViewById(R.id.team2score);
 
-					TextView team1score = (TextView) findViewById(R.id.team1score);
-					TextView team2score = (TextView) findViewById(R.id.team2score);
+						TextView tournamentName = (TextView) findViewById(R.id.tournamentName);
+						TextView format = (TextView) findViewById(R.id.format);
+						TextView startTime = (TextView) findViewById(R.id.startTime);
+						TextView liveLabel = (TextView) findViewById(R.id.livelabel);
+						TextView noLive = (TextView) findViewById(R.id.nolive);
+						TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
 
-					TextView tournamentName = (TextView) findViewById(R.id.tournamentName);
-					TextView format = (TextView) findViewById(R.id.format);
-					TextView startTime = (TextView) findViewById(R.id.startTime);
-					TextView liveLabel = (TextView) findViewById(R.id.livelabel);
-					TextView noLive = (TextView) findViewById(R.id.nolive);
-					TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
+						teamName_1.setText(opp_1.select("a").first().text()
+								.trim());
+						teamName_2.setText(opp_2.select("a").first().text()
+								.trim());
 
-					teamName_1.setText(opp_1.select("a").first().text().trim());
-					teamName_2.setText(opp_2.select("a").first().text().trim());
+						if (scoreDiv_1.className().trim().endsWith("winner")) {
+							team1score.setTextColor(Color.RED);
+						}
+						team1score.setText(scoreDiv_1.text().trim());
 
-					if (scoreDiv_1.className().trim().endsWith("winner")) {
-						team1score.setTextColor(Color.RED);
-					}
-					team1score.setText(scoreDiv_1.text().trim());
+						if (scoreDiv_2.className().trim().endsWith("winner")) {
+							team2score.setTextColor(Color.RED);
+						}
+						team2score.setText(scoreDiv_2.text().trim());
 
-					if (scoreDiv_2.className().trim().endsWith("winner")) {
-						team2score.setTextColor(Color.RED);
-					}
-					team2score.setText(scoreDiv_2.text().trim());
+						imageLoader.displayImage(baseUrl
+								+ opp_1.select("img").first().attr("src"),
+								icon_1, options, animateFirstListener);
 
-					imageLoader.displayImage(baseUrl
-							+ opp_1.select("img").first().attr("src"), icon_1,
-							options, animateFirstListener);
+						imageLoader.displayImage(baseUrl
+								+ opp_2.select("img").first().attr("src"),
+								icon_2, options, animateFirstListener);
 
-					imageLoader.displayImage(baseUrl
-							+ opp_2.select("img").first().attr("src"), icon_2,
-							options, animateFirstListener);
+						Elements detailTd = details.select("td");
 
-					Elements detailTd = details.select("td");
+						if (detailTd.size() == 4) {
 
-					if (detailTd.size() == 4) {
+							tournamentName.setText("Tournament: "
+									+ detailTd.get(2).text().trim());
+							format.setText("Format: Best of "
+									+ detailTd.get(3).text().trim());
+							String dateInString = detailTd.first().text()
+									.trim();
+							startTime.setText("Start Time: "
+									+ processDate(dateInString)
+									+ " (Your place)");
 
-						tournamentName.setText("Tournament: "
-								+ detailTd.get(2).text().trim());
-						format.setText("Format: Best of "
-								+ detailTd.get(3).text().trim());
-						String dateInString = detailTd.first().text().trim();
-						startTime.setText("Start Time: "
-								+ processDate(dateInString) + " (Your place)");
+						} else {
+							tournamentName.setText("Tournament: "
+									+ detailTd.get(1).text().trim());
+							format.setText("Format: Best of "
+									+ detailTd.get(2).text().trim());
+							startTime.setText("Start Time: ");
+						}
+
+						if (match.getMatchStatus() == Match.LIVE) {
+							liveStatus.setVisibility(View.VISIBLE);
+						} else if (match.getMatchStatus() == Match.NOTSTARTED) {
+							myTimer.setText(match.getTime());
+							myTimer.setVisibility(View.VISIBLE);
+						}
+
+						if (match.getMatchStatus() == Match.ENDED) {
+							noLive.setText("No Videos Released Yet.");
+							liveLabel.setText("VODs");
+						}
+
+						if (lives.isEmpty()) {
+							liveLabel.setVisibility(View.GONE);
+							noLive.setVisibility(View.VISIBLE);
+						} else {
+
+							ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+									mActivity,
+									android.R.layout.simple_list_item_1, lives);
+
+							setListAdapter(adapter);
+						}
+
+						DisplayView(contentView, retryView, loadingView);
 
 					} else {
-						tournamentName.setText("Tournament: "
-								+ detailTd.get(1).text().trim());
-						format.setText("Format: Best of "
-								+ detailTd.get(2).text().trim());
-						startTime.setText("Start Time: ");
+						handleCancelView();
 					}
+				} catch (Exception e) {
 
-					if (match.getMatchStatus() == Match.LIVE) {
-						liveStatus.setVisibility(View.VISIBLE);
-					} else if (match.getMatchStatus() == Match.NOTSTARTED) {
-						myTimer.setText(match.getTime());
-						myTimer.setVisibility(View.VISIBLE);
-					}
-
-					if (match.getMatchStatus() == Match.ENDED) {
-						noLive.setText("No Videos Released Yet.");
-						liveLabel.setText("VODs");
-					}
-
-					if (lives.isEmpty()) {
-						liveLabel.setVisibility(View.GONE);
-						noLive.setVisibility(View.VISIBLE);
-					} else {
-
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-								mActivity, android.R.layout.simple_list_item_1,
-								lives);
-
-						setListAdapter(adapter);
-					}
-
-					DisplayView(contentView, retryView, loadingView);
-
-				} else {
-					handleCancelView();
 				}
-
 			} else {
 
 				handleCancelView();
@@ -418,7 +431,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		// Destroy current activity
 		finish();
 
-		Toast.makeText(mActivity, "Refreshing", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(mActivity, "Refreshing", Toast.LENGTH_SHORT).show();
 
 		// Start a new activity
 		Intent i = new Intent(mActivity, MatchDetailsActivity.class);
