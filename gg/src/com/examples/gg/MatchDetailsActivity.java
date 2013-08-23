@@ -68,7 +68,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		mActionBar.setHomeButtonEnabled(true);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		
+
 		mActionBar.setTitle("Match Details");
 
 		contentLayout = findViewById(R.id.contentLayout);
@@ -431,7 +431,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		// Destroy current activity
 		finish();
 
-		//Toast.makeText(mActivity, "Refreshing", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(mActivity, "Refreshing", Toast.LENGTH_SHORT).show();
 
 		// Start a new activity
 		Intent i = new Intent(mActivity, MatchDetailsActivity.class);

@@ -371,24 +371,22 @@ public class LoadMore_Base extends SherlockListFragment implements
 						// No more videos left
 						isMoreVideos = false;
 					}
-
-					vaa.notifyDataSetChanged();
-
-					// Call onLoadMoreComplete when the LoadMore task, has
-					// finished
-					((LoadMoreListView) myLoadMoreListView)
-							.onLoadMoreComplete();
-
-					// loading done
-					DisplayView(contentView, retryView, loadingView);
-					if (!isMoreVideos) {
-						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
-						((LoadMoreListView) myLoadMoreListView)
-								.setOnLoadMoreListener(null);
-					}
 				} catch (Exception e) {
 
+				}
+				vaa.notifyDataSetChanged();
+
+				// Call onLoadMoreComplete when the LoadMore task, has
+				// finished
+				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+
+				// loading done
+				DisplayView(contentView, retryView, loadingView);
+				if (!isMoreVideos) {
+					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+					((LoadMoreListView) myLoadMoreListView)
+							.setOnLoadMoreListener(null);
 				}
 
 			} else {

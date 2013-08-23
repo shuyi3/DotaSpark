@@ -308,35 +308,31 @@ public class LoadMore_Activity_Base extends SherlockListActivity {
 							videolist.add(v);
 						}
 					}
-					try {
-						// put the next API in the first place of the array
-						API.add(feedManager.getNextApi());
-						// nextAPI = feedManager.getNextApi();
-						if (API.get(API.size() - 1) == null) {
-							// No more videos left
-							isMoreVideos = false;
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						// e.printStackTrace();
+
+					// put the next API in the first place of the array
+					API.add(feedManager.getNextApi());
+					// nextAPI = feedManager.getNextApi();
+					if (API.get(API.size() - 1) == null) {
+						// No more videos left
+						isMoreVideos = false;
 					}
-					vaa.notifyDataSetChanged();
 
-					// Call onLoadMoreComplete when the LoadMore task, has
-					// finished
-					((LoadMoreListView) myLoadMoreListView)
-							.onLoadMoreComplete();
-
-					// loading done
-					DisplayView(contentView, retryView, loadingView);
-					if (!isMoreVideos) {
-						((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
-
-						((LoadMoreListView) myLoadMoreListView)
-								.setOnLoadMoreListener(null);
-					}
 				} catch (Exception e) {
 
+				}
+				vaa.notifyDataSetChanged();
+
+				// Call onLoadMoreComplete when the LoadMore task, has
+				// finished
+				((LoadMoreListView) myLoadMoreListView).onLoadMoreComplete();
+
+				// loading done
+				DisplayView(contentView, retryView, loadingView);
+				if (!isMoreVideos) {
+					((LoadMoreListView) myLoadMoreListView).onNoMoreItems();
+
+					((LoadMoreListView) myLoadMoreListView)
+							.setOnLoadMoreListener(null);
 				}
 
 			} else {
