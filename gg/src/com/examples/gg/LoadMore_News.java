@@ -77,12 +77,36 @@ public class LoadMore_News extends LoadMore_Base implements
 	private Random random;
 
 	private SideMenuActivity sma;
-	private final int[] myDrawables = new int[] { R.drawable.bountyhunter,
-			R.drawable.centaurwarlord, R.drawable.disruptor, R.drawable.dusa,
-			R.drawable.invoker, R.drawable.jugg, R.drawable.pa,
-			R.drawable.pudge, R.drawable.radient, R.drawable.razor,
-			R.drawable.rubick, R.drawable.slardar, R.drawable.snk,
-			R.drawable.tiny, R.drawable.visage, R.drawable.faceless };
+	private final int[] myDrawables = new int[] { R.drawable.dota1,
+			R.drawable.dota2, R.drawable.dota3, R.drawable.dota4,
+			R.drawable.dota5, R.drawable.dota6, R.drawable.dota7,
+			R.drawable.dota8, R.drawable.dota9, R.drawable.dota10,
+			R.drawable.dota11, R.drawable.dota12, R.drawable.dota13,
+			R.drawable.dota14, R.drawable.dota15, R.drawable.dota16,
+			R.drawable.dota17, R.drawable.dota18, R.drawable.dota19,
+			R.drawable.dota20, R.drawable.dota21, R.drawable.dota22,
+			R.drawable.dota23, R.drawable.dota24, R.drawable.dota25,
+			R.drawable.dota26, R.drawable.dota27, R.drawable.dota28,
+			R.drawable.dota29, R.drawable.dota30, R.drawable.dota31,
+			R.drawable.dota32, R.drawable.dota33, R.drawable.dota34,
+			R.drawable.dota35, R.drawable.dota36, R.drawable.dota37,
+			R.drawable.dota38, R.drawable.dota39, R.drawable.dota40,
+			R.drawable.dota41, R.drawable.dota42, R.drawable.dota43,
+			R.drawable.dota44, R.drawable.dota45, R.drawable.dota46,
+			R.drawable.dota47, R.drawable.dota48, R.drawable.dota49,
+			R.drawable.dota50, R.drawable.dota51, R.drawable.dota52,
+			R.drawable.dota53, R.drawable.dota54, R.drawable.dota55,
+			R.drawable.dota56, R.drawable.dota57, R.drawable.dota58,
+			R.drawable.dota59, R.drawable.dota60, R.drawable.dota61,
+			R.drawable.dota62, R.drawable.dota63, R.drawable.dota64,
+			R.drawable.dota65, R.drawable.dota66, R.drawable.dota67,
+			R.drawable.dota68, R.drawable.dota69, R.drawable.dota70,
+			R.drawable.dota71, R.drawable.dota72, R.drawable.dota73,
+			R.drawable.dota74, R.drawable.dota75, R.drawable.dota76,
+			R.drawable.dota77, R.drawable.dota78, R.drawable.dota79,
+			R.drawable.dota80, R.drawable.dota81, R.drawable.dota82,
+			R.drawable.dota83, R.drawable.dota84, R.drawable.dota85,
+			R.drawable.dota86, R.drawable.dota87, R.drawable.dota88 };
 
 	private List<View> views = new ArrayList<View>();
 

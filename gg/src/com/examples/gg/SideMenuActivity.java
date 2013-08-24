@@ -68,7 +68,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				R.drawable.fresh_meat));
 		
 		items.add(new EntryItem("Latest News", "From JoinDota, Gosugamer",
-				R.drawable.fresh_meat));
+				R.drawable.ic_action_news));
 
 		items.add(new SectionItem("Latest Videos"));
 		items.add(new EntryItem("Highlights", "Dota excitements",
