@@ -250,22 +250,48 @@ public class LoadMore_JD_News_Image extends LoadMore_Base {
 			links = doc.select("div.news_item");
 
 			if (!links.isEmpty()) {
+				Elements imageElements = new Elements();
+				Elements newsUriElements = new Elements();
+				Elements newsTitleElements = new Elements();
+				Elements newsSubtitleElements = new Elements();
+				Elements dateElements = new Elements();
+				
 				String imageUri = "";
 				String newsUri = "";
 				String newsTitle = "";
 				String newsSubtitle = "";
 				String date = "";
-				System.out.println("Number of News: " + links.size());
+//				System.out.println("Number of News: " + links.size());
 
 				for (Element link : links) {
-					imageUri = link.select("img").first().attr("src");
-					newsUri = link.select("h2.news_title_new").first()
-							.select("a").first().attr("href");
-					newsTitle = link.select("h2.news_title_new").first()
-							.select("a").first().text();
-					newsSubtitle = link.select("div.news_teaser_text.image")
-							.first().text();
-					date = link.select("span.maketip").first().text();
+					imageElements = link.select("img");
+					if(!imageElements.isEmpty()){
+						imageUri = imageElements.first().attr("src");
+					}
+					
+					newsUriElements = link.select("h2.news_title_new");
+					if(!newsUriElements.isEmpty()){
+						newsUri = newsUriElements.first()
+								.select("a").first().attr("href");
+					}
+
+					
+					newsTitleElements = link.select("h2.news_title_new");		
+					if(!newsTitleElements.isEmpty()){
+						newsTitle = newsTitleElements.first()
+								.select("a").first().text();
+					}
+					
+					newsSubtitleElements = link.select("div.news_teaser_text");		
+					if(!newsTitleElements.isEmpty()){
+						newsSubtitle = newsSubtitleElements.first().text();
+					}
+
+					dateElements = link.select("span.maketip");		
+					if(!dateElements.isEmpty()){
+						date = dateElements.first().text();
+					}
+					
 					News aNews = new News();
 					aNews.setImageUri(imageUri);
 					aNews.setLink(newsUri);
