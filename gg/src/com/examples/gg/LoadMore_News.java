@@ -316,7 +316,7 @@ public class LoadMore_News extends LoadMore_Base implements
 		live2 = (TextView) v2.findViewById(R.id.live2);
 		live3 = (TextView) v2.findViewById(R.id.live3);
 
-		liveTitle.setText("Resent Results");
+		liveTitle.setText("Recent Results");
 
 		if (resultarray.length >= 1) {
 			liveMatch1.setText(resultarray[0]);
