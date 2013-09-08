@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -38,55 +39,87 @@ public class TwitchPlayer extends Activity {
 	private String ua;
 	private View loadingIndicator;
 	private boolean doubleBackToExitPressedOnce = false;
-	
+
 	private SharedPreferences prefs;
 	private SharedPreferences.Editor editor;
 	private boolean IF_SKIP_INSTRUCTION;
-	private  AlertDialog dialog = null;
+	private AlertDialog dialog = null;
 
-
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.twitchplayer);
-		
+
+		// Add a soft Menu button
+		try {
+			getWindow().addFlags(
+					WindowManager.LayoutParams.class.getField(
+							"FLAG_NEEDS_MENU_KEY").getInt(null));
+			
+//			final View v = getWindow().getDecorView();
+//			v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//			
+//			v.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
+//
+//				@Override
+//				public void onSystemUiVisibilityChange(int i) {
+//					// TODO Auto-generated method stub
+//					if (i == View.SYSTEM_UI_FLAG_VISIBLE) {
+//						Handler h = new Handler();
+//						Runnable r = new Runnable() {
+//
+//							@Override
+//							public void run() {
+//								v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//							}
+//						};
+//						h.postDelayed(r, 2000);
+//					}
+//				}
+//			});
+		} catch (Exception e) {
+
+		}
+
 		prefs = getPreferences(MODE_PRIVATE);
 
 		if (!prefs.getBoolean("IF_SKIP_INSTRUCTION", false)) {
 			// show dialog
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			// Add the buttons
-			builder.setPositiveButton("Remind me next time", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			               // User clicked OK button
-			        	    editor = prefs.edit();
-			        	    editor.putBoolean("IF_SKIP_INSTRUCTION", false);
-			        	    editor.commit();
-			           }
-			       });
-			builder.setNegativeButton("I know already", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			               // User cancelled the dialog
-			        	   
-			        	    editor = prefs.edit();
-			        	    editor.putBoolean("IF_SKIP_INSTRUCTION", true);
-			        	    editor.commit();
-			           }
-			       });
+			builder.setPositiveButton("Remind me next time",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User clicked OK button
+							editor = prefs.edit();
+							editor.putBoolean("IF_SKIP_INSTRUCTION", false);
+							editor.commit();
+						}
+					});
+			builder.setNegativeButton("I know already",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled the dialog
+
+							editor = prefs.edit();
+							editor.putBoolean("IF_SKIP_INSTRUCTION", true);
+							editor.commit();
+						}
+					});
 			// Set other dialog properties
-			
+
 			builder.setTitle("Instructions:");
-			
-			builder.setMessage("1. This Twitch.tv player requires Flash Player installed\n\n" +
-					"2. Fullscreen Mode: Double press the screen to enter/exit the fullscreen mode (chat box cannot be invoked in Fullscreen mode)\n\n"+
-			"3. Chat box: Press MENU button to turn on/off\n\n"+
-					"Notice: Now you can log in and chat with your Twitch.tv account in the Chatbox (and remember your account)");
+
+			builder.setMessage("1. This Twitch.tv player requires Flash Player installed\n\n"
+					+ "2. Fullscreen Mode: Double press the screen to enter/exit the fullscreen mode (chat box cannot be invoked in Fullscreen mode)\n\n"
+					+ "3. Chat box: Press MENU button to turn on/off\n\n"
+					+ "Notice: Now you can log in and chat with your Twitch.tv account in the Chatbox (and remember your account)");
 
 			// Create the AlertDialog
 			dialog = builder.create();
 			dialog.show();
 
-		
 		}
 
 		loadingIndicator = findViewById(R.id.fullscreen_loading_indicator);
@@ -101,24 +134,25 @@ public class TwitchPlayer extends Activity {
 		if (getPhoneAndroidSDK() >= 14) {
 			getWindow().setFlags(0x1000000, 0x1000000);
 		}
-				
+
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		float density  = getResources().getDisplayMetrics().density;
-		int height = (int) (metrics.heightPixels/density);
-		int width = (int) (metrics.widthPixels/density);
-		
-		System.out.println("height: "+ height);
-		System.out.println("width: "+ width);
+		float density = getResources().getDisplayMetrics().density;
+		int height = (int) (metrics.heightPixels / density);
+		int width = (int) (metrics.widthPixels / density);
+
+		System.out.println("height: " + height);
+		System.out.println("width: " + width);
 
 		String chat = "";
 		chat = "<html>" + "<body style=\"margin:0; padding:0\">"
-				+ "<iframe width=\"300\" height=\""+height+"\" scrolling=\"yes\""
+				+ "<iframe width=\"300\" height=\"" + height
+				+ "\" scrolling=\"yes\""
 				+ "src=\"http://www.twitch.tv/chat/embed?channel=" + video
 				+ "\">" + "</iframe>" + "</body>" + "</html>";
 
 		// mWebChat.loadUrl("http://www.justin.tv/chat/embed?channel=beyondthesummit&hide_chat=myspace,facebook&default_chat=jtv");
 		mWebChat.loadData(chat, "text/html", "UTF-8");
-//		mWebChat.loadUrl("http://www.twitch.tv/chat/embed?channel="+video);
+		// mWebChat.loadUrl("http://www.twitch.tv/chat/embed?channel="+video);
 		mWebChat.getSettings().setUserAgentString(ua);
 		// mWebChat.loadUrl("file:///android_asset/chat.html");
 
@@ -180,13 +214,13 @@ public class TwitchPlayer extends Activity {
 		chatSettings.setSupportMultipleWindows(true);
 		chatSettings.setPluginsEnabled(true);
 		chatSettings.setAllowFileAccess(true);
-//		chatSettings.setUseWideViewPort(true);
+		// chatSettings.setUseWideViewPort(true);
 		chatSettings.setLoadWithOverviewMode(true);
 		chatSettings.setDomStorageEnabled(true);
-		if(getPhoneAndroidSDK() >= 16) {
+		if (getPhoneAndroidSDK() >= 16) {
 			chatSettings.setAllowUniversalAccessFromFileURLs(true);
 		}
-//		chatSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+		// chatSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 		ua = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
 		chatSettings.setUserAgentString(ua);
 		mWebChat.setWebViewClient(new MyWebViewClient());
@@ -400,6 +434,5 @@ public class TwitchPlayer extends Activity {
 		}, 2000);
 
 	}
-	
 
 }
