@@ -63,7 +63,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
-		setBannerInHeader();
+		//setBannerInHeader();
 
 		mArrayAdatper = new MatchArrayAdapter(sfa, matchArray, imageLoader,
 				false);
@@ -115,7 +115,7 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 		Intent i = new Intent(this.getSherlockActivity(),
 				MatchDetailsActivity.class);
-		i.putExtra("match", matchArray.get(position - 1));
+		i.putExtra("match", matchArray.get(position));
 		startActivity(i);
 
 	}

@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -239,6 +240,40 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 			if (!taskCancel && result != null) {
 				try {
+					/* start of new code */
+					Elements links = new Elements();
+					links = doc.select("div#col1");
+					Element link = links.first();
+					String date = "";
+					if (!link.select("p.datetime").isEmpty()) {
+						date = link.select("p.datetime").first().text();
+					}
+					String bestof = "";
+					if (!link.select("p.bestof").isEmpty()) {
+						bestof = link.select("p.bestof").first().text();
+					}
+					
+					/* Get streams */
+					// Elements streamEles = new Elements();
+					// if(match.getMatchStatus() == Match.NOTSTARTED){
+					//
+					// streamEles =
+					// link.select("p.streamlist").first().select("a");
+					// for(Element e : streamEles){
+					// lives.add(e.select("a").first().ownText());
+					// //System.out.println("stream: " + e.ownText());
+					// }
+					// }else if(match.getMatchStatus() == Match.LIVE){
+					// streamEles =
+					// link.select("div[class=tab-wrapper]").first().select("a");
+					// for(Element e : streamEles){
+					// lives.add(e.select("span").first().ownText());
+					// //System.out.println("stream: " + e.ownText());
+					// }
+					//
+					// }
+					/* end of new code */
+
 					Element opp_1 = null;
 
 					opp_1 = doc.select("div.opponent").first();
@@ -246,22 +281,22 @@ public class MatchDetailsActivity extends SherlockListActivity {
 					if (opp_1 != null) {
 
 						Element opp_2 = doc.select("div.opponent").get(1);
-
-						Element scoreDiv_1 = doc
-								.select("div[class=center-column]").first()
-								.select("div").get(1);
-
-						Element scoreDiv_2 = doc
-								.select("div[class=center-column]").first()
-								.select("div").get(2);
-
-						Element details = doc.select("table#match-details")
-								.first();
-
+						// Element scoreDiv_1 = doc
+						// .select("div[class=center-column]").first()
+						// .select("div").get(1);
+						//
+						// Element scoreDiv_2 = doc
+						// .select("div[class=center-column]").first()
+						// .select("div").get(2);
+						//
+						// Element details = doc.select("table#match-details")
+						// .first();
+						//
 						Elements flash = doc.select("object");
+						// //
+						Elements videos = doc.select("iframe");
 
-						Elements videos = doc.select("div[class^=video]");
-
+						/* Get Twitch objects */
 						if (match.getMatchStatus() != Match.ENDED) {
 							if (!flash.isEmpty())
 								for (Element f : flash) {
@@ -275,20 +310,24 @@ public class MatchDetailsActivity extends SherlockListActivity {
 										lives.add(mData);
 									}
 								}
-						} else {
+						} else if (match.getMatchStatus() == Match.ENDED) {
 							if (!videos.isEmpty()) {
+								int i = 1;
 								for (Element v : videos) {
-									String imgurl = v.select("img").first()
-											.attr("src");
-									String title = v.select("a").first()
-											.attr("data-dialog-title");
-									String mImgurl = imgurl
-											.replaceAll(
-													"https://i1.ytimg.com/vi/(.*?)/(.*)",
-													"$1");
+									String src = v.attr("src");
+									// String imgurl = v.select("img").first()
+									// .attr("src");
+									String title = "Game " + i;
+									i++;
+									// String mImgurl = imgurl
+									// .replaceAll(
+									// "https://i1.ytimg.com/vi/(.*?)/(.*)",
+									// "$1");
 									// System.out.println("url: "+ mImgurl);
 									lives.add(title);
-									videoIds.add(mImgurl);
+									videoIds.add(src.substring(
+											src.indexOf("/embed/") + 7,
+											src.indexOf("?")));
 								}
 							}
 
@@ -316,16 +355,41 @@ public class MatchDetailsActivity extends SherlockListActivity {
 								.trim());
 						teamName_2.setText(opp_2.select("a").first().text()
 								.trim());
+						
+						// if (scoreDiv_1.className().trim().endsWith("winner"))
+						// {
+						// team1score.setTextColor(Color.RED);
+						// }
 
-						if (scoreDiv_1.className().trim().endsWith("winner")) {
-							team1score.setTextColor(Color.RED);
-						}
-						team1score.setText(scoreDiv_1.text().trim());
+						// if (scoreDiv_2.className().trim().endsWith("winner"))
+						// {
+						// team2score.setTextColor(Color.RED);
+						// }
+						if (match.getMatchStatus() == Match.LIVE) {
+							Elements scoreDiv = link.select("p.vs");
+							if (!scoreDiv.isEmpty()) {
+								Elements spans = scoreDiv.first()
+										.select("span");
+								String theScore = spans.get(1).text().trim();
+								String t1s = theScore.substring(0, 1);
+								String t2s = theScore.substring(4, 5);
+								team1score.setText(t1s);
+								team2score.setText(t2s);
+							}
 
-						if (scoreDiv_2.className().trim().endsWith("winner")) {
-							team2score.setTextColor(Color.RED);
+						} else if (match.getMatchStatus() == Match.ENDED) {
+
+							team1score.setText(link
+									.select("span.hidden > span").first()
+									.ownText());
+							team2score.setText(link
+									.select("span.hidden > span").get(1)
+									.ownText());
+
+						} else if (match.getMatchStatus() == Match.NOTSTARTED) {
+							team1score.setText("0");
+							team2score.setText("0");
 						}
-						team2score.setText(scoreDiv_2.text().trim());
 
 						imageLoader.displayImage(baseUrl
 								+ opp_1.select("img").first().attr("src"),
@@ -335,26 +399,20 @@ public class MatchDetailsActivity extends SherlockListActivity {
 								+ opp_2.select("img").first().attr("src"),
 								icon_2, options, animateFirstListener);
 
-						Elements detailTd = details.select("td");
+						// Elements detailTd = details.select("td");
 
-						if (detailTd.size() == 4) {
-
-							tournamentName.setText("Tournament: "
-									+ detailTd.get(2).text().trim());
-							format.setText("Format: Best of "
-									+ detailTd.get(3).text().trim());
-							String dateInString = detailTd.first().text()
-									.trim();
+						tournamentName.setText("Tournament: "
+								+ link.select("a").first().ownText());
+						format.setText("Format: " + bestof);
+						// String dateInString = detailTd.first().text()
+						// .trim();
+						if (!date.equals("")) {
 							startTime.setText("Start Time: "
-									+ processDate(dateInString)
-									+ " (Your place)");
-
-						} else {
-							tournamentName.setText("Tournament: "
-									+ detailTd.get(1).text().trim());
-							format.setText("Format: Best of "
-									+ detailTd.get(2).text().trim());
-							startTime.setText("Start Time: ");
+									+ processDate(date) + " (Your place)");
+						}else{
+							
+							startTime.setText("Start Time: "
+									+ "");
 						}
 
 						if (match.getMatchStatus() == Match.LIVE) {

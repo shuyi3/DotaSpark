@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -42,13 +41,5 @@
             android:background="@drawable/black_white_gradient" />
     </RelativeLayout>
 
-    <com.google.ads.AdView
-        android:id="@+id/ad"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-6718707824713684/9583271057"
-        ads:testDevices="5E4CA696BEB736E734DD974DD296F11A,AA30D28B77588935E3648795EBD49632"
-        ads:loadAdOnCreate="true" />
 
 </LinearLayout>

@@ -27,15 +27,17 @@
 
         <RelativeLayout
             android:id="@+id/date_layout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/news_layout" >
+            android:layout_marginRight="5dip"
+            android:layout_alignParentRight="true" >
             
             <TextView 
                 android:id="@+id/mydate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"
                 android:text="10 hours ago"
                 android:textSize="12sp"
                 />

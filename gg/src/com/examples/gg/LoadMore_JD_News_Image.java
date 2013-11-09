@@ -128,7 +128,7 @@ public class LoadMore_JD_News_Image extends LoadMore_Base {
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		// myLoadMoreListView.setDivider(null);
 
-		setBannerInHeader();
+		//setBannerInHeader();
 
 		mArrayAdatper = new NewsArrayAdapter_Official(sfa, titles, mNews,
 				imageLoader);
@@ -174,7 +174,7 @@ public class LoadMore_JD_News_Image extends LoadMore_Base {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		String url = mNews.get(position - 1).getLink();
+		String url = mNews.get(position).getLink();
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
 		startActivity(i);

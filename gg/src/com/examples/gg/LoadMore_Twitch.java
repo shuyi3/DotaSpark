@@ -65,7 +65,7 @@ SearchView.OnQueryTextListener {
 
 			if (check()){
 				Intent i = new Intent(this.getSherlockActivity(), TwitchPlayer.class);
-				i.putExtra("video", videolist.get(position-1).getVideoId());
+				i.putExtra("video", videolist.get(position).getVideoId());
 				startActivity(i);
 
 			}else{
