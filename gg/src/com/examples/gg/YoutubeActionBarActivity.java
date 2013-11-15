@@ -237,9 +237,11 @@ public class YoutubeActionBarActivity extends SherlockFragmentActivity implement
 				if (!wasRestored) {
 					if (isFullscreenMode) {
 						ytp.setFullscreen(true);
-						ytp.cueVideo(videoId);
-					} else
-						ytp.cueVideo(video.getVideoId());
+						ytp.loadVideo(videoId);
+					} else{
+						ytp.setFullscreen(true);
+						ytp.loadVideo(video.getVideoId());
+					}
 				}
 
 			
