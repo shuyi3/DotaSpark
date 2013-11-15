@@ -252,7 +252,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 					if (!link.select("p.bestof").isEmpty()) {
 						bestof = link.select("p.bestof").first().text();
 					}
-					
+
 					/* Get streams */
 					// Elements streamEles = new Elements();
 					// if(match.getMatchStatus() == Match.NOTSTARTED){
@@ -294,7 +294,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 						//
 						Elements flash = doc.select("object");
 						// //
-						Elements videos = doc.select("iframe");
+						Elements videos = doc.select("a[class=image modal]");
 
 						/* Get Twitch objects */
 						if (match.getMatchStatus() != Match.ENDED) {
@@ -314,20 +314,24 @@ public class MatchDetailsActivity extends SherlockListActivity {
 							if (!videos.isEmpty()) {
 								int i = 1;
 								for (Element v : videos) {
-									String src = v.attr("src");
-									// String imgurl = v.select("img").first()
-									// .attr("src");
+
+									// String src = v.attr("src");
+									String imgurl = v.select("img").first()
+											.attr("src");
+
+									String mImgurl = imgurl
+											.replaceAll(
+													"https://i1.ytimg.com/vi/(.*?)/(.*)",
+													"$1");
+									
+
 									String title = "Game " + i;
 									i++;
-									// String mImgurl = imgurl
-									// .replaceAll(
-									// "https://i1.ytimg.com/vi/(.*?)/(.*)",
-									// "$1");
-									// System.out.println("url: "+ mImgurl);
 									lives.add(title);
-									videoIds.add(src.substring(
-											src.indexOf("/embed/") + 7,
-											src.indexOf("?")));
+//									videoIds.add(src.substring(
+//											src.indexOf("/embed/") + 7,
+//											src.indexOf("?")));
+									videoIds.add(mImgurl);
 								}
 							}
 
@@ -355,7 +359,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 								.trim());
 						teamName_2.setText(opp_2.select("a").first().text()
 								.trim());
-						
+
 						// if (scoreDiv_1.className().trim().endsWith("winner"))
 						// {
 						// team1score.setTextColor(Color.RED);
@@ -409,10 +413,9 @@ public class MatchDetailsActivity extends SherlockListActivity {
 						if (!date.equals("")) {
 							startTime.setText("Start Time: "
 									+ processDate(date) + " (Your place)");
-						}else{
-							
-							startTime.setText("Start Time: "
-									+ "");
+						} else {
+
+							startTime.setText("Start Time: " + "");
 						}
 
 						if (match.getMatchStatus() == Match.LIVE) {
