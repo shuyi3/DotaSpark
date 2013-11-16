@@ -20,6 +20,7 @@ public class LoadMore_Activity_Channel extends LoadMore_Activity_Base implements
 
 	@Override
 	public void Initializing() {
+		ab.setTitle("Channel");
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
 		final String[] catagory = { "Recent", "Playlists" };
