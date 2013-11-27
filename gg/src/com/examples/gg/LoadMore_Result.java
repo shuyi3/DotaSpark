@@ -186,7 +186,7 @@ public class LoadMore_Result extends LoadMore_Base {
 			box = doc.select("div.box").get(2);
 
 			if (box != null) {
-				links = box.select("tr:has(td.opp)");
+				links = box.select("tr:has(span.opp)");
 
 				Element paginator = box.select("div.paginator").first();
 
@@ -208,8 +208,8 @@ public class LoadMore_Result extends LoadMore_Base {
 				for (Element link : links) {
 
 					Match newMatch = new Match();
-					Element opp_1 = link.select("td.opp").first();
-					Element opp_2 = link.select("td.opp").get(1);
+					Element opp_1 = link.select("span.opp").first();
+					Element opp_2 = link.select("span.opp").get(1);
 
 					newMatch.setTeamName1(opp_1.select("span").first().text()
 							.trim());
@@ -225,7 +225,7 @@ public class LoadMore_Result extends LoadMore_Base {
 							.trim());
 
 					newMatch.setGosuLink(baseUrl
-							+ opp_1.select("a[href]").attr("href"));
+							+ link.select("a[href]").attr("href"));
 
 					newMatch.setMatchStatus(Match.ENDED);
 

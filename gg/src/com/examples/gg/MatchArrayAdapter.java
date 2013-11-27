@@ -43,7 +43,7 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 				.showStubImage(R.drawable.loading)
 				.showImageForEmptyUri(R.drawable.loading)
 				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
-				.cacheOnDisc(true).displayer(new RoundedBitmapDisplayer(20))
+				.cacheOnDisc(true)
 				.build();
 
 		this.matches = matches;

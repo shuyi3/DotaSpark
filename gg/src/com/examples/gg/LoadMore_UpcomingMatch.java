@@ -14,7 +14,6 @@ import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
@@ -182,20 +181,23 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 
 		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
-
+			
 			Element box_2 = null;
 			box_2 = doc.select("div.box").get(1);
+			
 			if (box_2 != null) {
 
 				if (pageNum == 1) {
 					Element box_1 = doc.select("div.box").first();
-					links = box_1.select("tr:has(td.opp)");
-					Elements upcoming_links = box_2.select("tr:has(td.opp)");
+					links = box_1.select("tr:has(span.opp)");
+					Elements upcoming_links = box_2.select("tr:has(span.opp)");
+					
 					links.addAll(upcoming_links);
+					
 				} else {
-					links = box_2.select("tr:has(td.opp)");
+					links = box_2.select("tr:has(span.opp)");
 				}
-
+				
 				Element paginator = box_2.select("div.paginator").first();
 
 				if (paginator == null) {
@@ -210,16 +212,15 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 								+ pageNum);
 					}
 				}
-
+				
 				// Setting layout
 
 				for (Element link : links) {
 
 					Match newMatch = new Match();
 
-					Element opp_1 = link.select("td.opp").first();
-					Element opp_2 = link.select("td.opp").get(1);
-
+					Element opp_1 = link.select("span.opp").first();
+					Element opp_2 = link.select("span.opp").get(1);
 					newMatch.setTeamName1(opp_1.select("span").first().text()
 							.trim());
 					newMatch.setTeamName2(opp_2.select("span").first().text()
@@ -230,19 +231,21 @@ public class LoadMore_UpcomingMatch extends LoadMore_Base {
 					newMatch.setTeamIcon2(baseUrl
 							+ opp_2.select("img").attr("src"));
 
-					newMatch.setTime(link.select("td").get(3).text().trim());
+					newMatch.setTime(link.select("td").get(1).text().trim());
 
 					newMatch.setGosuLink(baseUrl
-							+ opp_1.select("a[href]").attr("href"));
+							+ link.select("a[href]").attr("href"));
+					
 
-					if (newMatch.getTime().toLowerCase().matches("live")) {
+					if (newMatch.getTime().toLowerCase().matches("live") || newMatch.getTime().matches("")) {
 						newMatch.setMatchStatus(Match.LIVE);
-					} else
+					} else{
 						newMatch.setMatchStatus(Match.NOTSTARTED);
-
+					}
 					matchArray.add(newMatch);
 
 				}
+				
 
 			} else {
 				handleCancelView();

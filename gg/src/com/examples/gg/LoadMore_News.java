@@ -603,17 +603,24 @@ public class LoadMore_News extends LoadMore_Base implements
 
 		private void pull(String responseString) {
 			Document doc = Jsoup.parse(responseString);
-			links = doc.select("tr:has(td.opp)");
+			links = doc.select("tr:has(span.opp)");
 			if (!links.isEmpty()) {
 
 				for (Element link : links) {
 
 					String match;
 
-					match = link.select("span").first().text().trim() + " vs "
-							+ link.select("span").get(2).text().trim() + " ";
-					if (link.getElementsByClass("results").isEmpty()) {
-						match += link.select("td").get(3).text().trim();
+					match = link.select("span.opp").first().text().trim() + " vs "
+							+ link.select("span.opp").get(1).text().trim() + " ";
+					if (link.select("span.hidden").isEmpty()) {
+						if(link.select("td").get(1).text().trim().toLowerCase().matches("live") || link.select("td").get(1).text().trim().matches("")){
+							//Game is live, append "live" text to it
+							match += "Live";
+						}else{
+							//Game is not live
+							match += link.select("td").get(1).text().trim();
+						}
+						
 						matches.add(match);
 					} else {
 						match += link.select("span.hidden").first().text()
