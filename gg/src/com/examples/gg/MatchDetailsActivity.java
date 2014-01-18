@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 
 import org.jsoup.Jsoup;
@@ -17,11 +18,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -56,6 +54,11 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	private TextView myTimer;
 	private View contentLayout;
 	private getMatchDetails mMatchDetails;
+	private Date gameStartDate;
+	private Random rand;
+	private int mRandNum;
+	private String tName1;
+	private String tName2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,18 +98,23 @@ public class MatchDetailsActivity extends SherlockListActivity {
 				contentLayout, fullscreenLoadingView, mRetryView);
 
 		mMatchDetails.execute(match.getGosuLink());
-
+		rand = new Random();
+		mRandNum = rand.nextInt(50000);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		menu.add(0, 0, 0, "Refresh")
+		menu.add(0, 0, 1, "Refresh")
 				.setIcon(R.drawable.ic_refresh)
 				.setShowAsAction(
 						MenuItem.SHOW_AS_ACTION_IF_ROOM
 								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
+		if (match.getMatchStatus() == Match.NOTSTARTED) {
+			menu.add(0, 1, 0, "").setIcon(R.drawable.ic_action_bell)
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
 		getSupportMenuInflater().inflate(R.menu.share_action_provider, menu);
 
 		MenuItem actionItem = menu
@@ -158,6 +166,30 @@ public class MatchDetailsActivity extends SherlockListActivity {
 
 		if (item.getItemId() == 0) {
 			refreshActivity();
+		}
+
+		if (item.getItemId() == 1) {
+			try {
+				// Setting up notification
+//				Date currentDate = new Date();
+				long dateInMill = gameStartDate.getTime();
+//				Log.i("debug cur/star/diff",
+//						Long.toString(currentDate.getTime()) + "/"
+//								+ Long.toString(dateInMill) + "/"
+//								+ Long.toString(dateInMill - currentDate.getTime()));
+				String msg = tName1 + " vs " + tName2;
+
+				// Create an instance of AlarmService
+				AlarmService as = new AlarmService(this, msg, mRandNum);
+				as.startAlarm(dateInMill);
+
+				Toast.makeText(this,
+						"You will get notified when the match starts.",
+						Toast.LENGTH_LONG).show();
+			} catch (Exception e) {
+				Toast.makeText(this, "Loading data, please try again later.",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -323,14 +355,13 @@ public class MatchDetailsActivity extends SherlockListActivity {
 											.replaceAll(
 													"https://i1.ytimg.com/vi/(.*?)/(.*)",
 													"$1");
-									
 
 									String title = "Game " + i;
 									i++;
 									lives.add(title);
-//									videoIds.add(src.substring(
-//											src.indexOf("/embed/") + 7,
-//											src.indexOf("?")));
+									// videoIds.add(src.substring(
+									// src.indexOf("/embed/") + 7,
+									// src.indexOf("?")));
 									videoIds.add(mImgurl);
 								}
 							}
@@ -355,10 +386,10 @@ public class MatchDetailsActivity extends SherlockListActivity {
 						TextView noLive = (TextView) findViewById(R.id.nolive);
 						TextView liveStatus = (TextView) findViewById(R.id.liveStatus);
 
-						teamName_1.setText(opp_1.select("a").first().text()
-								.trim());
-						teamName_2.setText(opp_2.select("a").first().text()
-								.trim());
+						tName1 = opp_1.select("a").first().text().trim();
+						tName2 = opp_2.select("a").first().text().trim();
+						teamName_1.setText(tName1);
+						teamName_2.setText(tName2);
 
 						// if (scoreDiv_1.className().trim().endsWith("winner"))
 						// {
@@ -480,6 +511,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
+		gameStartDate = date;
 
 		sdf = new SimpleDateFormat("MMMM d 'at' hh:mm a");
 		sdf.setTimeZone(TimeZone.getDefault());
@@ -487,6 +519,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		return sdf.format(date);
 
 	}
+
 
 	public void refreshActivity() {
 		// Destroy current activity

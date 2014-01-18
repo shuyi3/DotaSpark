@@ -15,7 +15,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class MatchArrayAdapter extends ArrayAdapter<Match> {
 	private LayoutInflater inflater;
@@ -43,8 +42,7 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 				.showStubImage(R.drawable.loading)
 				.showImageForEmptyUri(R.drawable.loading)
 				.showImageOnFail(R.drawable.loading).cacheInMemory(true)
-				.cacheOnDisc(true)
-				.build();
+				.cacheOnDisc(true).build();
 
 		this.matches = matches;
 	}
@@ -84,11 +82,13 @@ public class MatchArrayAdapter extends ArrayAdapter<Match> {
 		}
 
 		if (!isResult) {
-			if (matches.get(position).getMatchStatus() == Match.LIVE)
+			if (matches.get(position).getMatchStatus() == Match.LIVE) {
 				holder.time.setTextColor(Color.RED);
-			else
+				holder.time.setText("Live");
+			} else {
 				holder.time.setTextColor(Color.BLACK);
-			holder.time.setText(matches.get(position).getTime());
+				holder.time.setText(matches.get(position).getTime());
+			}
 		} else
 			holder.score.setText(matches.get(position).getScore());
 

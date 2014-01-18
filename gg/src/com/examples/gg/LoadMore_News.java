@@ -106,7 +106,12 @@ public class LoadMore_News extends LoadMore_Base implements
 			R.drawable.dota77, R.drawable.dota78, R.drawable.dota79,
 			R.drawable.dota80, R.drawable.dota81, R.drawable.dota82,
 			R.drawable.dota83, R.drawable.dota84, R.drawable.dota85,
-			R.drawable.dota86, R.drawable.dota87, R.drawable.dota88 };
+			R.drawable.dota86, R.drawable.dota87, R.drawable.dota88,
+			R.drawable.dota89, R.drawable.dota90, R.drawable.dota91,
+			R.drawable.dota92, R.drawable.dota93, R.drawable.dota94,
+			R.drawable.dota95, R.drawable.dota96, R.drawable.dota97,
+			R.drawable.dota98, R.drawable.dota99, R.drawable.dota100,
+			R.drawable.dota101, R.drawable.dota102, R.drawable.dota103 };
 
 	private List<View> views = new ArrayList<View>();
 
@@ -185,7 +190,7 @@ public class LoadMore_News extends LoadMore_Base implements
 		myLoadMoreListView = (LoadMoreListView) this.getListView();
 		myLoadMoreListView.setDivider(null);
 
-		//setBannerInHeader();
+		// setBannerInHeader();
 
 		vaa = new VideoArrayAdapter(sfa, titles, videolist, imageLoader);
 		setListAdapter(vaa);
@@ -610,17 +615,22 @@ public class LoadMore_News extends LoadMore_Base implements
 
 					String match;
 
-					match = link.select("span.opp").first().text().trim() + " vs "
-							+ link.select("span.opp").get(1).text().trim() + " ";
+					match = link.select("span.opp").first().text().trim()
+							+ " vs "
+							+ link.select("span.opp").get(1).text().trim()
+							+ " ";
 					if (link.select("span.hidden").isEmpty()) {
-						if(link.select("td").get(1).text().trim().toLowerCase().matches("live") || link.select("td").get(1).text().trim().matches("")){
-							//Game is live, append "live" text to it
+						if (link.select("td").get(1).text().trim()
+								.toLowerCase().matches("live")
+								|| link.select("td").get(1).text().trim()
+										.matches("")) {
+							// Game is live, append "live" text to it
 							match += "Live";
-						}else{
-							//Game is not live
+						} else {
+							// Game is not live
 							match += link.select("td").get(1).text().trim();
 						}
-						
+
 						matches.add(match);
 					} else {
 						match += link.select("span.hidden").first().text()

@@ -37,7 +37,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 
 	private FragmentManager fm;
 
-	private boolean doubleBackToExitPressedOnce = false;
+//	private boolean doubleBackToExitPressedOnce = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -312,36 +312,36 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	}
 
 	// Handles exit
-	@Override
-	public void onBackPressed() {
-		if (fm.getBackStackEntryCount() == 0) {
-
-			// No fragment in back stack
-
-			if (doubleBackToExitPressedOnce) {
-				super.onBackPressed();
-				return;
-			}
-			this.doubleBackToExitPressedOnce = true;
-			Toast.makeText(this, "Please click BACK again to exit",
-					Toast.LENGTH_SHORT).show();
-
-			// reset doubleBackToExitPressedOnce to false after 2 seconds
-			new Handler().postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-					doubleBackToExitPressedOnce = false;
-
-				}
-			}, 2000);
-		} else {
-
-			// Fragment back stack is empty
-
-			super.onBackPressed();
-		}
-	}
+//	@Override
+//	public void onBackPressed() {
+//		if (fm.getBackStackEntryCount() == 0) {
+//
+//			// No fragment in back stack
+//
+//			if (doubleBackToExitPressedOnce) {
+//				super.onBackPressed();
+//				return;
+//			}
+//			this.doubleBackToExitPressedOnce = true;
+//			Toast.makeText(this, "Please click BACK again to exit",
+//					Toast.LENGTH_SHORT).show();
+//
+//			// reset doubleBackToExitPressedOnce to false after 2 seconds
+//			new Handler().postDelayed(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					doubleBackToExitPressedOnce = false;
+//
+//				}
+//			}, 2000);
+//		} else {
+//
+//			// Fragment back stack is empty
+//
+//			super.onBackPressed();
+//		}
+//	}
 	
 	public void setDrawerIndicator(int position){
 		for (Item i : items)
