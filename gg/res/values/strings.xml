@@ -30,5 +30,6 @@
     <string name="apache_license">License</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="action_bar_share_with">Share with…</string>
+    <string name="setting_preference"></string>
 
 </resources>

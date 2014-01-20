@@ -15,11 +15,16 @@ import org.jsoup.select.Elements;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -59,7 +64,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	private int mRandNum;
 	private String tName1;
 	private String tName2;
-
+	private SharedPreferences prefs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -100,6 +105,8 @@ public class MatchDetailsActivity extends SherlockListActivity {
 		mMatchDetails.execute(match.getGosuLink());
 		rand = new Random();
 		mRandNum = rand.nextInt(50000);
+		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 
 	@Override
@@ -196,7 +203,7 @@ public class MatchDetailsActivity extends SherlockListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(ListView l, View v, final int position, long id) {
 
 		super.onListItemClick(l, v, position, id);
 
@@ -209,16 +216,88 @@ public class MatchDetailsActivity extends SherlockListActivity {
 			i.putExtra("videoId", videoIds.get(position));
 			startActivity(i);
 		} else {
-			if (check()) {
-				Intent i = new Intent(this, TwitchPlayer.class);
-				i.putExtra("video", lives.get(position));
-				startActivity(i);
+			
+			// Getting the preferred player
+			String preferredPlayer = prefs.getString("preferredPlayer", "-1");
+//			Log.i("debug prefs", preferredPlayer);
+			final Context mContext = this;
+			if (preferredPlayer.equals("-1")) {
+				// No preference
+				final CharSequence[] colors_radio = {
+						"New Player(No flash needed)", "Old Player(Flash needed)" };
+
+				new AlertDialog.Builder(this)
+						.setSingleChoiceItems(colors_radio, 0, null)
+						.setPositiveButton("Just once",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										dialog.dismiss();
+										int selectedPosition = ((AlertDialog) dialog)
+												.getListView()
+												.getCheckedItemPosition();
+										// Do something useful withe the position of
+										// the selected radio button
+										openPlayer(selectedPosition, mContext,
+												position, false);
+									}
+								})
+						.setNegativeButton("Remember my selection",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										dialog.dismiss();
+										int selectedPosition = ((AlertDialog) dialog)
+												.getListView()
+												.getCheckedItemPosition();
+										// Do something useful withe the position of
+										// the selected radio button
+										openPlayer(selectedPosition, mContext,
+												position, true);
+
+									}
+								}).show();
 			} else {
-				Intent i = new Intent(this, FlashInstallerActivity.class);
-				startActivity(i);
+				// Got preferred player
+				openPlayer(Integer.parseInt(preferredPlayer), mContext, position, false);
 			}
 		}
 
+	}
+	
+	private void openPlayer(int selectedPosition, Context mContext,
+			int videoPostion, boolean isSave) {
+		switch (selectedPosition) {
+		case 0:
+			// save pref
+			if (isSave) {
+				prefs.edit().putString("preferredPlayer", "0").commit();
+			}
+			// Using new video player
+			Intent i = new Intent(mContext, VideoBuffer.class);
+			i.putExtra("video", lives.get(videoPostion));
+			startActivity(i);
+			break;
+
+		case 1:
+			// save pref
+			if (isSave) {
+				prefs.edit().putString("preferredPlayer", "1").commit();
+			}
+
+			// Using old player
+			if (check()) {
+				Intent intent1 = new Intent(mContext, TwitchPlayer.class);
+				intent1.putExtra("video", lives.get(videoPostion));
+				startActivity(intent1);
+
+			} else {
+				Intent intent2 = new Intent(mContext,
+						FlashInstallerActivity.class);
+				startActivity(intent2);
+			}
+			break;
+		}
 	}
 
 	public void initMatchView() {
