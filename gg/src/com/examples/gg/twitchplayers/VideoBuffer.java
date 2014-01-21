@@ -49,6 +49,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.View.OnTouchListener;
@@ -85,12 +86,13 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 	private Context mContext;
 	List<String> listItems = new ArrayList<String>();
 	private SharedPreferences prefs;
+	private String globalPath;
 	private Runnable mNavHider = new Runnable() {
 		@Override
 		public void run() {
 			View decorView = getWindow().getDecorView();
 			decorView.setSystemUiVisibility(uiOptions);
-			qualityView.setVisibility(View.INVISIBLE);
+			qualityView.setVisibility(View.GONE);
 		}
 
 	};
@@ -98,7 +100,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 	private Runnable mSettingHider = new Runnable() {
 		@Override
 		public void run() {
-			qualityView.setVisibility(View.INVISIBLE);
+			qualityView.setVisibility(View.GONE);
 		}
 
 	};
@@ -120,6 +122,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		mBufferListener = this;
 
 		// Initialize variables
+		globalPath = null;
 		responseString = null;
 		videoSources = new ArrayList<String>();
 
@@ -177,6 +180,20 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		loadRateView.setText(percent + "%");
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		mVideoView.pause();
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		mVideoView.start();
+
+	}
+
 	@SuppressLint("NewApi")
 	private void hideBars() {
 		try {
@@ -200,7 +217,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 						| View.SYSTEM_UI_FLAG_FULLSCREEN;
 
 				decorView.setSystemUiVisibility(uiOptions);
-				qualityView.setVisibility(View.INVISIBLE);
+				qualityView.setVisibility(View.GONE);
 
 				decorView
 						.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
@@ -223,6 +240,13 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 							}
 						});
+
+			} else {
+				// For android version 4.0 or lower
+
+				getWindow().setFlags(
+						WindowManager.LayoutParams.FLAG_FULLSCREEN,
+						WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 			}
 		} catch (Exception e) {
@@ -302,6 +326,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 					}
 				}
+				globalPath = path;
 				// Adding stream sources to quality switcher.
 				addingMenuStreamSources();
 			}

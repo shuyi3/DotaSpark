@@ -23,11 +23,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -316,6 +318,13 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
   public void setVideoLayout(int layout, float aspectRatio) {
     LayoutParams lp = getLayoutParams();
     DisplayMetrics disp = mContext.getResources().getDisplayMetrics();
+    
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1 ){
+    	try{
+		    Display display = ((Activity) mContext).getWindowManager().getDefaultDisplay();
+		    display.getRealMetrics(disp);
+    	}catch(Exception e){}
+    }
     int windowWidth = disp.widthPixels, windowHeight = disp.heightPixels;
     float windowRatio = windowWidth / (float) windowHeight;
     float videoRatio = aspectRatio <= 0.01f ? mVideoAspectRatio : aspectRatio;
