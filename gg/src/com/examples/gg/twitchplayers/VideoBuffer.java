@@ -180,7 +180,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 	@SuppressLint("NewApi")
 	private void hideBars() {
 		try {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
 				// only for HONEYCOMB and newer versions
 
 				View decorView = getWindow().getDecorView();
