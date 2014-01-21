@@ -40,6 +40,15 @@
         <com.examples.gg.settings.Dialog_Disclaimer
             android:summary=""
             android:title="Disclaimer" />
+        
+        <PreferenceScreen
+            android:summary="whr0002@gmail.com"
+            android:title="Donate" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=BL54X4X73UMS2&amp;lc=CA&amp;item_name=Dota2TV%20%2d%20WWYZ&amp;currency_code=CAD&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">
+            </intent>
+        </PreferenceScreen>
     </PreferenceCategory>
 
 </PreferenceScreen>
