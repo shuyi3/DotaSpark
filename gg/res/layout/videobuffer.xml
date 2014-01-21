@@ -7,10 +7,6 @@
     <io.vov.vitamio.widget.CenterLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:orientation="horizontal" >
 
@@ -22,7 +18,7 @@
             android:layout_centerVertical="true" />
     </io.vov.vitamio.widget.CenterLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="" />
-    </LinearLayout>
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/qualitySwitch"
@@ -56,8 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:src="@drawable/quality_3" />
+        android:src="@drawable/quality_8" />
 
 </RelativeLayout>

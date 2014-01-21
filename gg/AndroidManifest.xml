@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.examples.gg"
     android:installLocation="auto"
-    android:versionCode="15"
-    android:versionName="1.1.3" >
+    android:versionCode="16"
+    android:versionName="1.1.4" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -31,18 +31,18 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
         <activity
-            android:name="com.examples.gg.YoutubeActionBarActivity"
+            android:name="com.examples.gg.loadMore.YoutubeActionBarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".TwitchPlayer"
+            android:name="com.examples.gg.twitchplayers.TwitchPlayer"
             android:label="@string/title_activity_main"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name="com.examples.gg.MatchDetailsActivity"
+            android:name="com.examples.gg.loadMore.MatchDetailsActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
@@ -56,15 +56,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoadMore_Activity_Channel"
+            android:name="com.examples.gg.loadMore.LoadMore_Activity_Channel"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".LoadMore_Activity_Base"
+  			android:name="com.examples.gg.loadMore.LoadMore_Activity_Base"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.examples.gg.settings.SettingsActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
@@ -72,27 +72,31 @@
             android:theme="@android:style/Theme.Dialog" >
         </activity>
         <activity
-            android:name=".FlashInstallerActivity"
+            android:name="com.examples.gg.settings.FlashInstallerActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.google.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:label="@string/app_name" >
+        </activity>
+        
         <activity
-            android:name=".LoadMore_Activity_Search"
+            android:name="com.examples.gg.loadMore.LoadMore_Activity_Search"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".LoadMore_Activity_Search_Youtube"
+            android:name="com.examples.gg.loadMore.LoadMore_Activity_Search_Youtube"
             android:label="@string/app_name" >
         </activity>
-        <activity
-            android:name=".LoadMore_Activity_Search_Twitch"
+        <activity 
+            android:name="com.examples.gg.loadMore.LoadMore_Activity_Search_Twitch"
             android:label="@string/app_name" >
         </activity>
+        
 
         <activity
-            android:name=".VideoBuffer"
+            android:name="com.examples.gg.twitchplayers.VideoBuffer"
             android:label="@string/app_name" 
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:theme="@android:style/Theme.NoTitleBar"
@@ -117,7 +121,7 @@
         <receiver android:process=":remote" android:name="AlarmReceiver"></receiver>
 
         <service android:name=".MyIntentService" />
-        <service android:enabled="true" android:name=".NotificationService" />
+        <service android:enabled="true" android:name="com.examples.gg.notificationservice.NotificationService" />
     </application>
 
 </manifest>

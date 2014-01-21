@@ -33,11 +33,11 @@
             </intent>
         </PreferenceScreen>
 
-        <com.examples.gg.Dialog_Libraries
+        <com.examples.gg.settings.Dialog_Libraries
             android:summary="License details for open source software"
             android:title="Open source licenses" />
 
-        <com.examples.gg.Dialog_Disclaimer
+        <com.examples.gg.settings.Dialog_Disclaimer
             android:summary=""
             android:title="Disclaimer" />
     </PreferenceCategory>
