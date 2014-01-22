@@ -70,6 +70,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 	private Uri uri;
 	private VideoView mVideoView;
 	private ImageView qualityView;
+	private TextView mMsgView;
 	private boolean isStart;
 	private ProgressBar pb;
 	private TextView downloadRateView, loadRateView;
@@ -113,6 +114,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		setContentView(R.layout.videobuffer);
 		mVideoView = (VideoView) findViewById(R.id.buffer);
 		qualityView = (ImageView) findViewById(R.id.qualitySwitch);
+		mMsgView = (TextView) findViewById(R.id.load_msg);
 		pb = (ProgressBar) findViewById(R.id.probar);
 
 		downloadRateView = (TextView) findViewById(R.id.download_rate);
@@ -144,6 +146,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		new MyAsyncTask().execute("http://usher.twitch.tv/select/"
 				+ channelName + ".json?nauthsig=&nauth=&allow_source=true");
 
+		mMsgView.setText("Loading channel data...");
 	}
 
 	@Override
@@ -153,6 +156,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 			if (mVideoView.isPlaying()) {
 				mVideoView.pause();
 				isStart = true;
+				mMsgView.setText("Loading video...");
 				pb.setVisibility(View.VISIBLE);
 				// downloadRateView.setVisibility(View.VISIBLE);
 				loadRateView.setVisibility(View.VISIBLE);
@@ -166,6 +170,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 				downloadRateView.setVisibility(View.GONE);
 				loadRateView.setVisibility(View.GONE);
 				qualityView.setVisibility(View.GONE);
+				mMsgView.setVisibility(View.GONE);
 			}
 			break;
 		// case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
@@ -191,6 +196,17 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 	public void onResume() {
 		super.onResume();
 		mVideoView.start();
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+			try {
+				if (h != null) {
+					qualityView.setVisibility(View.VISIBLE);
+
+					h.removeCallbacks(mNavHider);
+					h.postDelayed(mNavHider, 3000);
+				}
+			} catch (Exception e) {
+			}
+		}
 
 	}
 
@@ -291,7 +307,10 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 			} catch (Exception e) {
 				// Log.d("debug", conn.getErrorStream().toString());
-				e.printStackTrace();
+				pb.setVisibility(View.GONE);
+				mMsgView.setVisibility(View.VISIBLE);
+				mMsgView.setText("Sorry, there is a problem connecting to the server.");
+//				e.printStackTrace();
 				cancel(true);
 
 			} finally {
@@ -423,7 +442,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 				});
 
 				hideBars();
-
+				
 			}
 		}
 

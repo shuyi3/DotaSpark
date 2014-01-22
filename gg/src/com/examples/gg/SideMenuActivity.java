@@ -34,10 +34,14 @@ import com.examples.gg.loadMore.LoadMore_Result;
 import com.examples.gg.loadMore.LoadMore_Twitch;
 import com.examples.gg.loadMore.LoadMore_UpcomingMatch;
 import com.examples.gg.settings.SettingsActivity;
+import com.google.ads.Ad;
+import com.google.ads.AdListener;
+import com.google.ads.AdRequest;
+import com.google.ads.AdRequest.ErrorCode;
+import com.google.ads.InterstitialAd;
 
-
-
-public class SideMenuActivity extends SherlockFragmentActivity {
+public class SideMenuActivity extends SherlockFragmentActivity implements
+		AdListener {
 
 	// Declare Variable
 	DrawerLayout mDrawerLayout;
@@ -48,13 +52,27 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	EntryAdapter eAdapter;
 
 	private FragmentManager fm;
+	private InterstitialAd interstitial;
 
-//	private boolean doubleBackToExitPressedOnce = false;
+	// private boolean doubleBackToExitPressedOnce = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawer_main);
+
+		// Create the interstitial
+		interstitial = new InterstitialAd(this,
+				"ca-app-pub-6718707824713684/7369125856");
+
+		// Create ad request
+		AdRequest adRequest = new AdRequest();
+
+		// Begin loading your interstitial
+		interstitial.loadAd(adRequest);
+
+		// Set Ad Listener to use the callbacks below
+		interstitial.setAdListener(this);
 
 		// Initial fragment manager
 		fm = this.getSupportFragmentManager();
@@ -78,7 +96,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new SectionItem("Everyday's Feed"));
 		items.add(new EntryItem("What's new", "Fresh meat!",
 				R.drawable.fresh_meat));
-		
+
 		items.add(new EntryItem("Latest News", "From JoinDota, Gosugamer",
 				R.drawable.ic_action_news));
 
@@ -102,11 +120,12 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 		items.add(new SectionItem("About App"));
 		items.add(new EntryItem("Feedback", "Help us make it better",
 				R.drawable.feedback));
-		
-		items.add(new EntryItem("Share", "Share our app", R.drawable.ic_action_social_share));
-		items.add(new EntryItem("Rate Dota2TV", "Like it?", R.drawable.ic_action_rating_good));
-		
-		
+
+		items.add(new EntryItem("Share", "Share our app",
+				R.drawable.ic_action_social_share));
+		items.add(new EntryItem("Rate Dota2TV", "Like it?",
+				R.drawable.ic_action_rating_good));
+
 		eAdapter = new EntryAdapter(this, items);
 
 		// setListAdapter(adapter);
@@ -177,14 +196,13 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 				}, 0);
 			}
 		}
-		
-		if(item.getItemId() == R.id.menu_settings){
-			
+
+		if (item.getItemId() == R.id.menu_settings) {
+
 			// Start setting activity
-			Intent i = new Intent(this,
-					SettingsActivity.class);
+			Intent i = new Intent(this, SettingsActivity.class);
 			startActivity(i);
-			
+
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -232,7 +250,7 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			// News
 			ft.replace(R.id.content_frame, new LoadMore_News());
 			break;
-			
+
 		case 2:
 			// Gosu news
 			ft.replace(R.id.content_frame, new LoadMore_JD_News_Image());
@@ -262,44 +280,54 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 			// result section
 			ft.replace(R.id.content_frame, new LoadMore_Result());
 			break;
-			
+
 		case 12:
 			// Feedback
 
 			Intent email = new Intent(Intent.ACTION_VIEW);
-			email.setData(Uri.parse("mailto:dota2tv1@gmail.com?subject=Dota2TV Feedback"));
+			email.setData(Uri
+					.parse("mailto:dota2tv1@gmail.com?subject=Dota2TV Feedback"));
 			startActivity(Intent.createChooser(email, "Send feedback via.."));
-//			startActivity(email);
+			// startActivity(email);
 			break;
-			
+
 		case 13:
 			// Share Dota2TV
 			Intent sendIntent = new Intent();
 			sendIntent.setAction(Intent.ACTION_SEND);
-			sendIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.examples.gg");
+			sendIntent
+					.putExtra(Intent.EXTRA_TEXT,
+							"https://play.google.com/store/apps/details?id=com.examples.gg");
 			sendIntent.setType("text/plain");
-			startActivity(Intent.createChooser(sendIntent, "Share Dota2TV to.."));
-//			startActivity(sendIntent);
+			startActivity(Intent
+					.createChooser(sendIntent, "Share Dota2TV to.."));
+			// startActivity(sendIntent);
 			break;
-			
+
 		case 14:
 			// Rate Dota2TV
-		    Intent rateIntent = new Intent(Intent.ACTION_VIEW);
-		    //Try Google play
-		    rateIntent.setData(Uri.parse("market://details?id=com.examples.gg"));
-		    if (tryStartActivity(rateIntent) == false) {
-		        //Market (Google play) app seems not installed, let's try to open a webbrowser
-		        rateIntent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.examples.gg"));
-		        if (tryStartActivity(rateIntent) == false) {
-		            //Well if this also fails, we have run out of options, inform the user.
-		            Toast.makeText(this, "Could not open Google Play, please install Google Play.", Toast.LENGTH_SHORT).show();
-		        }
-		    }
-			
+			Intent rateIntent = new Intent(Intent.ACTION_VIEW);
+			// Try Google play
+			rateIntent
+					.setData(Uri.parse("market://details?id=com.examples.gg"));
+			if (tryStartActivity(rateIntent) == false) {
+				// Market (Google play) app seems not installed, let's try to
+				// open a webbrowser
+				rateIntent
+						.setData(Uri
+								.parse("https://play.google.com/store/apps/details?id=com.examples.gg"));
+				if (tryStartActivity(rateIntent) == false) {
+					// Well if this also fails, we have run out of options,
+					// inform the user.
+					Toast.makeText(
+							this,
+							"Could not open Google Play, please install Google Play.",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+
 			break;
 		}
-		
-
 
 		ft.commit();
 	}
@@ -324,55 +352,86 @@ public class SideMenuActivity extends SherlockFragmentActivity {
 	}
 
 	// Handles exit
-//	@Override
-//	public void onBackPressed() {
-//		if (fm.getBackStackEntryCount() == 0) {
-//
-//			// No fragment in back stack
-//
-//			if (doubleBackToExitPressedOnce) {
-//				super.onBackPressed();
-//				return;
-//			}
-//			this.doubleBackToExitPressedOnce = true;
-//			Toast.makeText(this, "Please click BACK again to exit",
-//					Toast.LENGTH_SHORT).show();
-//
-//			// reset doubleBackToExitPressedOnce to false after 2 seconds
-//			new Handler().postDelayed(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					doubleBackToExitPressedOnce = false;
-//
-//				}
-//			}, 2000);
-//		} else {
-//
-//			// Fragment back stack is empty
-//
-//			super.onBackPressed();
-//		}
-//	}
-	
-	public void setDrawerIndicator(int position){
+	// @Override
+	// public void onBackPressed() {
+	// if (fm.getBackStackEntryCount() == 0) {
+	//
+	// // No fragment in back stack
+	//
+	// if (doubleBackToExitPressedOnce) {
+	// super.onBackPressed();
+	// return;
+	// }
+	// this.doubleBackToExitPressedOnce = true;
+	// Toast.makeText(this, "Please click BACK again to exit",
+	// Toast.LENGTH_SHORT).show();
+	//
+	// // reset doubleBackToExitPressedOnce to false after 2 seconds
+	// new Handler().postDelayed(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// doubleBackToExitPressedOnce = false;
+	//
+	// }
+	// }, 2000);
+	// } else {
+	//
+	// // Fragment back stack is empty
+	//
+	// super.onBackPressed();
+	// }
+	// }
+
+	public void setDrawerIndicator(int position) {
 		for (Item i : items)
 			i.setUnchecked();
 		items.get(position).setChecked();
 		eAdapter.notifyDataSetChanged();
 	}
-	
+
 	private boolean tryStartActivity(Intent aIntent) {
-	    try
-	    {
-	        startActivity(aIntent);
-	        return true;
-	    }
-	    catch (ActivityNotFoundException e)
-	    {
-	        return false;
-	    }
+		try {
+			startActivity(aIntent);
+			return true;
+		} catch (ActivityNotFoundException e) {
+			return false;
+		}
 	}
-	 
+
+	@Override
+	public void onDismissScreen(Ad arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onLeaveApplication(Ad arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPresentScreen(Ad arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onReceiveAd(Ad ad) {
+		// TODO Auto-generated method stub
+		// Log.d("OK", "Received ad");
+//		Random mRand = new Random();
+//		if (mRand.nextInt(10) >= 5)
+			if (ad == interstitial) {
+				interstitial.show();
+			}
+	}
 
 }
