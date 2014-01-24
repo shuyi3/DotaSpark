@@ -67,7 +67,7 @@ public class SideMenuActivity extends SherlockFragmentActivity implements
 
 		// Create ad request
 		AdRequest adRequest = new AdRequest();
-
+		adRequest.addTestDevice("5E4CA696BEB736E734DD974DD296F11A");
 		// Begin loading your interstitial
 		interstitial.loadAd(adRequest);
 

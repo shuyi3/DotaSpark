@@ -401,9 +401,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 		@Override
 		protected void onCancelled() {
-			pb.setVisibility(View.GONE);
-			mMsgView.setVisibility(View.VISIBLE);
-			mMsgView.setText("Sorry, there is a problem connecting to the server.");
+			errorView();
 		}
 
 		@Override
@@ -438,6 +436,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 				// Tell the user to provide a media file URL/path.
 				Toast.makeText(VideoBuffer.this, "No stream sources",
 						Toast.LENGTH_LONG).show();
+				errorView();
 				return;
 			} else {
 				/*
@@ -699,6 +698,12 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 			}
 		}
 		return null;
+	}
+	
+	private void errorView(){
+		pb.setVisibility(View.GONE);
+		mMsgView.setVisibility(View.VISIBLE);
+		mMsgView.setText("Sorry, there is a problem connecting to the server.");
 	}
 
 }
