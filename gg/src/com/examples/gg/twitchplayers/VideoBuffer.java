@@ -26,14 +26,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import com.examples.gg.R;
-import com.examples.gg.R.id;
-import com.examples.gg.R.layout;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -49,14 +51,16 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.examples.gg.R;
 
 public class VideoBuffer extends Activity implements OnInfoListener,
 		OnBufferingUpdateListener {
@@ -143,8 +147,19 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		// }
 
 		// Getting twitch sources
-		new MyAsyncTask().execute("http://usher.twitch.tv/select/"
-				+ channelName + ".json?nauthsig=&nauth=&allow_source=true");
+		try {
+			channelName = URLEncoder.encode(
+					channelName.toLowerCase(Locale.ENGLISH), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// new MyAsyncTask().execute("http://usher.twitch.tv/select/"
+		// + channelName + ".json?nauthsig=&nauth=&allow_source=true");
+		String token_api = String.format(
+				"http://api.twitch.tv/api/channels/%s/access_token",
+				new Object[] { channelName });
+		new MyAsyncTask().execute(token_api);
 
 		mMsgView.setText("Loading channel data...");
 	}
@@ -307,10 +322,10 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 			} catch (Exception e) {
 				// Log.d("debug", conn.getErrorStream().toString());
-				pb.setVisibility(View.GONE);
-				mMsgView.setVisibility(View.VISIBLE);
-				mMsgView.setText("Sorry, there is a problem connecting to the server.");
-//				e.printStackTrace();
+				// pb.setVisibility(View.GONE);
+				// mMsgView.setVisibility(View.VISIBLE);
+				// mMsgView.setText("Sorry, there is a problem connecting to the server.");
+				// e.printStackTrace();
 				cancel(true);
 
 			} finally {
@@ -320,7 +335,75 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 					conn.disconnect();
 
 			}
+
+			if (responseString != null) {
+				String streams_api = null;
+				try {
+					// Get token and sig in JSON
+					JSONTokener jsonParser = new JSONTokener(
+							responseString.toString());
+					JSONObject wholeJson = (JSONObject) jsonParser.nextValue();
+					String token = wholeJson.getString("token");
+					String sig = wholeJson.getString("sig");
+					
+					Object aobj[] = {
+		                    "usher.twitch.tv", channelName, URLEncoder.encode(token, "UTF-8"), sig
+		                };
+					
+					streams_api = String.valueOf(new URL(String.format("http://%s/api/channel/hls/%s.m3u8?token=%s&sig=%s", aobj)));
+					
+					
+				} catch (Exception e) {
+
+				}
+				
+				if(streams_api != null){
+					try {
+						
+						URL url = new URL(streams_api);
+						conn = (HttpURLConnection) url.openConnection();
+	
+						conn.setRequestMethod("GET");
+						conn.setReadTimeout(10000);
+	
+						conn.setRequestProperty(
+								"User-Agent",
+								"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+	
+						InputStream is = conn.getInputStream();
+	
+						int http_status = conn.getResponseCode();
+	
+						// better check it first
+						if (http_status / 100 != 2) {
+							cancel(true);
+	
+						}
+	
+						responseString = getStringFromInputStream2(is);
+						is.close();
+	
+					} catch (Exception e) {
+						cancel(true);
+	
+					} finally {
+	
+						// Log.d("AsyncDebug", "shutdown");
+						if (conn != null)
+							conn.disconnect();
+	
+					}
+				}
+				
+			}
 			return responseString;
+		}
+
+		@Override
+		protected void onCancelled() {
+			pb.setVisibility(View.GONE);
+			mMsgView.setVisibility(View.VISIBLE);
+			mMsgView.setText("Sorry, there is a problem connecting to the server.");
 		}
 
 		@Override
@@ -442,7 +525,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 				});
 
 				hideBars();
-				
+
 			}
 		}
 
@@ -552,6 +635,35 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 				br = new BufferedReader(new InputStreamReader(is));
 				while ((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (br != null) {
+					try {
+						br.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return sb.toString();
+
+		}
+		
+		private String getStringFromInputStream2(InputStream is) {
+			// Log.i("debug", "in get");
+			BufferedReader br = null;
+			StringBuilder sb = new StringBuilder();
+
+			String line;
+			try {
+
+				br = new BufferedReader(new InputStreamReader(is));
+				while ((line = br.readLine()) != null) {
 					// pick up the video sources
 					if (line.contains("http")) {
 						videoSources.add(line);
@@ -576,6 +688,8 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 		}
 	}
+	
+	
 
 	// Return the stream source path according to given quality
 	private String getSpecificSource(ArrayList<String> al, String key) {
