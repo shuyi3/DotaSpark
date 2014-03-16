@@ -17,30 +17,28 @@ import com.examples.gg.data.Video;
 public class FeedManager_Base {
 
 	protected JSONObject feed;
-	public static final String YOUTUBE = "Youtube";
-	public static final String TWITCH = "Twitch";
-	public static final String SUBSCRIPTION = "Subscription";
 	protected String mJSON;
 
+	// Get the JSON String
 	public String getmJSON() {
 		return mJSON;
 	}
 
+	// Set the JSON String
 	public void setmJSON(String mJSON) {
 		this.mJSON = mJSON;
 	}
 
+	// Return a list of Video objects according to the JSON String provided
 	public ArrayList<Video> getVideoPlaylist() {
-		
+
 		processJSON(mJSON);
 
 		ArrayList<Video> videos = new ArrayList<Video>();
 
 		try {
-			// System.out.println(plTitle);
 			// get the playlist
 			JSONArray playlist = feed.getJSONArray("entry");
-			// System.out.println("Length: "+ playlist.length());
 
 			for (int i = 0; i < playlist.length(); i++) {
 				// get a video in the playlist
@@ -53,8 +51,6 @@ public class FeedManager_Base {
 				videoLink = oneVideo.getJSONObject("content").getString("src");
 				videoId = videoLink.substring(videoLink.indexOf("/v/") + 3,
 						videoLink.indexOf("?"));
-
-				// System.out.println("Working 2: "+videoLink);
 				String videoDesc = oneVideo.getJSONObject("media$group")
 						.getJSONObject("media$description").getString("$t");
 				String thumbUrl = oneVideo.getJSONObject("media$group")
@@ -62,7 +58,6 @@ public class FeedManager_Base {
 						.getString("url");
 				String updateTime = oneVideo.getJSONObject("published")
 						.getString("$t");
-				// System.out.println("Working 4");
 				String author = oneVideo.getJSONArray("author")
 						.getJSONObject(0).getJSONObject("name").getString("$t");
 				String vCount = oneVideo.getJSONObject("yt$statistics")
@@ -75,11 +70,7 @@ public class FeedManager_Base {
 
 				Video video = new Video();
 
-				// System.out.println("converted duration: " +
-				// convertedDuration);
-				// System.out.println(videoDesc);
 				// store title and link
-
 				video.setTitle(videoTitle);
 				video.setVideoId(videoId);
 				video.setThumbnailUrl(thumbUrl);
@@ -88,26 +79,25 @@ public class FeedManager_Base {
 				video.setAuthor(author);
 				video.setViewCount(vCount);
 				video.setDuration(convertedDuration);
-				// System.out.println(video.getTitle());
+
 				// push it to the list
 				videos.add(video);
-				// System.out.println(videoTitle+"***"+videoLink);
 
 			}
 
 		} catch (Exception ex) {
 
-			// ex.printStackTrace();
+			ex.printStackTrace();
 		}
 
 		return videos;
 	}
 
+	// Return the next web api from Youtube
 	public String getNextApi() throws JSONException {
 		JSONArray link = feed.getJSONArray("link");
 		for (int i = 0; i < link.length(); i++) {
 			JSONObject jo = link.getJSONObject(i);
-			// System.out.println(jo.getString("rel"));
 			if (jo.getString("rel").equals("next")) {
 				// there are more videos in this playlist
 				String nextUrl = jo.getString("href");
@@ -118,14 +108,18 @@ public class FeedManager_Base {
 
 	}
 
+	// Get the whole JSON object
 	public JSONObject getFeed() {
 		return feed;
 	}
 
+	// Set the whole JSON object
 	public void setFeed(JSONObject feed) {
 		this.feed = feed;
 	}
 
+	// Given a String number(seconds), return a formatted String time in
+	// 00:00:00
 	protected String formatSecondsAsTime(String secs) {
 		int totalSecs = Integer.parseInt(secs);
 
@@ -142,6 +136,8 @@ public class FeedManager_Base {
 
 	}
 
+	// Given a number (1 digit or 2 digits), return a formatted string
+	// in "00", "0X", "XX"
 	private String twoDigitString(int number) {
 
 		if (number == 0) {
@@ -155,11 +151,10 @@ public class FeedManager_Base {
 		return String.valueOf(number);
 	}
 
+	// Given a date string from JSON, return date difference
 	protected String handleDate(String s) {
 		String temp = s.replace("T", " ");
 		String dateInString = temp.substring(0, temp.indexOf("."));
-		// System.out.println("Date in String: " + dateInString);
-
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
 		Date d1 = new Date();
@@ -167,20 +162,16 @@ public class FeedManager_Base {
 		try {
 			d2 = dateFormat.parse(dateInString);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
-		// System.out.println("Date 1: " + dateFormat.format(d1));
-		// System.out.println("Date 2: " + dateFormat.format(d2));
 
-		// System.out.println(calculateDateDifference(d1,d2));
 		return calculateDateDifference(d1, d2);
 
 	}
 
+	// Given a past date and current date, return date difference
 	private String calculateDateDifference(Date today, Date past) {
 		long diff = today.getTime() - past.getTime();
-		// System.out.println("diff: " + diff);
 		long diffSec = (diff / 1000L) % 60L;
 		long diffMin = (diff / (60L * 1000L)) % 60L;
 		long diffHour = (diff / (60L * 60L * 1000L)) % 24L;
@@ -241,6 +232,7 @@ public class FeedManager_Base {
 		return "";
 	}
 
+	// convert a JSON string to a JSON object
 	protected void processJSON(String json) {
 		try {
 			JSONTokener jsonParser = new JSONTokener(json);

@@ -35,6 +35,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup.LayoutParams;
 
 import io.vov.vitamio.MediaFormat;
@@ -319,7 +320,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     LayoutParams lp = getLayoutParams();
     DisplayMetrics disp = mContext.getResources().getDisplayMetrics();
     
-    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1 ){
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1){
     	try{
 		    Display display = ((Activity) mContext).getWindowManager().getDefaultDisplay();
 		    display.getRealMetrics(disp);

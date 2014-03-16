@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.examples.gg"
     android:installLocation="auto"
-    android:versionCode="21"
-    android:versionName="1.1.9" >
+    android:versionCode="22"
+    android:versionName="1.2.0" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -97,6 +97,13 @@
 
         <activity
             android:name="com.examples.gg.twitchplayers.VideoBuffer"
+            android:label="@string/app_name" 
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name="com.examples.gg.twitchplayers.MediaBuffer"
             android:label="@string/app_name" 
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:theme="@android:style/Theme.NoTitleBar"

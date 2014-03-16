@@ -21,7 +21,6 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.widget.VideoView;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,10 +32,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,12 +51,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.examples.gg.R;
 
 public class VideoBuffer extends Activity implements OnInfoListener,
@@ -345,56 +342,58 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 					JSONObject wholeJson = (JSONObject) jsonParser.nextValue();
 					String token = wholeJson.getString("token");
 					String sig = wholeJson.getString("sig");
-					
-					Object aobj[] = {
-		                    "usher.twitch.tv", channelName, URLEncoder.encode(token, "UTF-8"), sig
-		                };
-					
-					streams_api = String.valueOf(new URL(String.format("http://%s/api/channel/hls/%s.m3u8?token=%s&sig=%s", aobj)));
-					
-					
+
+					Object aobj[] = { "usher.twitch.tv", channelName,
+							URLEncoder.encode(token, "UTF-8"), sig };
+
+					streams_api = String
+							.valueOf(new URL(
+									String.format(
+											"http://%s/api/channel/hls/%s.m3u8?token=%s&sig=%s",
+											aobj)));
+
 				} catch (Exception e) {
 
 				}
-				
-				if(streams_api != null){
+
+				if (streams_api != null) {
 					try {
-						
+
 						URL url = new URL(streams_api);
 						conn = (HttpURLConnection) url.openConnection();
-	
+
 						conn.setRequestMethod("GET");
 						conn.setReadTimeout(10000);
-	
+
 						conn.setRequestProperty(
 								"User-Agent",
 								"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-	
+
 						InputStream is = conn.getInputStream();
-	
+
 						int http_status = conn.getResponseCode();
-	
+
 						// better check it first
 						if (http_status / 100 != 2) {
 							cancel(true);
-	
+
 						}
-	
+
 						responseString = getStringFromInputStream2(is);
 						is.close();
-	
+
 					} catch (Exception e) {
 						cancel(true);
-	
+
 					} finally {
-	
+
 						// Log.d("AsyncDebug", "shutdown");
 						if (conn != null)
 							conn.disconnect();
-	
+
 					}
 				}
-				
+
 			}
 			return responseString;
 		}
@@ -444,6 +443,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 				 * mVideoView.setVideoURI(Uri.parse(URLstring));
 				 */
 				uri = Uri.parse(path);
+				mVideoView.setBufferSize(0);
 				mVideoView.setVideoURI(uri);
 				// mVideoView.setMediaController(new MediaController(this));
 				mVideoView.requestFocus();
@@ -652,7 +652,7 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 			return sb.toString();
 
 		}
-		
+
 		private String getStringFromInputStream2(InputStream is) {
 			// Log.i("debug", "in get");
 			BufferedReader br = null;
@@ -687,8 +687,6 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 
 		}
 	}
-	
-	
 
 	// Return the stream source path according to given quality
 	private String getSpecificSource(ArrayList<String> al, String key) {
@@ -699,8 +697,8 @@ public class VideoBuffer extends Activity implements OnInfoListener,
 		}
 		return null;
 	}
-	
-	private void errorView(){
+
+	private void errorView() {
 		pb.setVisibility(View.GONE);
 		mMsgView.setVisibility(View.VISIBLE);
 		mMsgView.setText("Sorry, there is a problem connecting to the server.");

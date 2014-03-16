@@ -21,6 +21,7 @@ import com.examples.gg.R;
 import com.examples.gg.R.drawable;
 import com.examples.gg.feedManagers.FeedManager_Twitch;
 import com.examples.gg.settings.FlashInstallerActivity;
+import com.examples.gg.twitchplayers.MediaBuffer;
 import com.examples.gg.twitchplayers.TwitchPlayer;
 import com.examples.gg.twitchplayers.VideoBuffer;
 
@@ -84,7 +85,7 @@ public class LoadMore_Twitch extends LoadMore_Base implements
 		if (preferredPlayer.equals("-1")) {
 			// No preference
 			final CharSequence[] colors_radio = {
-					"New Player(No flash needed)", "Old Player(Flash needed)" };
+					"New Player(No Flash needed)", "Old Player(Flash needed)" };
 
 			new AlertDialog.Builder(this.getSherlockActivity())
 					.setSingleChoiceItems(colors_radio, 0, null)
@@ -102,7 +103,7 @@ public class LoadMore_Twitch extends LoadMore_Base implements
 											position, false);
 								}
 							})
-					.setNegativeButton("Remember my selection",
+					.setNegativeButton("Always",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
