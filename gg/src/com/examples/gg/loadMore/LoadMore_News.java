@@ -135,7 +135,7 @@ public class LoadMore_News extends LoadMore_Base implements
 
 		// Give API URLs
 		API.add("https://gdata.youtube.com/feeds/api/users/cpGJHANGum7tFm0kg6fh7g/newsubscriptionvideos?max-results=10&alt=json");
-
+//		API.add("http://youtube-rss.f-y.name/rss/55590a90-dcb3-11e3-a44f-0401096cca01/?alt=json");
 		// set a feed manager
 		feedManager = new FeedManager_Subscription();
 

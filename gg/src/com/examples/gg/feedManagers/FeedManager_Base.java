@@ -14,6 +14,9 @@ import org.json.JSONTokener;
 
 import com.examples.gg.data.Video;
 
+/**
+ * This class is used to parse JSON from Youtube server 
+ * */
 public class FeedManager_Base {
 
 	protected JSONObject feed;
@@ -93,7 +96,7 @@ public class FeedManager_Base {
 		return videos;
 	}
 
-	// Return the next web api from Youtube
+	// Return the next data api from Youtube
 	public String getNextApi() throws JSONException {
 		JSONArray link = feed.getJSONArray("link");
 		for (int i = 0; i < link.length(); i++) {
@@ -239,7 +242,7 @@ public class FeedManager_Base {
 			JSONObject wholeJson = (JSONObject) jsonParser.nextValue();
 			this.feed = wholeJson.getJSONObject("feed");
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 

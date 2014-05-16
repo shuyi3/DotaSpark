@@ -14,8 +14,10 @@ import android.support.v4.app.NotificationCompat;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.examples.gg.R;
 import com.examples.gg.SideMenuActivity;
-import com.examples.gg.R.drawable;
 
+/**
+ * This class implements creation of a notification.
+ * */
 public class NotificationService extends WakefulIntentService {
 
 	public NotificationService() {
@@ -24,25 +26,24 @@ public class NotificationService extends WakefulIntentService {
 
 	@Override
 	protected void doWakefulWork(Intent intent) {
-//		Log.i("debug", "in service");
+		// Log.i("debug", "in service");
 		NotificationManager mNM;
 		// The PendingIntent to launch our activity if the user selects this
 		// notification
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				new Intent(this, SideMenuActivity.class), 0);
-		
+
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this).setSmallIcon(R.drawable.ic_launcher)
 				.setContentTitle("The game has started!")
 				.setContentText(intent.getStringExtra("msg"))
 				.setContentIntent(contentIntent)
 				.setDefaults(Notification.DEFAULT_SOUND)
-				.setDefaults(Notification.DEFAULT_LIGHTS)
-				.setAutoCancel(true);
+				.setDefaults(Notification.DEFAULT_LIGHTS).setAutoCancel(true);
 
 		mNM = (NotificationManager) this
 				.getSystemService(this.NOTIFICATION_SERVICE);
-		
+
 		// Play the ringtone and vibrate
 		try {
 			Uri notificationURI = RingtoneManager
@@ -55,6 +56,7 @@ public class NotificationService extends WakefulIntentService {
 			// Vibrate for 500 milliseconds
 			v.vibrate(500);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		mNM.notify(intent.getIntExtra("rand", 1), mBuilder.build());
